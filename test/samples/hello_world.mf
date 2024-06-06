@@ -1,0 +1,12 @@
+//main = () -> int {
+//    print "Hello, world"
+//}
+
+//func main = () -> int {
+//   print "Hello, world!"
+//}
+
+func main () -> int {
+    print "Hello, world!"
+    0
+}
