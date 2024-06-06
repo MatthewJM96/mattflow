@@ -86,6 +86,7 @@ endif()
 
 add_executable(mattflow
     "${PROJECT_SOURCE_DIR}/src/lex/atom.cpp"
+    "${PROJECT_SOURCE_DIR}/src/lex/lexer.cpp"
     "${PROJECT_SOURCE_DIR}/src/main.cpp"
 )
 
