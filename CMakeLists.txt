@@ -66,6 +66,7 @@ endif()
 # containing include directories and libraries we will add to our target.
 
 find_package(concurrentqueue REQUIRED)
+find_package(Boost REQUIRED)
 
 ########################################################################################
 
@@ -101,6 +102,7 @@ target_precompile_headers(mattflow
 # Globally used includes and libraries.
 
 set(mattflow_Include_Dirs
+    ${Boost_INCLUDE_DIRS}
     ${concurrentqueue_INCLUDE_DIRS}
 )
 # set(mattflow_Libraries

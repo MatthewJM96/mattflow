@@ -9,6 +9,8 @@
 #include <cstdlib>
 
 // Containers
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/graph_traits.hpp>
 #include <map>
 #include <moodycamel/blockingconcurrentqueue.h>
 #include <moodycamel/concurrentqueue.h>
