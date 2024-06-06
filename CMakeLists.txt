@@ -6,21 +6,21 @@ cmake_minimum_required(VERSION 3.22)
 # #     Setup Conan     #
 # #######################
 
-# message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-# file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
-#             "${CMAKE_BINARY_DIR}/cmake/conan.cmake"
-#             EXPECTED_HASH SHA256=5cdb3042632da3efff558924eecefd580a0e786863a857ca097c3d1d43df5dcd
-#             TLS_VERIFY ON
-#             STATUS DOWNLOAD_STATUS)
+message(STATUS "Downloading conan_provider.cmake from https://github.com/conan-io/cmake-conan")
+file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/develop2/conan_provider.cmake"
+            "${CMAKE_BINARY_DIR}/cmake/conan_provider.cmake"
+            STATUS DOWNLOAD_STATUS)
 
-# list(GET DOWNLOAD_STATUS 0 DOWNLOAD_STATUS_CODE)
-# if(NOT ${DOWNLOAD_STATUS_CODE} EQUAL 0)
-#     message(FATAL_ERROR "Error downloading conan.cmake: ${DOWNLOAD_STATUS}")
-# else()
-#     message(STATUS "Download result: ${DOWNLOAD_STATUS}")
-# endif()
+list(GET DOWNLOAD_STATUS 0 DOWNLOAD_STATUS_CODE)
+if(NOT ${DOWNLOAD_STATUS_CODE} EQUAL 0)
+    message(FATAL_ERROR "Error downloading conan_provider.cmake: ${DOWNLOAD_STATUS}")
+else()
+    message(STATUS "Download result: ${DOWNLOAD_STATUS}")
+endif()
 
-# include(${CMAKE_BINARY_DIR}/cmake/conan.cmake)
+set(CMAKE_PROJECT_TOP_LEVEL_INCLUDES
+    "${CMAKE_PROJECT_TOP_LEVEL_INCLUDES};${CMAKE_BINARY_DIR}/cmake/conan_provider.cmake"
+)
 
 ########################################################################################
 
@@ -58,40 +58,6 @@ endif()
 
 ########################################################################################
 
-#################################
-#     mattflow Dependencies     #
-#################################
-
-# Here we specify libraries we require that Conan will be responsible for
-# obtaining.
-
-# set(mattflow
-#     glm/0.9.9.8
-# )
-
-########################################################################################
-
-#########################################
-#     mattflow Depency Installation     #
-#########################################
-
-# Here we get Conan to install all those dependencies we have specified, using the same
-# release mode, compiler, std library and so on that we will use to build mattflow.
-
-# conan_cmake_configure(REQUIRES ${mattflow}
-#                       GENERATORS cmake_find_package)
-
-# conan_cmake_autodetect(settings)
-
-# conan_cmake_install(PATH_OR_REFERENCE .
-#                     BUILD missing
-#                     REMOTE conancenter
-#                     SETTINGS ${settings})
-
-# list(APPEND CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR}")
-
-########################################################################################
-
 #########################################
 #     mattflow Dependency Discovery     #
 #########################################
@@ -99,7 +65,7 @@ endif()
 # Now all dependencies are built, we "discover them", i.e. set up some useful variables
 # containing include directories and libraries we will add to our target.
 
-# find_package(TBB REQUIRED COMPONENTS tbb)
+find_package(concurrentqueue REQUIRED)
 
 ########################################################################################
 
@@ -134,9 +100,9 @@ target_precompile_headers(mattflow
 
 # Globally used includes and libraries.
 
-# set(mattflow_Include_Dirs
-#     ${glm_INCLUDE_DIRS}
-# )
+set(mattflow_Include_Dirs
+    ${concurrentqueue_INCLUDE_DIRS}
+)
 # set(mattflow_Libraries
 #     tbb
 # )
@@ -152,11 +118,11 @@ target_include_directories(mattflow
     "${PROJECT_SOURCE_DIR}/include"
 )
 
-# target_include_directories(mattflow
-#     SYSTEM
-#     PUBLIC
-#     ${mattflow_Include_Dirs}
-# )
+target_include_directories(mattflow
+    SYSTEM
+    PUBLIC
+    ${mattflow_Include_Dirs}
+)
 
 # target_link_libraries(mattflow
 #     ${mattflow_Libraries}
