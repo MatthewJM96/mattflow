@@ -1,5 +1,5 @@
-#ifndef __mattflow_atom_h
-#define __mattflow_atom_h
+#ifndef __mattflow_lex_atom_h
+#define __mattflow_lex_atom_h
 
 namespace mattflow {
     namespace lex {
@@ -32,4 +32,4 @@ namespace mattflow {
 }  // namespace mattflow
 namespace mflex = mattflow::lex;
 
-#endif  // __mattflow_atom_h
+#endif  // __mattflow_lex_atom_h

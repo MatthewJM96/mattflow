@@ -1,5 +1,5 @@
-#ifndef __mattflow_token_h
-#define __mattflow_token_h
+#ifndef __mattflow_lex_token_h
+#define __mattflow_lex_token_h
 
 #include "atom.h"
 
@@ -49,4 +49,4 @@ namespace mattflow {
 }  // namespace mattflow
 namespace mflex = mattflow::lex;
 
-#endif  // __mattflow_token_h
+#endif  // __mattflow_lex_token_h
