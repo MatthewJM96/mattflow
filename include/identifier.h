@@ -7,7 +7,7 @@ namespace mattflow {
 
     class IdentifierTable {
     public:
-        MATTFLOW_NON_COPYABLE(IdentifierTable)
+        MATTFLOW_NON_COPYABLE(IdentifierTable);
 
         static IdentifierTable& get() {
             static IdentifierTable instance;
