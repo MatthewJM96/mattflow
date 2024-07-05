@@ -68,7 +68,7 @@ AllowAllArgumentsOnNextLine: true
 BinPackArguments: false
 AllowAllParametersOfDeclarationOnNextLine: true
 BinPackParameters: false
-AttributeMacros: ['CALLER_DELETE', 'CALLEE_DELETE', 'OUT', 'IN']
+AttributeMacros: ['CALLER_DELETE', 'CALLEE_DELETE', 'VALOUT', 'VALIN', 'VALINOUT']
 
 ConstructorInitializerIndentWidth: 4
 SpaceBeforeCtorInitializerColon: true

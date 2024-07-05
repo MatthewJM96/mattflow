@@ -2,6 +2,7 @@
 #define __mattflow_lex_token_h
 
 #include "identifier.h"
+#include "lex/token_type.h"
 
 namespace mattflow {
     namespace lex {

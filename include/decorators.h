@@ -6,9 +6,9 @@
 #define CALLEE_DELETE
 
 // Data Direction
-#define OUT
-#define IN
-#define INOUT
+#define VALOUT
+#define VALIN
+#define VALINOUT
 
 #if defined(DEBUG)
 #  define debug_printf(...) printf(__VA_ARGS__)
