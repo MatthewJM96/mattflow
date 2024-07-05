@@ -4,7 +4,7 @@
 namespace mattflow {
     namespace lex {
         enum class TokenType : int16_t {
-            EOF = std::numeric_limits<int16_t>::min(),
+            SENTINEL = std::numeric_limits<int16_t>::min(),
 
             // Parentheses, braces, and brackets.
             LEFT_PAREN,      // (
