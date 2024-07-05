@@ -6,6 +6,15 @@
 
 static void trim_whitespace(VALINOUT mf::SourceView& source_view) {
     auto offset = source_view.source.find_first_not_of(" \n");
+    if (offset == std::string_view::npos) {
+        source_view.source = std::string_view();
+
+        source_view.start_line   = source_view.end_line;
+        source_view.start_column = source_view.end_column;
+
+        return;
+    }
+
     for (auto c : source_view.source.substr(0, offset)) {
         if (c == '\n') {
             ++source_view.start_line;
