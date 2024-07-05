@@ -19,4 +19,13 @@
 #  endif  // !defined(NDEBUG)
 #endif
 
-#endif // __mattflow_decorators_h
+// Non-copyable / non-movable macros.
+#define MATTFLOW_NON_COPYABLE(TYPE)                                                    \
+  TYPE(const TYPE& rhs)            = delete;                                           \
+  TYPE& operator=(const TYPE& rhs) = delete
+
+#define MATTFLOW_NON_MOVABLE(TYPE)                                                     \
+  TYPE(TYPE&& rhs)            = delete;                                                \
+  TYPE& operator=(TYPE&& rhs) = delete
+
+#endif  // __mattflow_decorators_h
