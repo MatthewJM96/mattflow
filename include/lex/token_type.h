@@ -74,6 +74,7 @@ namespace mattflow {
             {            TokenType::GREATER_THAN,                                               ">"},
             {TokenType::GREATER_THAN_OR_EQUAL_TO,                                              ">="},
             {             TokenType::ASSIGN_TYPE,                                               ":"},
+            {            TokenType::ASSIGN_VALUE,                                               "="},
             {                   TokenType::MINUS,                                               "-"},
             {                    TokenType::PLUS,                                             "\\+"},
             {                   TokenType::SLASH,                                               "/"},
