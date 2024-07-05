@@ -4,6 +4,7 @@
 #include "identifier.h"
 #include "lex/token_type.h"
 #include "number.h"
+#include "source.h"
 
 namespace mattflow {
     namespace lex {
