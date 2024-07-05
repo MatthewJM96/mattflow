@@ -94,6 +94,9 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
                 }
 
                 tokens.emplace_back(token);
+
+                // Don't consider any other possible token matches.
+                break;
             }
         }
 
