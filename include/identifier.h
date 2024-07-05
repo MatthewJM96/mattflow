@@ -14,9 +14,9 @@ namespace mattflow {
             return instance;
         }
 
-        IdentifierIdx try_insert(std::string_view atom);
+        IdentifierIdx try_insert(std::string_view identifier);
 
-        std::string_view get(IdentifierIdx atom_idx);
+        std::string_view get(IdentifierIdx identifier_idx);
     protected:
         IdentifierTable() { /* Empty. */
         }
