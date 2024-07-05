@@ -17,14 +17,28 @@ func main () -> int {
     }
 
     for y in [3, 4, 5], z in [1, 2] {
-        w = y + z
+        w := y + z
         print(w)
     }
 
     for y in [3, 4, 5], z in [1 .. 4] where z != 2 {
-        w = y + z
+        w : uint64 = y + z
         print(w)
     }
+
+    i := 100
+    j := 30
+
+    if i < 200 print(i)
+
+    if i > 30 {
+        k := i + 5
+        print(k)
+    }
+
+    // if i > 1 and j < 60 print(j)
+    if i > 1 and j < 60
+        print(j)
 
     0
 }
