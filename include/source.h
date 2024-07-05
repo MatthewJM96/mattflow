@@ -9,7 +9,7 @@ namespace mattflow {
      * represents the file in which this source is located.
      */
     struct SourceView {
-        std::string_view src;
+        std::string_view source;
         FileID           file_id;
         uint64_t         start_line, end_line;
         uint64_t         start_column, end_column;

@@ -88,6 +88,7 @@ add_executable(mattflow
     "${PROJECT_SOURCE_DIR}/src/lex/lexer.cpp"
     "${PROJECT_SOURCE_DIR}/src/identifier.cpp"
     "${PROJECT_SOURCE_DIR}/src/main.cpp"
+    "${PROJECT_SOURCE_DIR}/src/number.cpp"
 )
 
 target_precompile_headers(mattflow
