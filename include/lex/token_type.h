@@ -37,12 +37,6 @@ namespace mattflow {
             SLASH,  // /
             STAR,   // *
 
-            // Literals
-            IDENTIFIER,  // [a-zA-Z_][a-zA-Z0-9_]*
-            STRING,      // (?:\"{3}((?:\n.*)*)\"{3})|(?:\"(.*)\")
-            // TODO(Matthew): support other number representations?
-            NUMBER,  // [0-9]+(?:\.[0-9]*)?
-
             // Keywords
             TRUE,   // true
             FALSE,  // false
@@ -55,6 +49,12 @@ namespace mattflow {
             IN,     // in
             MATCH,  // match
             PRINT,  // print
+
+            // Literals
+            IDENTIFIER,  // [a-zA-Z_][a-zA-Z0-9_]*
+            STRING,      // (?:\"{3}((?:\n.*)*)\"{3})|(?:\"(.*)\")
+            // TODO(Matthew): support other number representations?
+            NUMBER,  // [0-9]+(?:\.[0-9]*)?
         };
 
         static std::vector<std::tuple<TokenType, std::string>> TOKEN_REGEX_PATTERNS = {
@@ -78,9 +78,6 @@ namespace mattflow {
             {                    TokenType::PLUS,                                             "\\+"},
             {                   TokenType::SLASH,                                               "/"},
             {                    TokenType::STAR,                                             "\\*"},
-            {              TokenType::IDENTIFIER,                          "[a-zA-Z_][a-zA-Z_0-9]*"},
-            {                  TokenType::STRING, "(?:\\\"{3}((?:\\n.*)*)\\\"{3})|(?:\\\"(.*)\\\")"},
-            {                  TokenType::NUMBER,                            "[0-9]+(?:\\.[0-9]*)?"},
             {                    TokenType::TRUE,                                            "true"},
             {                   TokenType::FALSE,                                           "false"},
             {                      TokenType::OR,                                              "or"},
@@ -92,6 +89,9 @@ namespace mattflow {
             {                      TokenType::IN,                                              "in"},
             {                   TokenType::MATCH,                                           "match"},
             {                   TokenType::PRINT,                                           "print"},
+            {              TokenType::IDENTIFIER,                          "[a-zA-Z_][a-zA-Z_0-9]*"},
+            {                  TokenType::STRING, "(?:\\\"{3}((?:\\n.*)*)\\\"{3})|(?:\\\"(.*)\\\")"},
+            {                  TokenType::NUMBER,                            "[0-9]+(?:\\.[0-9]*)?"},
         };
     }  // namespace lex
 }  // namespace mattflow
