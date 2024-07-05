@@ -29,5 +29,7 @@ and or then if = *          \
     std::cout << "or   " << static_cast<int16_t>(mflex::TokenType::OR) << std::endl;
     std::cout << "then " << static_cast<int16_t>(mflex::TokenType::THEN) << std::endl;
     std::cout << "if   " << static_cast<int16_t>(mflex::TokenType::IF) << std::endl;
+    std::cout << "eq   " << static_cast<int16_t>(mflex::TokenType::ASSIGN_VALUE)
+              << std::endl;
     std::cout << "star " << static_cast<int16_t>(mflex::TokenType::STAR) << std::endl;
 }
