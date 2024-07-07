@@ -17,6 +17,7 @@ namespace mattflow {
             // Separators and accessors.
             COMMA,  // ,
             DOT,    // .
+            ARROW,  // ->
 
             // Boolean operators.
             NOT,                       // !
@@ -66,6 +67,7 @@ namespace mattflow {
             {          TokenType::RIGHT_BRACKETS,                                             "\\]"},
             {                   TokenType::COMMA,                                               ","},
             {                     TokenType::DOT,                                             "\\."},
+            {                   TokenType::ARROW,                                              "->"},
             {                     TokenType::NOT,                                               "!"},
             {                  TokenType::EQUALS,                                              "=="},
             {              TokenType::NOT_EQUALS,                                              "!="},
