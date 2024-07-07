@@ -1,0 +1,70 @@
+//main = () -> int {
+//    print "Hello, world"
+//}
+
+//func main = () -> int {
+//   print "Hello, world!"
+//}
+
+func main () -> int {
+    print("Hello, world!")
+
+    for x in [0, 1, 2] print(x)
+
+    for y in [3, 4, 5] {
+        z = y + 1
+        print(z)
+    }
+
+    for y in [3, 4, 5], z in [1, 2] {
+        w := y + z
+        print(w)
+    }
+
+    for y in [3, 4, 5], z in [1 .. 4] where z != 2 {
+        w : uint64 = y + z
+        print(w)
+    }
+
+    l := for x in [0, 1, 2] x * x
+
+    i := 100
+    j := 30
+
+    if i < 200 then print(i)
+
+    if i > 30 then {
+        k := i + 5
+        print(k)
+    }
+
+    // if i > 1 and j < 60 then print(j)
+    if i > 1 and j < 60 then
+        print(j)
+
+    if
+        i < 30
+        j > 60
+    then
+        print(i)
+    else
+        print(j)
+
+    p := if i < 30 then 40 else 60
+
+    q := match
+        i < 10 {
+            print("1")
+            1
+        }
+        i < 30 {
+            print("2")
+            2
+        }
+        i < 200 {
+            print("3")
+            3
+        }
+
+    0
+}
