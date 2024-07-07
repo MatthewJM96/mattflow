@@ -84,10 +84,9 @@ endif()
 #     mattflow Source Tree     #
 ################################
 
-add_executable(mattflow
+add_library(mattflow
     "${PROJECT_SOURCE_DIR}/src/lex/lexer.cpp"
     "${PROJECT_SOURCE_DIR}/src/identifier.cpp"
-    "${PROJECT_SOURCE_DIR}/src/main.cpp"
     "${PROJECT_SOURCE_DIR}/src/number.cpp"
 )
 
@@ -132,3 +131,55 @@ target_include_directories(mattflow
 # target_link_libraries(mattflow
 #     ${mattflow_Libraries}
 # )
+
+########################################################################################
+
+######################################
+#     mattflow tests Source Tree     #
+######################################
+
+add_executable(mattflow_tests
+    "${PROJECT_SOURCE_DIR}/test/main.cpp"
+)
+
+target_precompile_headers(mattflow_tests
+    PUBLIC
+        include/stdafx.h
+)
+
+########################################################################################
+
+##########################################################
+#     mattflow tests Include and Library Directories     #
+##########################################################
+
+# Globally used includes and libraries.
+
+set(mattflow_tests_Include_Dirs
+    ${Boost_INCLUDE_DIRS}
+    ${concurrentqueue_INCLUDE_DIRS}
+)
+set(mattflow_tests_Libraries
+    mattflow
+)
+
+########################################################################################
+
+##########################################################
+#     mattflow tests Include and Library Directories     #
+##########################################################
+
+target_include_directories(mattflow_tests
+    PUBLIC
+    "${PROJECT_SOURCE_DIR}/include"
+)
+
+target_include_directories(mattflow_tests
+    SYSTEM
+    PUBLIC
+    ${mattflow_Include_Dirs}
+)
+
+target_link_libraries(mattflow_tests
+    ${mattflow_tests_Libraries}
+)

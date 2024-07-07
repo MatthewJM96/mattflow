@@ -132,7 +132,8 @@
                 "rhs": "Linux"
             },
             "targets": [
-                "mattflow"
+                "mattflow",
+                "mattflow_tests"
             ],
             "jobs": 10
         },
@@ -147,7 +148,8 @@
                 "rhs": "Linux"
             },
             "targets": [
-                "mattflow"
+                "mattflow",
+                "mattflow_tests"
             ]
         },
         {
@@ -161,7 +163,8 @@
                 "rhs": "Linux"
             },
             "targets": [
-                "mattflow"
+                "mattflow",
+                "mattflow_tests"
             ]
         },
         {
@@ -175,7 +178,8 @@
                 "rhs": "Linux"
             },
             "targets": [
-                "mattflow"
+                "mattflow",
+                "mattflow_tests"
             ]
         },
         {
@@ -189,7 +193,8 @@
                 "rhs": "Windows"
             },
             "targets": [
-                "mattflow"
+                "mattflow",
+                "mattflow_tests"
             ],
             "configuration": "Debug",
             "jobs": 10
@@ -205,7 +210,8 @@
                 "rhs": "Windows"
             },
             "targets": [
-                "mattflow"
+                "mattflow",
+                "mattflow_tests"
             ],
             "configuration": "Release",
             "jobs": 10
