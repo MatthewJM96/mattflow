@@ -39,6 +39,7 @@ namespace mattflow {
             STAR,   // *
 
             // Keywords
+            FUNC,   // func
             TRUE,   // true
             FALSE,  // false
             OR,     // or
@@ -81,6 +82,7 @@ namespace mattflow {
             {                    TokenType::PLUS,                                             "\\+"},
             {                   TokenType::SLASH,                                               "/"},
             {                    TokenType::STAR,                                             "\\*"},
+            {                    TokenType::FUNC,                                            "func"},
             {                    TokenType::TRUE,                                            "true"},
             {                   TokenType::FALSE,                                           "false"},
             {                      TokenType::OR,                                              "or"},
