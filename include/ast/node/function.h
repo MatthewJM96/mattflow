@@ -2,20 +2,11 @@
 #define __mattflow_ast_node_function_h
 
 #include "ast/node/node.h"
+#include "identifier.h"
 
 namespace mattflow {
     namespace ast {
-        struct PrototypeNode : public Node {
-            PrototypeNode();
-
-            MATTFLOW_NON_COPYABLE(PrototypeNode);
-        };
-
-        class FunctionNode : public Node {
-            FunctionNode();
-
-            MATTFLOW_NON_COPYABLE(FunctionNode);
-        };
+        class FunctionNode : public Node { };
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;

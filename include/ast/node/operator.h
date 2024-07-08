@@ -5,17 +5,9 @@
 
 namespace mattflow {
     namespace ast {
-        struct UnaryOperatorNode : public Node {
-            UnaryOperatorNode();
+        struct UnaryOperatorNode : public Node { };
 
-            MATTFLOW_NON_COPYABLE(UnaryOperatorNode);
-        };
-
-        struct BinaryOperatorNode : public Node {
-            BinaryOperatorNode();
-
-            MATTFLOW_NON_COPYABLE(BinaryOperatorNode);
-        };
+        struct BinaryOperatorNode : public Node { };
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;

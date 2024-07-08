@@ -5,11 +5,7 @@
 
 namespace mattflow {
     namespace ast {
-        struct NumberNode : public Node {
-            NumberNode();
-
-            MATTFLOW_NON_COPYABLE(NumberNode);
-        };
+        struct NumberNode : public Node { };
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;

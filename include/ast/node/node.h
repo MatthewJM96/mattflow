@@ -4,9 +4,7 @@
 namespace mattflow {
     namespace ast {
         struct Node {
-            Node();
-
-            MATTFLOW_NON_COPYABLE(Node);
+            bool visited = false;
         };
     }  // namespace ast
 }  // namespace mattflow
