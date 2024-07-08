@@ -51,6 +51,21 @@ namespace mattflow {
             MATCH,  // match
             PRINT,  // print
 
+            // Intrinsic types
+            CHAR,     // char
+            INT,      // int
+            INT8,     // int8
+            INT16,    // int16
+            INT32,    // int32
+            INT64,    // int64
+            UINT,     // uint
+            UINT8,    // uint8
+            UINT16,   // uint16
+            UINT32,   // uint32
+            UINT64,   // uint64
+            FLOAT32,  // float32
+            FLOAT64,  // float64
+
             // Literals
             IDENTIFIER,  // [a-zA-Z_][a-zA-Z0-9_]*
             STRING,      // (?:\"{3}((?:\n.*)*)\"{3})|(?:\"(.*)\")
@@ -92,6 +107,19 @@ namespace mattflow {
             {                      TokenType::IN,                              "in(?![a-zA-Z0-9_])"},
             {                   TokenType::MATCH,                           "match(?![a-zA-Z0-9_])"},
             {                   TokenType::PRINT,                           "print(?![a-zA-Z0-9_])"},
+            {                    TokenType::CHAR,                            "char(?![a-zA-Z0-9_])"},
+            {                     TokenType::INT,                             "int(?![a-zA-Z0-9_])"},
+            {                    TokenType::INT8,                            "int8(?![a-zA-Z0-9_])"},
+            {                   TokenType::INT16,                           "int16(?![a-zA-Z0-9_])"},
+            {                   TokenType::INT32,                           "int32(?![a-zA-Z0-9_])"},
+            {                   TokenType::INT64,                           "int64(?![a-zA-Z0-9_])"},
+            {                    TokenType::UINT,                            "uint(?![a-zA-Z0-9_])"},
+            {                   TokenType::UINT8,                           "uint8(?![a-zA-Z0-9_])"},
+            {                  TokenType::UINT16,                          "uint16(?![a-zA-Z0-9_])"},
+            {                  TokenType::UINT32,                          "uint32(?![a-zA-Z0-9_])"},
+            {                  TokenType::UINT64,                          "uint64(?![a-zA-Z0-9_])"},
+            {                 TokenType::FLOAT32,                         "float32(?![a-zA-Z0-9_])"},
+            {                 TokenType::FLOAT64,                         "float64(?![a-zA-Z0-9_])"},
             {              TokenType::IDENTIFIER,                          "[a-zA-Z_][a-zA-Z_0-9]*"},
             {                  TokenType::STRING, "(?:\\\"{3}((?:\\n.*)*)\\\"{3})|(?:\\\"(.*)\\\")"},
             {                  TokenType::NUMBER,                            "[0-9]+(?:\\.[0-9]*)?"},
