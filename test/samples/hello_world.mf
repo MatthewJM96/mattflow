@@ -1,4 +1,4 @@
-func main () -> int {
+main : () -> int = {
     print("Hello, world!")
 
     0

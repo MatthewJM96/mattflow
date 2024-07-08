@@ -1,12 +1,14 @@
-//main = () -> int {
+//main := () {
 //    print "Hello, world"
+//    0
 //}
 
-//func main = () -> int {
-//   print "Hello, world!"
+//main : () -> int = () {
+//    print "Hello, world"
+//    0
 //}
 
-func main () -> int {
+main : () -> int = {
     print("Hello, world!")
 
     for x in [0, 1, 2] print(x)
