@@ -62,11 +62,11 @@ int main() {
 
     assert(
         static_cast<int16_t>(tokens[0].type)
-        == static_cast<int16_t>(mflex::TokenType::FUNC)
+        == static_cast<int16_t>(mflex::TokenType::IDENTIFIER)
     );
     assert(
         static_cast<int16_t>(tokens[1].type)
-        == static_cast<int16_t>(mflex::TokenType::IDENTIFIER)
+        == static_cast<int16_t>(mflex::TokenType::ASSIGN_TYPE)
     );
     assert(
         static_cast<int16_t>(tokens[2].type)
@@ -86,30 +86,34 @@ int main() {
     );
     assert(
         static_cast<int16_t>(tokens[6].type)
-        == static_cast<int16_t>(mflex::TokenType::LEFT_BRACE)
+        == static_cast<int16_t>(mflex::TokenType::ASSIGN_VALUE)
     );
     assert(
         static_cast<int16_t>(tokens[7].type)
-        == static_cast<int16_t>(mflex::TokenType::PRINT)
+        == static_cast<int16_t>(mflex::TokenType::LEFT_BRACE)
     );
     assert(
         static_cast<int16_t>(tokens[8].type)
-        == static_cast<int16_t>(mflex::TokenType::LEFT_PAREN)
+        == static_cast<int16_t>(mflex::TokenType::PRINT)
     );
     assert(
         static_cast<int16_t>(tokens[9].type)
-        == static_cast<int16_t>(mflex::TokenType::STRING)
+        == static_cast<int16_t>(mflex::TokenType::LEFT_PAREN)
     );
     assert(
         static_cast<int16_t>(tokens[10].type)
-        == static_cast<int16_t>(mflex::TokenType::RIGHT_PAREN)
+        == static_cast<int16_t>(mflex::TokenType::STRING)
     );
     assert(
         static_cast<int16_t>(tokens[11].type)
-        == static_cast<int16_t>(mflex::TokenType::NUMBER)
+        == static_cast<int16_t>(mflex::TokenType::RIGHT_PAREN)
     );
     assert(
         static_cast<int16_t>(tokens[12].type)
+        == static_cast<int16_t>(mflex::TokenType::NUMBER)
+    );
+    assert(
+        static_cast<int16_t>(tokens[13].type)
         == static_cast<int16_t>(mflex::TokenType::RIGHT_BRACE)
     );
 
