@@ -18,20 +18,14 @@ namespace boost {
 }  // namespace boost
 
 namespace mattflow {
+    class Node;
+
     namespace ast {
-        class Node {
-        public:
-            Node();
-
-            MATTFLOW_NON_COPYABLE(Node);
-        protected:
-        };
-
         using AST = boost::adjacency_list<
             boost::vecS,
             boost::vecS,
             boost::directedS,
-            boost::property<vertex_data_t, Node>>;
+            boost::property<vertex_data_t, Node*>>;
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;
