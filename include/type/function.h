@@ -2,7 +2,12 @@
 #define __mattflow_type_function_h
 
 namespace mattflow {
-    namespace type { }  // namespace type
+    namespace type {
+        struct FunctionType {
+            Type*              return_type;
+            std::vector<Type*> arguments;
+        };
+    }  // namespace type
 }  // namespace mattflow
 namespace mftype = mattflow::type;
 

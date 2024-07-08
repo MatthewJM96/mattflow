@@ -5,7 +5,7 @@
 
 namespace mattflow {
     namespace type {
-        enum class IntrinsicTypeID : int16_t {
+        enum class IntrinsicType : int16_t {
             CHAR    = static_cast<int16_t>(mflex::TokenType::CHAR),
             INT     = static_cast<int16_t>(mflex::TokenType::INT),
             INT8    = static_cast<int16_t>(mflex::TokenType::INT8),
@@ -21,17 +21,17 @@ namespace mattflow {
             FLOAT64 = static_cast<int16_t>(mflex::TokenType::FLOAT64),
         };
 
-        IntrinsicTypeID cast_token_to_intrinsic(mflex::TokenType tok) {
+        IntrinsicType cast_token_to_intrinsic(mflex::TokenType tok) {
             assert(
                 static_cast<int16_t>(tok)
-                >= static_cast<int16_t>(IntrinsicTypeID{ IntrinsicTypeID::CHAR })
+                >= static_cast<int16_t>(IntrinsicType{ IntrinsicType::CHAR })
             );
             assert(
                 static_cast<int16_t>(tok)
-                <= static_cast<int16_t>(IntrinsicTypeID{ IntrinsicTypeID::FLOAT64 })
+                <= static_cast<int16_t>(IntrinsicType{ IntrinsicType::FLOAT64 })
             );
 
-            return static_cast<IntrinsicTypeID>(static_cast<int16_t>(tok));
+            return static_cast<IntrinsicType>(static_cast<int16_t>(tok));
         }
     }  // namespace type
 }  // namespace mattflow
