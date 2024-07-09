@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "identifier.h"
+#include "literal/identifier.h"
 
 #include "lex/lexer.h"
 
@@ -28,7 +28,7 @@ static void trim_whitespace(VALINOUT mf::SourceView& source_view) {
 
 void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
     // Get handle on global identifier table.
-    IdentifierTable& identifier_table = IdentifierTable::get();
+    mflit::IdentifierTable& identifier_table = mflit::IdentifierTable::get();
 
     // Set up tracker of remaining source.
     SourceView remaining_source_view = source_view;
@@ -78,7 +78,7 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
                     token.string = results[1].str();
                 } else if (token.type == TokenType::NUMBER) {
                     // Put string into string buffer and mark index.
-                    token.number = Number(std::move(results[0].str()));
+                    token.number = mflit::Number(std::move(results[0].str()));
                 }
 
                 // Find end line and column of token.

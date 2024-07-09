@@ -1,7 +1,7 @@
 #ifndef __mattflow_type_struct_h
 #define __mattflow_type_struct_h
 
-#include "identifier.h"
+#include "literal/identifier.h"
 
 namespace mattflow {
     namespace type {
@@ -10,7 +10,7 @@ namespace mattflow {
         // TODO(Matthew): disentangle field names from type? allows for entirely
         // anonymous structs.
         struct StructType {
-            std::vector<std::tuple<IdentifierIdx, Type*>> fields;
+            std::vector<std::tuple<mflit::IdentifierIdx, Type*>> fields;
         };
     }  // namespace type
 }  // namespace mattflow

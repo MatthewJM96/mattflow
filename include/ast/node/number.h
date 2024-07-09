@@ -2,12 +2,12 @@
 #define __mattflow_ast_node_number_h
 
 #include "ast/node/node.h"
-#include "number.h"
+#include "literal/number.h"
 
 namespace mattflow {
     namespace ast {
         struct NumberNode : public Node {
-            Number value;
+            mflit::Number value;
         };
     }  // namespace ast
 }  // namespace mattflow

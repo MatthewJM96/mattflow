@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
-#include "identifier.h"
+#include "literal/identifier.h"
 
-mf::IdentifierIdx mf::IdentifierTable::try_insert(std::string_view identifier) {
+mflit::IdentifierIdx mflit::IdentifierTable::try_insert(std::string_view identifier) {
     std::unique_lock lck(m_mutex);
 
     IdentifierHash hash = std::hash<std::string_view>{}(identifier);
@@ -15,7 +15,7 @@ mf::IdentifierIdx mf::IdentifierTable::try_insert(std::string_view identifier) {
     return m_hash_idx_map[hash];
 }
 
-std::string_view mf::IdentifierTable::get(IdentifierIdx identifier_idx) {
+std::string_view mflit::IdentifierTable::get(IdentifierIdx identifier_idx) {
     std::shared_lock lck(m_mutex);
 
     if (identifier_idx < m_identifiers.size()) {

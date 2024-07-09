@@ -1,9 +1,9 @@
 #ifndef __mattflow_lex_token_h
 #define __mattflow_lex_token_h
 
-#include "identifier.h"
 #include "lex/token_type.h"
-#include "number.h"
+#include "literal/identifier.h"
+#include "literal/number.h"
 #include "source.h"
 
 namespace mattflow {
@@ -12,9 +12,9 @@ namespace mattflow {
             TokenType type;
 
             // One required if token is of kind literal.
-            IdentifierIdx identifier_idx;
-            std::string   string;
-            Number        number;
+            mflit::IdentifierIdx identifier_idx;
+            std::string          string;
+            mflit::Number        number;
 
             // How will modules work? 1:1 with files?
             // ModuleID module_id;

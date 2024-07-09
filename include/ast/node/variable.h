@@ -7,8 +7,8 @@
 namespace mattflow {
     namespace ast {
         struct VariableNode : public Node {
-            mftype::Type  type;
-            IdentifierIdx identifier_idx;
+            mftype::Type         type;
+            mflit::IdentifierIdx identifier_idx;
         };
     }  // namespace ast
 }  // namespace mattflow

@@ -2,7 +2,7 @@
 #define __mattflow_ast_node_function_h
 
 #include "ast/node/node.h"
-#include "identifier.h"
+#include "literal/identifier.h"
 
 namespace mattflow {
     namespace ast {

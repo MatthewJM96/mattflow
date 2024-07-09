@@ -1,15 +1,24 @@
 #include "stdafx.h"
 
-#include "number.h"
+#include "literal/number.h"
 
-mf::Number::Number() : m_repr("") {
+mflit::Number::Number() : m_is_floating_point(false), m_int_value(0) {
     // Empty.
 }
 
-mf::Number::Number(std::string&& repr) : m_repr(std::move(repr)) {
-    // Empty.
+mflit::Number::Number(std::string_view repr) {
+    // TODO(Matthew): Parse string into number.
+    (void)repr;
 }
 
-std::string_view mf::Number::repr() {
-    return std::string_view(m_repr);
+template <typename Type>
+    requires (std::floating_point<Type> || std::integral<Type>)
+Type mflit::Number::as() {
+    if constexpr (std::floating_point<Type>) {
+        assert(m_is_floating_point);
+    } else {
+        assert(!m_is_floating_point);
+    }
+
+    return *reinterpret_cast<Type*>(reinterpret_cast<void*>(&m_int_value));
 }
