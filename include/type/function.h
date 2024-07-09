@@ -3,6 +3,8 @@
 
 namespace mattflow {
     namespace type {
+        struct Type;
+
         struct FunctionType {
             Type*              return_type;
             std::vector<Type*> arguments;
