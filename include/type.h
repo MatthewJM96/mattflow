@@ -7,20 +7,22 @@
 
 namespace mattflow {
     namespace type {
-        enum class BasicType {
+        enum class TypeKind {
+            UNRESOLVED,
             INTRINSIC,
             STRUCT,
             FUNCTION
         };
 
         struct Type {
-            BasicType basic_type;
+            TypeKind type_kind;
 
             union {
                 FunctionType  function_type;
                 IntrinsicType intrinsic_type;
                 StructType    struct_type;
-            }
+                void*         null_type;
+            };
         };
     }  // namespace type
 }  // namespace mattflow
