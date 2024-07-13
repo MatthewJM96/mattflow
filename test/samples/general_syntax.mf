@@ -1,6 +1,6 @@
 // Deduce function signature.
 //main := () -> {
-//    print "Hello, world"
+//    print("Hello, world")
 //    0
 //}
 
@@ -51,7 +51,7 @@
 
     p := if i < 30 then 40 else 60
 
-    q := match
+    q := match {
         i < 10 {
             print("1")
             1
@@ -64,6 +64,7 @@
             print("3")
             3
         }
+    }
 
     0
 }
