@@ -4,7 +4,7 @@
 namespace mattflow {
     namespace ast {
         struct Node {
-            bool visited = false;
+            // Empty.
         };
     }  // namespace ast
 }  // namespace mattflow
