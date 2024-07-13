@@ -14,7 +14,7 @@ namespace mattflow {
             STRUCT,
             FUNCTION,
             TYPE,
-            NULL
+            NULL_TYPE
         };
 
         struct Type {
