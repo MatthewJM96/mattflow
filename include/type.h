@@ -18,6 +18,10 @@ namespace mattflow {
         };
 
         struct Type {
+            ~Type() {
+                // Empty.
+            }
+
             TypeKind type_kind;
 
             union {
