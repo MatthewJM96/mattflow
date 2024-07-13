@@ -1,14 +1,11 @@
-//main := () {
+// Deduce function signature.
+//main := () -> {
 //    print "Hello, world"
 //    0
 //}
 
-//main : () -> int = () {
-//    print "Hello, world"
-//    0
-//}
-
-main : () -> int = {
+// Explicit function signature.
+//main : () -> int = () -> {
     print("Hello, world!")
 
     for x in [0, 1, 2] print(x)

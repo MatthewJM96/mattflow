@@ -1,3 +1,7 @@
 main : () -> int = {
     3 + 4 * 8 - 20 / 4
 }
+
+sum : (a : int, b : int) -> int = a + b
+
+increment : (a: int) -> int = sum(a, 1)
