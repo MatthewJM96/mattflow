@@ -1,6 +1,7 @@
-point2d := struct {
-    float32 x, y;
-}
+// NOTE(Matthew): this feature is speculative as it is not clear if it will mess up the
+//                grammar immediately, and without an extended character set support
+//                beyond [a-zA-Z0-9_] for identifiers it is hard to imagine a major
+//                benefit.
 
 // op defaults to lower precedence than intrinsic unary operators, with right
 // associativity when function takes one parameter, and to higher precedence than
@@ -19,6 +20,10 @@ point2d := struct {
 // while precedence can be specified without associativity with the ommission of the
 // first but inclusion of the comma:
 //   op(,+)
+
+point2d := struct {
+    float32 x, y;
+}
 
 dist2 := (a : point2d, b : point2d) op -> {
     a^2 + b^2
