@@ -2,6 +2,8 @@
 
 #include "lex/lexer.h"
 
+#include "ast/ast.h"
+
 static char* read_file_to_string(const std::filesystem::path& path) {
     std::filesystem::path abs_path = std::filesystem::absolute(path);
     if (!std::filesystem::exists(abs_path)) return nullptr;
@@ -70,50 +72,46 @@ int main() {
     );
     assert(
         static_cast<int16_t>(tokens[2].type)
-        == static_cast<int16_t>(mflex::TokenType::LEFT_PAREN)
-    );
-    assert(
-        static_cast<int16_t>(tokens[3].type)
-        == static_cast<int16_t>(mflex::TokenType::RIGHT_PAREN)
-    );
-    assert(
-        static_cast<int16_t>(tokens[4].type)
-        == static_cast<int16_t>(mflex::TokenType::ARROW)
-    );
-    assert(
-        static_cast<int16_t>(tokens[5].type)
-        == static_cast<int16_t>(mflex::TokenType::IDENTIFIER)
-    );
-    assert(
-        static_cast<int16_t>(tokens[6].type)
         == static_cast<int16_t>(mflex::TokenType::ASSIGN_VALUE)
     );
     assert(
-        static_cast<int16_t>(tokens[7].type)
-        == static_cast<int16_t>(mflex::TokenType::LEFT_BRACE)
-    );
-    assert(
-        static_cast<int16_t>(tokens[8].type)
-        == static_cast<int16_t>(mflex::TokenType::PRINT)
-    );
-    assert(
-        static_cast<int16_t>(tokens[9].type)
+        static_cast<int16_t>(tokens[3].type)
         == static_cast<int16_t>(mflex::TokenType::LEFT_PAREN)
     );
     assert(
-        static_cast<int16_t>(tokens[10].type)
-        == static_cast<int16_t>(mflex::TokenType::STRING)
-    );
-    assert(
-        static_cast<int16_t>(tokens[11].type)
+        static_cast<int16_t>(tokens[4].type)
         == static_cast<int16_t>(mflex::TokenType::RIGHT_PAREN)
     );
     assert(
-        static_cast<int16_t>(tokens[12].type)
+        static_cast<int16_t>(tokens[5].type)
+        == static_cast<int16_t>(mflex::TokenType::ARROW)
+    );
+    assert(
+        static_cast<int16_t>(tokens[6].type)
+        == static_cast<int16_t>(mflex::TokenType::LEFT_BRACE)
+    );
+    assert(
+        static_cast<int16_t>(tokens[7].type)
+        == static_cast<int16_t>(mflex::TokenType::PRINT)
+    );
+    assert(
+        static_cast<int16_t>(tokens[8].type)
+        == static_cast<int16_t>(mflex::TokenType::LEFT_PAREN)
+    );
+    assert(
+        static_cast<int16_t>(tokens[9].type)
+        == static_cast<int16_t>(mflex::TokenType::STRING)
+    );
+    assert(
+        static_cast<int16_t>(tokens[10].type)
+        == static_cast<int16_t>(mflex::TokenType::RIGHT_PAREN)
+    );
+    assert(
+        static_cast<int16_t>(tokens[11].type)
         == static_cast<int16_t>(mflex::TokenType::NUMBER)
     );
     assert(
-        static_cast<int16_t>(tokens[13].type)
+        static_cast<int16_t>(tokens[12].type)
         == static_cast<int16_t>(mflex::TokenType::RIGHT_BRACE)
     );
 
