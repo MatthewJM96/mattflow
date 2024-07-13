@@ -2,6 +2,10 @@ main : () -> int = {
     3 + 4 * 8 - 20 / 4
 }
 
-sum : (a : int, b : int) -> int = a + b
+//sum : (int, int) -> int = (a : int, b : int) -> a + b
 
-increment : (a: int) -> int = sum(a, 1)
+sum := (a : int, b : int) -> a + b
+
+//increment : (int) -> int = (a : int) -> sum(a, 1)
+
+increment := (a : int) -> sum(a, 1)
