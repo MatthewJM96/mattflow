@@ -1,11 +1,11 @@
-#ifndef __mattflow_type_intrinsic_h
-#define __mattflow_type_intrinsic_h
+#ifndef __mattflow_type_number_h
+#define __mattflow_type_number_h
 
 #include "lex/token_type.h"
 
 namespace mattflow {
     namespace type {
-        enum class IntrinsicType : int16_t {
+        enum class NumberType : int16_t {
             CHAR    = static_cast<int16_t>(mflex::TokenType::CHAR),
             INT     = static_cast<int16_t>(mflex::TokenType::INT),
             INT8    = static_cast<int16_t>(mflex::TokenType::INT8),
@@ -21,7 +21,7 @@ namespace mattflow {
             FLOAT64 = static_cast<int16_t>(mflex::TokenType::FLOAT64),
         };
 
-        IntrinsicType cast_token_to_intrinsic(mflex::TokenType tok) {
+        NumberType cast_token_to_intrinsic(mflex::TokenType tok) {
             assert(
                 static_cast<int16_t>(tok)
                 >= static_cast<int16_t>(mflex::TokenType::CHAR)
@@ -31,10 +31,10 @@ namespace mattflow {
                 <= static_cast<int16_t>(mflex::TokenType::FLOAT64)
             );
 
-            return static_cast<IntrinsicType>(static_cast<int16_t>(tok));
+            return static_cast<NumberType>(static_cast<int16_t>(tok));
         }
     }  // namespace type
 }  // namespace mattflow
 namespace mftype = mattflow::type;
 
-#endif  // __mattflow_type_intrinsic_h
+#endif  // __mattflow_type_number_h
