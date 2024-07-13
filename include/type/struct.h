@@ -7,10 +7,8 @@ namespace mattflow {
     namespace type {
         struct Type;
 
-        // TODO(Matthew): disentangle field names from type? allows for entirely
-        // anonymous structs.
         struct StructType {
-            std::vector<std::tuple<mflit::IdentifierIdx, Type*>> fields;
+            std::vector<Type*> fields;
         };
     }  // namespace type
 }  // namespace mattflow
