@@ -18,9 +18,9 @@ namespace boost {
 }  // namespace boost
 
 namespace mattflow {
-    class Node;
-
     namespace ast {
+        struct Node;
+
         using AST = boost::adjacency_list<
             boost::vecS,
             boost::vecS,
