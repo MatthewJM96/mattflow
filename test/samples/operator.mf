@@ -1,0 +1,32 @@
+point2d := struct {
+    float32 x, y;
+}
+
+// op defaults to lower precedence than intrinsic unary operators, with right
+// associativity when function takes one parameter, and to higher precedence than
+// intrinsic unary operators but lower than intrinsic binary operators with left
+// associativity when the function takes two parameters. In both cases, the operator
+// defaults to being higher associativity than the assignment operator.
+//
+// This can be customised however, consider:
+//   op([<,>],INTRINSIC_OP)
+// here the first parameter (either "<" or ">") refers to the associativity of the
+// operator, while the second is any valid intrinsic operator.
+//
+// Associativity can be specified without specifying precedence by omitting the second
+// parameter:
+//   op(<)
+// while precedence can be specified without associativity with the ommission of the
+// first but inclusion of the comma:
+//   op(,+)
+
+dist2 := (a : point2d, b : point2d) op -> {
+    a^2 + b^2
+}
+
+main := () -> {
+    a : point2d = { 1.0, 4.0 }
+    b : point2d = { 3.0, 7.0 }
+
+    result := a dist2 b
+}
