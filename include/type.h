@@ -32,6 +32,9 @@ namespace mattflow {
                 void*        null_type;
             };
         };
+
+        using Types     = std::vector<Type>;
+        using TypeTable = std::unordered_map<mflit::IdentifierIdx, Type*>;
     }  // namespace type
 }  // namespace mattflow
 namespace mftype = mattflow::type;
