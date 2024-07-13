@@ -26,6 +26,8 @@ namespace mattflow {
             boost::vecS,
             boost::directedS,
             boost::property<vertex_data_t, Node*>>;
+
+        using ASTVertexNodeMap = boost::property_map<AST, vertex_data_t>::type;
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;
