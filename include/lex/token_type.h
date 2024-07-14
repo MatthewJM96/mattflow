@@ -39,17 +39,18 @@ namespace mattflow {
             STAR,   // *
 
             // Keywords
-            TRUE,   // true
-            FALSE,  // false
-            OR,     // or
-            AND,    // and
-            IF,     // if
-            THEN,   // then
-            ELSE,   // else
-            FOR,    // for
-            IN,     // in
-            MATCH,  // match
-            PRINT,  // print
+            TRUE,    // true
+            FALSE,   // false
+            OR,      // or
+            AND,     // and
+            IF,      // if
+            THEN,    // then
+            ELSE,    // else
+            FOR,     // for
+            IN,      // in
+            MATCH,   // match
+            PRINT,   // print
+            STRUCT,  // struct
 
             // Intrinsic types
             CHAR,     // char
@@ -107,6 +108,7 @@ namespace mattflow {
             {                      TokenType::IN,                              "in(?![a-zA-Z0-9_])"},
             {                   TokenType::MATCH,                           "match(?![a-zA-Z0-9_])"},
             {                   TokenType::PRINT,                           "print(?![a-zA-Z0-9_])"},
+            {                  TokenType::STRUCT,                          "struct(?![a-zA-Z0-9_])"},
             {                    TokenType::CHAR,                            "char(?![a-zA-Z0-9_])"},
             {                     TokenType::INT,                             "int(?![a-zA-Z0-9_])"},
             {                    TokenType::INT8,                            "int8(?![a-zA-Z0-9_])"},
