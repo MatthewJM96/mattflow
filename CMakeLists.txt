@@ -89,6 +89,7 @@ add_library(mattflow
     "${PROJECT_SOURCE_DIR}/src/lex/lexer.cpp"
     "${PROJECT_SOURCE_DIR}/src/identifier.cpp"
     "${PROJECT_SOURCE_DIR}/src/number.cpp"
+    "${PROJECT_SOURCE_DIR}/src/type.cpp"
 )
 
 target_precompile_headers(mattflow
