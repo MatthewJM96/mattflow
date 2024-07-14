@@ -44,6 +44,12 @@ namespace mattflow {
             return static_cast<OperatorKind>(static_cast<int16_t>(tok));
         }
 
+        /**
+         * @brief Node reflecting an operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedges rvalue expression
+         */
         struct OperatorNode : public Node {
             OperatorKind kind;
         };

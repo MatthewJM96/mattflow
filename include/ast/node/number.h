@@ -6,6 +6,11 @@
 
 namespace mattflow {
     namespace ast {
+        /**
+         * @brief Node reflecting a number literal.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         */
         struct NumberNode : public Node {
             mflit::Number value;
         };

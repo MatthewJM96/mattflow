@@ -7,9 +7,14 @@
 
 namespace mattflow {
     namespace ast {
+        /**
+         * @brief Node reflecting a struct type.
+         *
+         * @inedge variable
+         */
         struct StructNode : public Node {
             mflit::IdentifierIdx              name;
-            mftype::Type                      type;
+            mftype::Type*                     type;
             std::vector<mflit::IdentifierIdx> field_names;
         };
     }  // namespace ast

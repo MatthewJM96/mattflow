@@ -5,7 +5,14 @@
 
 namespace mattflow {
     namespace ast {
-        struct StringNode : public Node { };
+        /**
+         * @brief Node reflecting a string literal.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         */
+        struct StringNode : public Node {
+            std::string value;
+        };
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;
