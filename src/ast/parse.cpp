@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ast/node.h"
+#include "literal/identifier.h"
 
 #include "ast/parse.h"
 
@@ -61,13 +62,24 @@ mfast::ASTVertex parse_variable_declaration(
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state,
-    VALOUT mfast::VariableTable& variable_table,
-    VALINOUT mftype::TypeTable& type_table
+    VALOUT mfast::VariableTable& variable_table
 ) {
     // No validation needed here, the current token will be an identifier token which is
     // assured to be valid during lexing, and the type assignment character ":".
     assert(curr_token->type == mflex::TokenType::IDENTIFIER);
     assert((curr_token + 1)->type == mflex::TokenType::ASSIGN_TYPE);
+
+    // TODO(Matthew): this will need revisiting to deal with scope.
+    if (variable_table.contains(curr_token->identifier_idx)) {
+        auto& ident = mflit::IdentifierTable::get();
+        std::cout << "Variable " << ident.get(curr_token->identifier_idx)
+                  << " already declared." << std::endl;
+        exit(456);
+    }
+
+    // Mark variable as existing, next token should assign type and if it doesn't we
+    // have an issue.
+    variable_table[curr_token->identifier_idx] = nullptr;
 
     nodes.variables.emplace_back(mfast::VariableNode{
         curr_token, curr_token, curr_token->identifier_idx });
