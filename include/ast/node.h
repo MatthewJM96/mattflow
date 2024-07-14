@@ -17,6 +17,7 @@ namespace mattflow {
             std::vector<FunctionNode> functions;
             std::vector<NumberNode>   numbers;
             std::vector<OperatorNode> operators;
+            std::vector<StringNode>   strings;
             std::vector<VariableNode> variables;
             Node                      nil_node;
 
