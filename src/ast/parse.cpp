@@ -11,7 +11,7 @@ bool maybe_see_type(VALIN const mflex::Tokens::const_iterator& token) {
            || token->type == mflex::TokenType::LEFT_PAREN;
 }
 
-mfast::ASTVertex parse_number(
+mfast::ASTVertex add_number_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -34,7 +34,7 @@ mfast::ASTVertex parse_number(
     return vertex;
 }
 
-mfast::ASTVertex parse_string(
+mfast::ASTVertex add_string_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -57,7 +57,7 @@ mfast::ASTVertex parse_string(
     return vertex;
 }
 
-mfast::ASTVertex parse_variable_declaration(
+mfast::ASTVertex add_variable_declaration_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -93,7 +93,16 @@ mfast::ASTVertex parse_variable_declaration(
     return vertex;
 }
 
-mfast::ASTVertex parse_struct_type(
+mfast::ASTVertex add_struct_node(
+    VALINOUT mflex::Tokens::const_iterator& curr_token,
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state,
+    VALOUT mfast::VariableTable& variable_table,
+    VALINOUT mftype::TypeTable& type_table
+) { }
+
+mfast::ASTVertex add_struct_field_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -105,7 +114,7 @@ mfast::ASTVertex parse_struct_type(
 // TODO(Matthew): do we want type nodes? it seems weird to not have them, but then we
 //                also need to track types outside the AST for efficient resolution of
 //                types down the line (e.g. to support auto, polymorphism, etc).
-mfast::ASTVertex parse_type(
+mfast::ASTVertex add_type_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
