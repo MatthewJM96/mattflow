@@ -11,7 +11,7 @@ bool maybe_see_type(VALIN const mflex::Tokens::const_iterator& token) {
            || token->type == mflex::TokenType::LEFT_PAREN;
 }
 
-mfast::ASTVertex add_number_node(
+void add_number_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -24,18 +24,18 @@ mfast::ASTVertex add_number_node(
     nodes.numbers.emplace_back(mfast::NumberNode{
         curr_token, curr_token, curr_token->number });
 
-    mfast::ASTVertex vertex                  = boost::add_vertex(ast);
-    parser_state.vertex[parser_state.cursor] = vertex;
-    nodes.vertex_node_map[vertex]            = &nodes.numbers.back();
+    auto vertex      = boost::add_vertex(ast);
+    auto prev_vertex = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[++parser_state.cursor] = vertex;
+    nodes.vertex_node_map[vertex]              = &nodes.numbers.back();
 
-    parser_state.cursor += 1;
+    boost::add_edge(prev_vertex, vertex, ast);
+
     // number
     curr_token += 1;
-
-    return vertex;
 }
 
-mfast::ASTVertex add_string_node(
+void add_string_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -48,18 +48,18 @@ mfast::ASTVertex add_string_node(
     nodes.strings.emplace_back(mfast::StringNode{
         curr_token, curr_token, std::move(curr_token->string) });
 
-    mfast::ASTVertex vertex                  = boost::add_vertex(ast);
-    parser_state.vertex[parser_state.cursor] = vertex;
-    nodes.vertex_node_map[vertex]            = &nodes.strings.back();
+    auto vertex      = boost::add_vertex(ast);
+    auto prev_vertex = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[++parser_state.cursor] = vertex;
+    nodes.vertex_node_map[vertex]              = &nodes.strings.back();
 
-    parser_state.cursor += 1;
+    boost::add_edge(prev_vertex, vertex, ast);
+
     // string
     curr_token += 1;
-
-    return vertex;
 }
 
-mfast::ASTVertex add_variable_declaration_node(
+void add_variable_declaration_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -86,18 +86,46 @@ mfast::ASTVertex add_variable_declaration_node(
     nodes.variables.emplace_back(mfast::VariableNode{
         curr_token, curr_token, curr_token->identifier_idx });
 
-    mfast::ASTVertex vertex                  = boost::add_vertex(ast);
-    parser_state.vertex[parser_state.cursor] = vertex;
-    nodes.vertex_node_map[vertex]            = &nodes.variables.back();
+    auto vertex      = boost::add_vertex(ast);
+    auto prev_vertex = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[++parser_state.cursor] = vertex;
+    nodes.vertex_node_map[vertex]              = &nodes.variables.back();
 
-    parser_state.cursor += 1;
+    boost::add_edge(prev_vertex, vertex, ast);
+
     // identifier ":"
     curr_token += 2;
-
-    return vertex;
 }
 
-mfast::ASTVertex add_struct_node(
+void add_assignment_node(
+    VALINOUT mflex::Tokens::const_iterator& curr_token,
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state,
+    VALOUT mfast::VariableTable& variable_table
+) {
+    // No validation needed here, the current token will be the value assignment
+    // character "=".
+    assert(curr_token->type == mflex::TokenType::ASSIGN_VALUE);
+
+    // Mark variable as existing, next token should assign type and if it doesn't we
+    // have an issue.
+    variable_table[curr_token->identifier_idx] = nullptr;
+
+    nodes.assignments.emplace_back(mfast::AssignmentNode{ curr_token, curr_token });
+
+    auto vertex      = boost::add_vertex(ast);
+    auto prev_vertex = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[++parser_state.cursor] = vertex;
+    nodes.vertex_node_map[vertex]              = &nodes.assignments.back();
+
+    boost::add_edge(prev_vertex, vertex, ast);
+
+    // "="
+    curr_token += 1;
+}
+
+void add_struct_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -113,18 +141,18 @@ mfast::ASTVertex add_struct_node(
     nodes.structs.emplace_back(mfast::StructNode{
         curr_token, curr_token, type_table.register_type_from_token(*curr_token) });
 
-    mfast::ASTVertex vertex                  = boost::add_vertex(ast);
-    parser_state.vertex[parser_state.cursor] = vertex;
-    nodes.vertex_node_map[vertex]            = &nodes.strings.back();
+    auto vertex      = boost::add_vertex(ast);
+    auto prev_vertex = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[++parser_state.cursor] = vertex;
+    nodes.vertex_node_map[vertex]              = &nodes.structs.back();
 
-    parser_state.cursor += 1;
+    boost::add_edge(prev_vertex, vertex, ast);
+
     // "struct" "{"
     curr_token += 2;
-
-    return vertex;
 }
 
-mfast::ASTVertex add_struct_field_node(
+void add_struct_field_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -132,29 +160,31 @@ mfast::ASTVertex add_struct_field_node(
     VALOUT mfast::VariableTable& variable_table,
     VALINOUT mftype::TypeTable& type_table
 ) {
+    // TODO(Matthew): implement correctly... just copied add_struct_node.
+
     // No validation needed here, the current token will be a string token which is
     // assured to be valid during lexing.
     assert(curr_token->type == mflex::TokenType::IDENTIFIER);
     assert((curr_token + 1)->type == mflex::TokenType::LEFT_BRACE);
 
-    nodes.structs.emplace_back(mfast::StructNode{
+    nodes.struct_fields.emplace_back(mfast::StructFieldNode{
         curr_token, curr_token, type_table.register_type_from_token(*curr_token) });
 
-    mfast::ASTVertex vertex                  = boost::add_vertex(ast);
-    parser_state.vertex[parser_state.cursor] = vertex;
-    nodes.vertex_node_map[vertex]            = &nodes.strings.back();
+    auto vertex      = boost::add_vertex(ast);
+    auto prev_vertex = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[++parser_state.cursor] = vertex;
+    nodes.vertex_node_map[vertex]              = &nodes.strings.back();
 
-    parser_state.cursor += 1;
+    boost::add_edge(prev_vertex, vertex, ast);
+
     // "struct" "{"
     curr_token += 2;
-
-    return vertex;
 }
 
 // TODO(Matthew): do we want type nodes? it seems weird to not have them, but then we
 //                also need to track types outside the AST for efficient resolution of
 //                types down the line (e.g. to support auto, polymorphism, etc).
-mfast::ASTVertex add_type_node(
+void add_type_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -169,14 +199,15 @@ mfast::ASTVertex add_type_node(
     nodes.strings.emplace_back(mfast::StringNode{
         curr_token, curr_token, std::move(curr_token->string) });
 
-    mfast::ASTVertex vertex                  = boost::add_vertex(ast);
-    parser_state.vertex[parser_state.cursor] = vertex;
-    nodes.vertex_node_map[vertex]            = &nodes.strings.back();
+    auto vertex      = boost::add_vertex(ast);
+    auto prev_vertex = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[++parser_state.cursor] = vertex;
+    nodes.vertex_node_map[vertex]              = &nodes.strings.back();
+
+    boost::add_edge(prev_vertex, vertex, ast);
 
     ++parser_state.cursor;
     ++curr_token;
-
-    return vertex;
 }
 
 void mfast::parse(

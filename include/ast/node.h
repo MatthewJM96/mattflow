@@ -15,6 +15,7 @@
 namespace mattflow {
     namespace ast {
         struct NodeBuffers {
+            std::vector<AssignmentNode>  assignments;
             std::vector<FunctionNode>    functions;
             std::vector<NumberNode>      numbers;
             std::vector<OperatorNode>    operators;
