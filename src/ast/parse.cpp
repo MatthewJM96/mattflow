@@ -28,8 +28,9 @@ mfast::ASTVertex add_number_node(
     parser_state.vertex[parser_state.cursor] = vertex;
     nodes.vertex_node_map[vertex]            = &nodes.numbers.back();
 
-    ++parser_state.cursor;
-    ++curr_token;
+    parser_state.cursor += 1;
+    // number
+    curr_token += 1;
 
     return vertex;
 }
@@ -51,8 +52,9 @@ mfast::ASTVertex add_string_node(
     parser_state.vertex[parser_state.cursor] = vertex;
     nodes.vertex_node_map[vertex]            = &nodes.strings.back();
 
-    ++parser_state.cursor;
-    ++curr_token;
+    parser_state.cursor += 1;
+    // string
+    curr_token += 1;
 
     return vertex;
 }
@@ -88,7 +90,9 @@ mfast::ASTVertex add_variable_declaration_node(
     parser_state.vertex[parser_state.cursor] = vertex;
     nodes.vertex_node_map[vertex]            = &nodes.variables.back();
 
-    ++parser_state.cursor;
+    parser_state.cursor += 1;
+    // identifier ":"
+    curr_token += 2;
 
     return vertex;
 }
