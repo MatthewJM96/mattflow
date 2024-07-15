@@ -9,17 +9,20 @@
 #include "ast/node/number.h"
 #include "ast/node/operator.h"
 #include "ast/node/string.h"
+#include "ast/node/struct.h"
 #include "ast/node/variable.h"
 
 namespace mattflow {
     namespace ast {
         struct NodeBuffers {
-            std::vector<FunctionNode> functions;
-            std::vector<NumberNode>   numbers;
-            std::vector<OperatorNode> operators;
-            std::vector<StringNode>   strings;
-            std::vector<VariableNode> variables;
-            Node                      nil_node;
+            std::vector<FunctionNode>    functions;
+            std::vector<NumberNode>      numbers;
+            std::vector<OperatorNode>    operators;
+            std::vector<StringNode>      strings;
+            std::vector<StructNode>      structs;
+            std::vector<StructFieldNode> struct_fields;
+            std::vector<VariableNode>    variables;
+            Node                         nil_node;
 
             ASTVertexNodeMap vertex_node_map;
         };

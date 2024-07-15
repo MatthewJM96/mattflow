@@ -11,11 +11,20 @@ namespace mattflow {
          * @brief Node reflecting a struct type.
          *
          * @inedge variable
+         * @outedges struct field
          */
         struct StructNode : public Node {
-            mflit::IdentifierIdx              name;
-            mftype::Type*                     type;
-            std::vector<mflit::IdentifierIdx> field_names;
+            mftype::Type* type;
+        };
+
+        /**
+         * @brief Node reflecting a struct field.
+         *
+         * @inedge variable
+         */
+        struct StructFieldNode : public Node {
+            mflit::IdentifierIdx name;
+            mftype::Type*        type;
         };
     }  // namespace ast
 }  // namespace mattflow
