@@ -22,7 +22,7 @@
 //   op(,+)
 
 point2d := struct {
-    float32 x, y;
+    x, y : float32;
 }
 
 dist2 := (a : point2d, b : point2d) op -> {
