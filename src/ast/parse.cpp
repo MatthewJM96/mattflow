@@ -104,7 +104,25 @@ mfast::ASTVertex add_struct_node(
     VALOUT mfast::ParserState& parser_state,
     VALOUT mfast::VariableTable& variable_table,
     VALINOUT mftype::TypeTable& type_table
-) { }
+) {
+    // No validation needed here, the current token will be a string token which is
+    // assured to be valid during lexing.
+    assert(curr_token->type == mflex::TokenType::STRUCT);
+    assert((curr_token + 1)->type == mflex::TokenType::LEFT_BRACE);
+
+    nodes.structs.emplace_back(mfast::StructNode{
+        curr_token, curr_token, type_table.register_type_from_token(*curr_token) });
+
+    mfast::ASTVertex vertex                  = boost::add_vertex(ast);
+    parser_state.vertex[parser_state.cursor] = vertex;
+    nodes.vertex_node_map[vertex]            = &nodes.strings.back();
+
+    parser_state.cursor += 1;
+    // "struct" "{"
+    curr_token += 2;
+
+    return vertex;
+}
 
 mfast::ASTVertex add_struct_field_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
@@ -113,7 +131,25 @@ mfast::ASTVertex add_struct_field_node(
     VALOUT mfast::ParserState& parser_state,
     VALOUT mfast::VariableTable& variable_table,
     VALINOUT mftype::TypeTable& type_table
-) { }
+) {
+    // No validation needed here, the current token will be a string token which is
+    // assured to be valid during lexing.
+    assert(curr_token->type == mflex::TokenType::IDENTIFIER);
+    assert((curr_token + 1)->type == mflex::TokenType::LEFT_BRACE);
+
+    nodes.structs.emplace_back(mfast::StructNode{
+        curr_token, curr_token, type_table.register_type_from_token(*curr_token) });
+
+    mfast::ASTVertex vertex                  = boost::add_vertex(ast);
+    parser_state.vertex[parser_state.cursor] = vertex;
+    nodes.vertex_node_map[vertex]            = &nodes.strings.back();
+
+    parser_state.cursor += 1;
+    // "struct" "{"
+    curr_token += 2;
+
+    return vertex;
+}
 
 // TODO(Matthew): do we want type nodes? it seems weird to not have them, but then we
 //                also need to track types outside the AST for efficient resolution of
