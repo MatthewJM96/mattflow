@@ -19,7 +19,8 @@ namespace mattflow {
                 FACTOR     = 600,
                 UNARY      = 700,
                 CALL       = 800,
-                PRIMARY    = 900
+                PRIMARY    = 900,
+                IDENTIFIER = 1000
             };
         }  // namespace parser_expects
 

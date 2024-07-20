@@ -238,7 +238,76 @@ void mfast::parse(
     nodes.vertex_node_map[parser_state.vertex[0]] = &nodes.nil_node;
 
     // Iterate tokens, parsing as appropriate.
-    for (auto it = tokens.begin(); it != tokens.end(); ++it) {
+    auto it = tokens.begin();
+    while (it != tokens.end()) {
+        if (parser_state.precedence[parser_state.cursor] <= parser_expects::EXPRESSION)
+        {
+            switch (it->type) {
+                case mflex::TokenType::IF:
+                    // Add if vertex, push precedence parser_expects::ASSIGNMENT
+                    add_if_node(...);
+                    continue;
+                case mflex::TokenType::FOR:
+                    // Add for vertex, push precedence parser_expects::IDENTIFIER
+                    add_for_node(...);
+                    continue;
+                case mflex::TokenType::WHILE:
+                    // Add while vertex, push precedence parser_expects::EXPRESSION
+                    add_while_node(...);
+                    continue;
+                case mflex::TokenType::PRINT:
+                    // Add print vertex, push precedence parser_expects::EXPRESSION
+                    add_print_node(...);
+                    continue;
+                case mflex::TokenType::LEFT_BRACE:
+                    // Add block vertex, push precedence parser_expects::EXPRESSION
+                    add_block_node(...);
+                    continue;
+                case mflex::TokenType::RIGHT_BRACE:
+                    // Pop block.
+                    parser_state.cursor -= 1;
+                    continue;
+            }
+        }
+
+        if (parser_state.precedence[parser_state.cursor] <= parser_expects::ASSIGNMENT)
+        {
+        }
+
+        if (parser_state.precedence[parser_state.cursor] <= parser_expects::LOGIC) {
+            switch (it->type) {
+                case mflex::TokenType::OR:
+                    // Add if vertex, push precedence parser_expects::LOGIC
+                    add_or_node(...);
+                    continue;
+                case mflex::TokenType::AND:
+                    // Add for vertex, push precedence parser_expects::LOGIC
+                    add_and_node(...);
+                    continue;
+            }
+        }
+
+        if (parser_state.precedence[parser_state.cursor] <= parser_expects::EQUALITY) {
+        }
+
+        if (parser_state.precedence[parser_state.cursor] <= parser_expects::COMPARISON)
+        {
+        }
+
+        if (parser_state.precedence[parser_state.cursor] <= parser_expects::TERM) {
+        }
+
+        if (parser_state.precedence[parser_state.cursor] <= parser_expects::FACTOR) {
+        }
+
+        if (parser_state.precedence[parser_state.cursor] <= parser_expects::UNARY) {
+        }
+
+        if (parser_state.precedence[parser_state.cursor] <= parser_expects::CALL) {
+        }
+
+        if (parser_state.precedence[parser_state.cursor] <= parser_expects::PRIMARY) {
+        }
     }
 
     // If we get here and cursor is not pointing to top-level block, then something has
