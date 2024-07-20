@@ -233,7 +233,7 @@ void mfast::parse(
     parser_state.vertex        = new ASTVertex[tokens.size()];
 
     // Add top-level block node for module.
-    parser_state.expects[0]                       = parser_expects::ALL;
+    parser_state.expects[0]                       = parser_expects::EXPRESSION;
     parser_state.precedence[0]                    = -1;
     parser_state.associativity[0]                 = Associativity::ANY;
     parser_state.vertex[0]                        = boost::add_vertex(ast);

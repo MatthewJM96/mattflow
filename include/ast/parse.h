@@ -10,21 +10,17 @@ namespace mattflow {
         //                suggestions in as placeholders.
         namespace parser_expects {
             enum ParserExpectsFlag {
-                IDENTIFIER    = 0x000,
-                NUMBER        = 0x001,
-                LEFT_PAREN    = 0x002,
-                RIGHT_PAREN   = 0x004,
-                LEFT_BRACE    = 0x008,
-                RIGHT_BRACE   = 0x010,
-                LEFT_BRACKET  = 0x020,
-                RIGHT_BRACKET = 0x040
+                EXPRESSION,
+                ASSIGNMENT,
+                LOGIC,
+                EQUALITY,
+                COMPARISON,
+                TERM,
+                FACTOR,
+                UNARY,
+                CALL,
+                PRIMARY
             };
-
-            const auto ALL
-                = ParserExpectsFlag::IDENTIFIER | ParserExpectsFlag::NUMBER
-                  | ParserExpectsFlag::LEFT_PAREN | ParserExpectsFlag::RIGHT_PAREN
-                  | ParserExpectsFlag::LEFT_BRACE | ParserExpectsFlag::RIGHT_BRACE
-                  | ParserExpectsFlag::LEFT_BRACKET | ParserExpectsFlag::RIGHT_BRACKET;
         }  // namespace parser_expects
 
         enum class Associativity {
