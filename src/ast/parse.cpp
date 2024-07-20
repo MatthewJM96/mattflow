@@ -108,10 +108,6 @@ void add_assignment_node(
     // character "=".
     assert(curr_token->type == mflex::TokenType::ASSIGN_VALUE);
 
-    // Mark variable as existing, next token should assign type and if it doesn't we
-    // have an issue.
-    variable_table[curr_token->identifier_idx] = nullptr;
-
     nodes.assignments.emplace_back(mfast::AssignmentNode{ curr_token, curr_token });
 
     auto vertex      = boost::add_vertex(ast);
@@ -246,4 +242,14 @@ void mfast::parse(
     // Iterate tokens, parsing as appropriate.
     for (auto it = tokens.begin(); it != tokens.end(); ++it) {
     }
+
+    // If we get here and cursor is not pointing to top-level block, then something has
+    // gone wrong in parsing.
+    assert(parser_state.cursor == 0);
+
+    // Clean up.
+    delete[] parser_state.expects;
+    delete[] parser_state.precedence;
+    delete[] parser_state.vertex;
+    delete[] parser_state.associativity;
 }
