@@ -227,14 +227,12 @@ void mfast::parse(
     // Prepare stack for expectation, precedence, and associativity.
     ParserState parser_state;
     parser_state.cursor        = 0;
-    parser_state.expects       = new int[tokens.size()];
-    parser_state.precedence    = new int[tokens.size()];
+    parser_state.precedence    = new uint16_t[tokens.size()];
     parser_state.associativity = new Associativity[tokens.size()];
     parser_state.vertex        = new ASTVertex[tokens.size()];
 
     // Add top-level block node for module.
-    parser_state.expects[0]                       = parser_expects::EXPRESSION;
-    parser_state.precedence[0]                    = -1;
+    parser_state.precedence[0]                    = parser_expects::EXPRESSION;
     parser_state.associativity[0]                 = Associativity::ANY;
     parser_state.vertex[0]                        = boost::add_vertex(ast);
     nodes.vertex_node_map[parser_state.vertex[0]] = &nodes.nil_node;
@@ -248,7 +246,6 @@ void mfast::parse(
     assert(parser_state.cursor == 0);
 
     // Clean up.
-    delete[] parser_state.expects;
     delete[] parser_state.precedence;
     delete[] parser_state.vertex;
     delete[] parser_state.associativity;

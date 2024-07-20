@@ -9,17 +9,17 @@ namespace mattflow {
         // TODO(Matthew): work out what will be useful here, for now put some
         //                suggestions in as placeholders.
         namespace parser_expects {
-            enum ParserExpectsFlag {
-                EXPRESSION,
-                ASSIGNMENT,
-                LOGIC,
-                EQUALITY,
-                COMPARISON,
-                TERM,
-                FACTOR,
-                UNARY,
-                CALL,
-                PRIMARY
+            enum ParserExpectsFlag : uint16_t {
+                EXPRESSION = 0,
+                ASSIGNMENT = 100,
+                LOGIC      = 200,
+                EQUALITY   = 300,
+                COMPARISON = 400,
+                TERM       = 500,
+                FACTOR     = 600,
+                UNARY      = 700,
+                CALL       = 800,
+                PRIMARY    = 900
             };
         }  // namespace parser_expects
 
@@ -31,8 +31,7 @@ namespace mattflow {
 
         struct ParserState {
             size_t         cursor;
-            int*           expects;
-            int*           precedence;
+            uint16_t*      precedence;
             Associativity* associativity;
             ASTVertex*     vertex;
         };
