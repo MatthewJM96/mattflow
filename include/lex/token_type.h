@@ -53,6 +53,7 @@ namespace mattflow {
             STRUCT,  // struct
 
             // Intrinsic types
+            NIL,      // null
             CHAR,     // char
             INT,      // int
             INT8,     // int8
@@ -109,6 +110,7 @@ namespace mattflow {
             {                   TokenType::MATCH,                           "match(?![a-zA-Z0-9_])"},
             {                   TokenType::PRINT,                           "print(?![a-zA-Z0-9_])"},
             {                  TokenType::STRUCT,                          "struct(?![a-zA-Z0-9_])"},
+            {                     TokenType::NIL,                            "null(?![a-zA-Z0-9_])"},
             {                    TokenType::CHAR,                            "char(?![a-zA-Z0-9_])"},
             {                     TokenType::INT,                             "int(?![a-zA-Z0-9_])"},
             {                    TokenType::INT8,                            "int8(?![a-zA-Z0-9_])"},
