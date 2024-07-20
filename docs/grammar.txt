@@ -8,7 +8,7 @@ expression      -> for
                     | assignment
 
 for             -> "for" range ("," range )* "do" expression
-range           -> identifier "in" (number_range | list | IDENTIFIER) "where" logic
+range           -> identifier "in" expression "where" logic
 if              -> "if" assignment "then" expression
                     ("elif" assignment "then" expression)*
                     ( "else" expression )? 
