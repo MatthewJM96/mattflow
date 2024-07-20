@@ -48,6 +48,9 @@ namespace mattflow {
             ELSE,    // else
             FOR,     // for
             IN,      // in
+            WHERE,   // where
+            WHILE,   // while
+            DO,      // do
             MATCH,   // match
             PRINT,   // print
             STRUCT,  // struct
@@ -107,6 +110,9 @@ namespace mattflow {
             {                    TokenType::ELSE,                            "else(?![a-zA-Z0-9_])"},
             {                     TokenType::FOR,                             "for(?![a-zA-Z0-9_])"},
             {                      TokenType::IN,                              "in(?![a-zA-Z0-9_])"},
+            {                   TokenType::WHERE,                           "where(?![a-zA-Z0-9_])"},
+            {                   TokenType::WHILE,                           "while(?![a-zA-Z0-9_])"},
+            {                      TokenType::DO,                              "do(?![a-zA-Z0-9_])"},
             {                   TokenType::MATCH,                           "match(?![a-zA-Z0-9_])"},
             {                   TokenType::PRINT,                           "print(?![a-zA-Z0-9_])"},
             {                  TokenType::STRUCT,                          "struct(?![a-zA-Z0-9_])"},
