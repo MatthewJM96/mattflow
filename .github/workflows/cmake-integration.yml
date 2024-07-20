@@ -21,16 +21,12 @@ jobs:
 
       matrix:
         build_type: [Release, Debug]
-        c_compiler: [gcc-13, clang-17, clang-16, clang-15]
+        c_compiler: [gcc-13, clang-17]
         include:
           - c_compiler: gcc-13
             cpp_compiler: g++-13
           - c_compiler: clang-17
             cpp_compiler: clang++-17
-          - c_compiler: clang-16
-            cpp_compiler: clang++-16
-          - c_compiler: clang-15
-            cpp_compiler: clang++-15
 
     steps:
     - uses: actions/checkout@v3
@@ -43,9 +39,7 @@ jobs:
         sudo apt install g++-13 gcc-13 ;
         wget https://apt.llvm.org/llvm.sh ;
         chmod u+x llvm.sh ;
-        sudo ./llvm.sh 17 ;
-        sudo ./llvm.sh 16 ;
-        sudo ./llvm.sh 15
+        sudo ./llvm.sh 17
 
     - name: Install conan
       run: >
@@ -128,7 +122,7 @@ jobs:
         python3 -m venv ${{ github.workspace }}\.venv ;
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
-        pip install conan==2.3.2 ;
+        pip install conan==2.5.0 ;
         conan profile detect
 
     - name: Set reusable strings
@@ -208,7 +202,7 @@ jobs:
       run: >
         python3 -m venv ${{ github.workspace }}/.venv ;
         source ${{ github.workspace }}/.venv/bin/activate ;
-        pip install conan==2.3.2 ;
+        pip install conan==2.5.0 ;
         conan profile detect
 
     - name: Set reusable strings
