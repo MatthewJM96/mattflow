@@ -8,6 +8,7 @@
 main : () -> int = () -> {
     print("Hello, world!")
 
+    // for x : int in [0, 1, 2] print(x)
     for x in [0, 1, 2] print(x)
 
     for y in [3, 4, 5] {
@@ -71,7 +72,8 @@ main : () -> int = () -> {
     // TODO(Matthew): evaluate then and else expressions as if inside block expression
     //                of if condition? seems messy as elif would then also need to be
     //                evaluated as such... but then the main point of the block
-    //                expression is to enclose short-lived declarations.
+    //                expression is to enclose short-lived declarations. It would then
+    //                be consistent with how the for loop works though.
     f : int
     g : int
     if {
