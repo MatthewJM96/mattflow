@@ -38,6 +38,7 @@ jobs:
     - name: Install system dependencies
       run: >
         sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa -y ;
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y ;
         sudo apt update ;
         sudo apt install g++-13 gcc-13 ;
         wget https://apt.llvm.org/llvm.sh ;
@@ -50,11 +51,8 @@ jobs:
       run: >
         python3 -m venv ${{ github.workspace }}/.venv ;
         source ${{ github.workspace }}/.venv/bin/activate ;
-        pip install conan==2.3.2 ;
-        conan profile new default --detect ;
-        conan profile update conf.tools.system.package_manager:mode=install default ;
-        conan profile update conf.tools.system.package_manager:sudo=True default ;
-        conan profile update settings.compiler.libcxx=libstdc++11 default
+        pip install conan==2.5.0 ;
+        conan profile detect
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -131,8 +129,7 @@ jobs:
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
         pip install conan==2.3.2 ;
-        conan profile new default --detect ;
-        conan profile update conf.tools.system.package_manager:mode=install default
+        conan profile detect
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -212,8 +209,7 @@ jobs:
         python3 -m venv ${{ github.workspace }}/.venv ;
         source ${{ github.workspace }}/.venv/bin/activate ;
         pip install conan==2.3.2 ;
-        conan profile new default --detect ;
-        conan profile update conf.tools.system.package_manager:mode=install default
+        conan profile detect
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
