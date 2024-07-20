@@ -1,0 +1,57 @@
+program         -> expression* EOF 
+
+declaration     -> struct
+                    | function
+                    | variable
+                    | statement 
+
+
+expression      -> for
+                    | if
+                    | print
+                    | while
+                    | block
+                    | assignment
+
+for             -> "for" range ("," range )* expression
+range           -> identifier "in" expression "where" expression
+if              -> "if" expression "then" expression
+                    ("elif" expression "then" expression)*
+                    ( "else" expression )? 
+print           -> "print" "(" arguments ")"
+while           -> "while" expression "do" expression
+block           -> "{" declaration* "}"
+
+// TODO(Matthew): can a call return an lvalue? e.g.:
+//                  unwrap := (s: &some_struct_of_structs) -> s.some_sub_struct
+//                  unwrap(some_actual_struct_of_structs).sub_struct_field = 42
+//                should this be allowable? if unwrap takes its argument by reference,
+//                then it seems like the answer should be yes
+assignment      -> ( (variable | ( call "." )* IDENTIFIER ) "=" (assignment | logic) ) | logic
+logic           -> equality ( ( "or" | "and" ) equality )*
+equality        -> comparison ( ( "!=" | "==" ) comparison )*
+comparison      -> term ( ( ">" | ">=" | "<" | "<=" ) term )*
+term            -> factor ( ( "-" | "+" ) factor )*
+factor          -> unary ( ( "/" | "*" ) unary )*
+unary           -> ( "!" | "-" ) unary | call
+call            -> primary ( "(" arguments? ")" | "." IDENTIFIER )*
+arguments       -> expression ( "," expression )*
+primary         -> "true" | "false" | "null"
+                    | NUMBER | STRING | IDENTIFIER | "(" assignment ")" | block
+
+intrinsic_type  -> "null" | "char" | "int" | "int8" | "int16" | "int32" | "int64"
+                    | "uint" | "uint8" | "uint16" | "uint32" | "uint64" | "float32"
+                    | "float64"
+struct          -> "struct" "{" field* "}"
+field           -> variable ( "=" expression )?
+function        -> "(" parameters? ")" "->" type
+parameters      -> variable ( "," variable )*
+variable        -> IDENTIFIER ":" type
+type            -> intrinsic_type | struct | function | IDENTIFIER
+
+NUMBER          -> DIGIT+ ( "." DIGIT+ )?
+STRING          -> ( "\"" <any char except "\"" or "\n">* "\"" )
+                    | ( "\"\"\"" <any char>* "\"\"\"" )
+IDENTIFIER      -> ALPHA ( ALPHA | DIGIT )*
+ALPHA           -> "a" ... "z" | "A" ... "Z" | "_"
+DIGIT           -> "0" ... "9"
