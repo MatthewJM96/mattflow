@@ -5,7 +5,7 @@
 //}
 
 // Explicit function signature.
-//main : () -> int = () -> {
+main : () -> int = () -> {
     print("Hello, world!")
 
     for x in [0, 1, 2] print(x)
@@ -15,16 +15,19 @@
         print(z)
     }
 
+    // Showcase inline multidimensional for loop.
     for y in [3, 4, 5], z in [1, 2] {
         w := y + z
         print(w)
     }
 
+    // Showcase where statement on for loop.
     for y in [3, 4, 5], z in [1 .. 4] where z != 2 {
         w : uint64 = y + z
         print(w)
     }
 
+    // Showcase assigning list to variable.
     l := for x in [0, 1, 2] x * x
 
     i := 100
@@ -32,25 +35,60 @@
 
     if i < 200 then print(i)
 
+    // Showcase block expression for then.
     if i > 30 then {
         k := i + 5
         print(k)
     }
 
+    // Showcase if then - all can be on one line...
     // if i > 1 and j < 60 then print(j)
     if i > 1 and j < 60 then
         print(j)
 
+    // Showcase else.
     if
-        i < 30
-        j > 60
+        i < 30 and j > 60
     then
         print(i)
     else
         print(j)
 
+    // Showcase elif.
+    if
+        i < 20
+    then
+        print(i)
+    elif
+        i > 30
+    then
+        print(-i)
+    else
+        print(i + 1)
+
+
+    // Showcase variable declaration and block expression for if condition.
+    // TODO(Matthew): evaluate then and else expressions as if inside block expression
+    //                of if condition? seems messy as elif would then also need to be
+    //                evaluated as such... but then the main point of the block
+    //                expression is to enclose short-lived declarations.
+    f : int
+    g : int
+    if {
+        f = evaluate_something()
+        g = evaluate_something_else()
+        f + g > 40
+    }
+    then
+        print(f)
+    else
+        print(g)
+
     p := if i < 30 then 40 else 60
 
+    // TODO(Matthew): not really happy with this... let's think some more about how to
+    //                make this work well - read the C++ regular expression matching and
+    //                check out match statements in other languages.
     q := match {
         i < 10 {
             print("1")
@@ -65,6 +103,20 @@
             3
         }
     }
+
+    // TODO(Matthew): as we can assign any expression to any variable, we want a notion
+    //                of union of types as an intrinsic. come up with a system for this
+    //                  the type syntax is easy:
+    //                    x : int | float32 = eval_something_inty_or_floaty()
+    //                  but we then want to take that AS IF one of the two types and
+    //                  this requires more thought... e.g. if say:
+    //                    x as int
+    //                  tries to provide x as if it were an int, how do we deal with the
+    //                  case that it is was a float32 all along? Do we require that we
+    //                  can detect this statically? That would restrict the language a
+    //                  lot, but the alternative implies a runtime impact from tracking
+    //                  types... (and so probably means solving the runtime reflection
+    //                  question)
 
     0
 }
