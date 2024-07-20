@@ -1,11 +1,5 @@
 program         -> expression* EOF 
 
-declaration     -> struct
-                    | function
-                    | variable
-                    | statement 
-
-
 expression      -> for
                     | if
                     | print
@@ -20,7 +14,7 @@ if              -> "if" expression "then" expression
                     ( "else" expression )? 
 print           -> "print" "(" arguments ")"
 while           -> "while" expression "do" expression
-block           -> "{" declaration* "}"
+block           -> "{" expression* "}"
 
 // TODO(Matthew): can a call return an lvalue? e.g.:
 //                  unwrap := (s: &some_struct_of_structs) -> s.some_sub_struct
