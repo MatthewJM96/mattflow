@@ -7,10 +7,10 @@ expression      -> for
                     | block
                     | assignment
 
-for             -> "for" range ("," range )* expression
-range           -> identifier "in" expression "where" expression
-if              -> "if" expression "then" expression
-                    ("elif" expression "then" expression)*
+for             -> "for" range ("," range )* "do" expression
+range           -> identifier "in" (number_range | list | IDENTIFIER) "where" logic
+if              -> "if" assignment "then" expression
+                    ("elif" assignment "then" expression)*
                     ( "else" expression )? 
 print           -> "print" "(" arguments ")"
 while           -> "while" expression "do" expression
@@ -21,7 +21,7 @@ block           -> "{" expression* "}"
 //                  unwrap(some_actual_struct_of_structs).sub_struct_field = 42
 //                should this be allowable? if unwrap takes its argument by reference,
 //                then it seems like the answer should be yes
-assignment      -> ( (variable | ( call "." )* IDENTIFIER ) "=" (assignment | logic) ) | logic
+assignment      -> ( (variable | ( call "." )* IDENTIFIER ) "=" expression ) | logic
 logic           -> equality ( ( "or" | "and" ) equality )*
 equality        -> comparison ( ( "!=" | "==" ) comparison )*
 comparison      -> term ( ( ">" | ">=" | "<" | "<=" ) term )*
@@ -32,6 +32,7 @@ call            -> primary ( "(" arguments? ")" | "." IDENTIFIER )*
 arguments       -> expression ( "," expression )*
 primary         -> "true" | "false" | "null"
                     | NUMBER | STRING | IDENTIFIER | "(" assignment ")" | block
+                    | number_range | list
 
 intrinsic_type  -> "null" | "char" | "int" | "int8" | "int16" | "int32" | "int64"
                     | "uint" | "uint8" | "uint16" | "uint32" | "uint64" | "float32"
@@ -42,6 +43,9 @@ function        -> "(" parameters? ")" "->" type
 parameters      -> variable ( "," variable )*
 variable        -> IDENTIFIER ":" type
 type            -> intrinsic_type | struct | function | IDENTIFIER
+
+number_range    -> "[" NUMBER ".." NUMBER "]"
+list            -> "[" (expression ("," expression)*)? "]"
 
 NUMBER          -> DIGIT+ ( "." DIGIT+ )?
 STRING          -> ( "\"" <any char except "\"" or "\n">* "\"" )

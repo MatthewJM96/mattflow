@@ -8,28 +8,28 @@
 main : () -> int = () -> {
     print("Hello, world!")
 
-    // for x : int in [0, 1, 2] print(x)
-    for x in [0, 1, 2] print(x)
+    // for x : int in [0, 1, 2] do print(x)
+    for x in [0, 1, 2] do print(x)
 
-    for y in [3, 4, 5] {
+    for y in [3, 4, 5] do {
         z = y + 1
         print(z)
     }
 
     // Showcase inline multidimensional for loop.
-    for y in [3, 4, 5], z in [1, 2] {
+    for y in [3, 4, 5], z in [1, 2] do {
         w := y + z
         print(w)
     }
 
     // Showcase where statement on for loop.
-    for y in [3, 4, 5], z in [1 .. 4] where z != 2 {
+    for y in [3, 4, 5], z in [1 .. 4] where z != 2 do {
         w : uint64 = y + z
         print(w)
     }
 
     // Showcase assigning list to variable.
-    l := for x in [0, 1, 2] x * x
+    l := for x in [0, 1, 2] do x * x
 
     i := 100
     j := 30
