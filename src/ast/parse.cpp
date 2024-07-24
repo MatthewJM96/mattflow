@@ -272,17 +272,15 @@ void mfast::parse(
 
         if (parser_state.precedence[parser_state.cursor] <= parser_expects::ASSIGNMENT)
         {
+            // TODO(Matthew): sketch out implementation.
         }
 
         if (parser_state.precedence[parser_state.cursor] <= parser_expects::LOGIC) {
             switch (it->type) {
-                case mflex::TokenType::OR:
-                    // Add if vertex, push precedence parser_expects::LOGIC
-                    add_or_node(...);
-                    continue;
                 case mflex::TokenType::AND:
-                    // Add for vertex, push precedence parser_expects::LOGIC
-                    add_and_node(...);
+                case mflex::TokenType::OR:
+                    // Add if vertex, push precedence parser_expects::expression.
+                    add_operator_node(...);
                     continue;
             }
         }
@@ -292,21 +290,115 @@ void mfast::parse(
 
         if (parser_state.precedence[parser_state.cursor] <= parser_expects::COMPARISON)
         {
+            switch (it->type) {
+                case mflex::TokenType::EQUALS:
+                case mflex::TokenType::NOT_EQUALS:
+                case mflex::TokenType::LESS_THAN:
+                case mflex::TokenType::LESS_THAN_OR_EQUAL_TO:
+                case mflex::TokenType::GREATER_THAN:
+                case mflex::TokenType::GREATER_THAN_OR_EQUAL_TO:
+                    // TODO(Matthew): grammar as written says we should push TERM and I
+                    //                  think I want to disallow e.g. 4 < 3 > 4 <= 2
+                    //                  so great
+                    // Add operator vertex, push precedence parser_expects::TERM.
+                    add_operator_node(...);
+                    continue;
+            }
         }
 
         if (parser_state.precedence[parser_state.cursor] <= parser_expects::TERM) {
+            switch (it->type) {
+                case mflex::TokenType::PLUS:
+                case mflex::TokenType::MINUS:
+                    // TODO(Matthew): grammar as written says we should push UNARY but I
+                    //                  think I want to allow e.g. 4 + 3 + 4 - 2
+                    // Add operator vertex, push precedence parser_expects::TERM.
+                    add_operator_node(...);
+                    continue;
+            }
         }
 
         if (parser_state.precedence[parser_state.cursor] <= parser_expects::FACTOR) {
+            switch (it->type) {
+                case mflex::TokenType::SLASH:
+                case mflex::TokenType::STAR:
+                    // TODO(Matthew): grammar as written says we should push UNARY but I
+                    //                  think I want to allow e.g. 4 * 3 * 4 / 2
+                    // Add operator vertex, push precedence parser_expects::FACTOR.
+                    add_operator_node(...);
+                    continue;
+            }
         }
 
         if (parser_state.precedence[parser_state.cursor] <= parser_expects::UNARY) {
+            switch (it->type) {
+                case mflex::TokenType::NOT:
+                // TODO(Matthew): how do we differentiate subtraction and negation in
+                //                  this parse scheme? can we just look back one token
+                //                  or layer of stack, or should we do something else?
+                case mflex::TokenType::MINUS:
+                    // Add operator vertex, push precedence parser_expects::UNARY.
+                    add_operator_node(...);
+                    continue;
+            }
         }
 
         if (parser_state.precedence[parser_state.cursor] <= parser_expects::CALL) {
+            if (it->type == mflex::TokenType::IDENTIFIER
+                && (it + 1)->type == mflex::TokenType::LEFT_PAREN)
+            {
+                // Add call vertex, push precendence parser_expects::EXPRESSION.
+                add_call_node(...);
+                continue;
+            }
         }
 
         if (parser_state.precedence[parser_state.cursor] <= parser_expects::PRIMARY) {
+            switch (it->type) {
+                case mflex::TokenType::TRUE:
+                case mflex::TokenType::FALSE:
+                    // Add Boolean vertex, pop precedence.
+                    add_bool_node(...);
+                    continue;
+                case mflex::TokenType::NIL:
+                    // Add null vertex, pop precedence.
+                    add_null_node(...);
+                    continue;
+                case mflex::TokenType::NUMBER:
+                    // Add number vertex, pop precedence.
+                    add_number_node(...);
+                    continue;
+                case mflex::TokenType::STRING:
+                    // Add string vertex, pop precedence.
+                    add_string_node(...);
+                    continue;
+                case mflex::TokenType::IDENTIFIER:
+                    // TODO(Matthew): can identifiers be anything but variables?
+                    //                  if so, add_identifier_node and resolve later.
+                    // Add variable vertex, pop precedence.
+                    add_variable_node(...);
+                    continue;
+                case mflex::TokenType::LEFT_PAREN:
+                    // Add paren vertex, push precedence parser_expects::ASSIGNMENT.
+                    add_paren_node(...);
+                    continue;
+                case mflex::TokenType::LEFT_BRACE:
+                    // Add block vertex, push precedence parser_expects::EXPRESSION.
+                    add_block_node(...);
+                    continue;
+                case mflex::TokenType::LEFT_BRACKET:
+                    // TODO(Matthew): ambiguity as could be number range or list.
+                    //                  need a way to decide which we are seeing here.
+                    //                  are we happy with this approach?
+                    if ((it + 2)->type == mflex::TokenType::RANGE) {
+                        // Add range vertex, push precedence parser_expects::PRIMARY.
+                        add_range_node(...);
+                    } else {
+                        // Add list vertex, push precedence parser_expects::EXPRESSION.
+                        add_list_node(...);
+                    }
+                    continue;
+            }
         }
     }
 
