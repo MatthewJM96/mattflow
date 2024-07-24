@@ -16,6 +16,7 @@ namespace mattflow {
 
             // Separators and accessors.
             COMMA,  // ,
+            RANGE,  // ..
             DOT,    // .
             ARROW,  // ->
 
@@ -86,6 +87,7 @@ namespace mattflow {
             {            TokenType::LEFT_BRACKET,                                             "\\["},
             {           TokenType::RIGHT_BRACKET,                                             "\\]"},
             {                   TokenType::COMMA,                                               ","},
+            {                   TokenType::RANGE,                                          "\\.\\."},
             {                     TokenType::DOT,                                             "\\."},
             {                   TokenType::ARROW,                                              "->"},
             {                     TokenType::NOT,                                               "!"},
