@@ -7,12 +7,12 @@ namespace mattflow {
             SENTINEL = std::numeric_limits<int16_t>::min(),
 
             // Parentheses, braces, and brackets.
-            LEFT_PAREN,      // (
-            RIGHT_PAREN,     // )
-            LEFT_BRACE,      // {
-            RIGHT_BRACE,     // }
-            LEFT_BRACKETS,   // [
-            RIGHT_BRACKETS,  // ]
+            LEFT_PAREN,     // (
+            RIGHT_PAREN,    // )
+            LEFT_BRACE,     // {
+            RIGHT_BRACE,    // }
+            LEFT_BRACKET,   // [
+            RIGHT_BRACKET,  // ]
 
             // Separators and accessors.
             COMMA,  // ,
@@ -83,8 +83,8 @@ namespace mattflow {
             {             TokenType::RIGHT_PAREN,                                             "\\)"},
             {              TokenType::LEFT_BRACE,                                             "\\{"},
             {             TokenType::RIGHT_BRACE,                                             "\\}"},
-            {           TokenType::LEFT_BRACKETS,                                             "\\["},
-            {          TokenType::RIGHT_BRACKETS,                                             "\\]"},
+            {            TokenType::LEFT_BRACKET,                                             "\\["},
+            {           TokenType::RIGHT_BRACKET,                                             "\\]"},
             {                   TokenType::COMMA,                                               ","},
             {                     TokenType::DOT,                                             "\\."},
             {                   TokenType::ARROW,                                              "->"},
