@@ -28,6 +28,8 @@ namespace mattflow {
             LESS_THAN_OR_EQUAL_TO,     // <=
             GREATER_THAN,              // >
             GREATER_THAN_OR_EQUAL_TO,  // >=
+            OR,                        // or
+            AND,                       // and
 
             // Assignment.
             ASSIGN_TYPE,   // :
@@ -40,12 +42,9 @@ namespace mattflow {
             STAR,   // *
 
             // Keywords
-            TRUE,    // true
-            FALSE,   // false
-            OR,      // or
-            AND,     // and
             IF,      // if
             THEN,    // then
+            ELIF,    // elif
             ELSE,    // else
             FOR,     // for
             IN,      // in
@@ -56,9 +55,14 @@ namespace mattflow {
             PRINT,   // print
             STRUCT,  // struct
 
+            // Boolean values
+            TRUE,   // true
+            FALSE,  // false
+
             // Intrinsic types
             NIL,      // null
             CHAR,     // char
+            BOOL,     // bool
             INT,      // int
             INT8,     // int8
             INT16,    // int16
@@ -97,18 +101,17 @@ namespace mattflow {
             {   TokenType::LESS_THAN_OR_EQUAL_TO,                                              "<="},
             {            TokenType::GREATER_THAN,                                               ">"},
             {TokenType::GREATER_THAN_OR_EQUAL_TO,                                              ">="},
+            {                      TokenType::OR,                              "or(?![a-zA-Z0-9_])"},
+            {                     TokenType::AND,                             "and(?![a-zA-Z0-9_])"},
             {             TokenType::ASSIGN_TYPE,                                               ":"},
             {            TokenType::ASSIGN_VALUE,                                               "="},
             {                   TokenType::MINUS,                                               "-"},
             {                    TokenType::PLUS,                                             "\\+"},
             {                   TokenType::SLASH,                                               "/"},
             {                    TokenType::STAR,                                             "\\*"},
-            {                    TokenType::TRUE,                            "true(?![a-zA-Z0-9_])"},
-            {                   TokenType::FALSE,                           "false(?![a-zA-Z0-9_])"},
-            {                      TokenType::OR,                              "or(?![a-zA-Z0-9_])"},
-            {                     TokenType::AND,                             "and(?![a-zA-Z0-9_])"},
             {                      TokenType::IF,                              "if(?![a-zA-Z0-9_])"},
             {                    TokenType::THEN,                            "then(?![a-zA-Z0-9_])"},
+            {                    TokenType::ELIF,                            "elif(?![a-zA-Z0-9_])"},
             {                    TokenType::ELSE,                            "else(?![a-zA-Z0-9_])"},
             {                     TokenType::FOR,                             "for(?![a-zA-Z0-9_])"},
             {                      TokenType::IN,                              "in(?![a-zA-Z0-9_])"},
@@ -118,8 +121,11 @@ namespace mattflow {
             {                   TokenType::MATCH,                           "match(?![a-zA-Z0-9_])"},
             {                   TokenType::PRINT,                           "print(?![a-zA-Z0-9_])"},
             {                  TokenType::STRUCT,                          "struct(?![a-zA-Z0-9_])"},
+            {                    TokenType::TRUE,                            "true(?![a-zA-Z0-9_])"},
+            {                   TokenType::FALSE,                           "false(?![a-zA-Z0-9_])"},
             {                     TokenType::NIL,                            "null(?![a-zA-Z0-9_])"},
             {                    TokenType::CHAR,                            "char(?![a-zA-Z0-9_])"},
+            {                    TokenType::BOOL,                            "bool(?![a-zA-Z0-9_])"},
             {                     TokenType::INT,                             "int(?![a-zA-Z0-9_])"},
             {                    TokenType::INT8,                            "int8(?![a-zA-Z0-9_])"},
             {                   TokenType::INT16,                           "int16(?![a-zA-Z0-9_])"},
