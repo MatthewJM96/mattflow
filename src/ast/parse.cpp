@@ -261,9 +261,21 @@ void mfast::parse(
                 // Add for vertex, push precedence parser_expects::IDENTIFIER
                 try_add_for_node(...);
                 continue;
+            case mflex::TokenType::IN:
+                // Add in vertex, push precedence parser_expects::EXPRESSION
+                try_add_in_node(...);
+                continue;
+            case mflex::TokenType::WHERE:
+                // Add where vertex, push precedence parser_expects::LOGIC
+                try_add_where_node(...);
+                continue;
             case mflex::TokenType::WHILE:
                 // Add while vertex, push precedence parser_expects::EXPRESSION
                 try_add_while_node(...);
+                continue;
+            case mflex::TokenType::DO:
+                // Add do vertex, push precedence parser_expects::EXPRESSION
+                try_add_do_node(...);
                 continue;
             case mflex::TokenType::PRINT:
                 // Add print vertex, push precedence parser_expects::EXPRESSION
