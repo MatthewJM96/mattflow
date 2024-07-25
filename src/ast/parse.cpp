@@ -495,14 +495,13 @@ void mfast::parse(
                 continue;
         }
     }
-}
 
-// If we get here and cursor is not pointing to top-level block, then something has
-// gone wrong in parsing.
-assert(parser_state.cursor == 0);
+    // If we get here and cursor is not pointing to top-level block, then something has
+    // gone wrong in parsing.
+    assert(parser_state.cursor == 0);
 
-// Clean up.
-delete[] parser_state.precedence;
-delete[] parser_state.vertex;
-delete[] parser_state.associativity;
+    // Clean up.
+    delete[] parser_state.precedence;
+    delete[] parser_state.vertex;
+    delete[] parser_state.associativity;
 }
