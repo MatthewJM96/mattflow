@@ -11,6 +11,116 @@ bool maybe_see_type(VALIN const mflex::Tokens::const_iterator& token) {
            || token->type == mflex::TokenType::LEFT_PAREN;
 }
 
+void try_add_if_node(
+    VALINOUT mflex::Tokens::const_iterator& curr_token,
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state
+) {
+    // Should only get here after knowing this is true.
+    assert(curr_token->type == mflex::TokenType::IF);
+
+    // No validation needed for if node as only requirement is that we have seen an "if"
+    // token - which to get here we certainly have.
+
+    // TODO(Matthew): do we want to relax this as we might want to allow e.g.
+    //                  if x == if y then z else w then
+    //                but it is ugly.
+    if (parser_state.precedence[parser_state.cursor]
+        > mfast::parser_expects::EXPRESSION)
+    {
+        exit(1);
+    }
+
+    // Add vertex to AST for if node, and push it onto the stack.
+    auto vertex      = boost::add_vertex(ast);
+    auto prev_vertex = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[++parser_state.cursor] = vertex;
+
+    // Create the if node.
+    nodes.ifs.emplace_back(curr_token, curr_token);
+    nodes.vertex_node_map[vertex] = &nodes.ifs.back();
+
+    // Link if node to previous.
+    boost::add_edge(prev_vertex, vertex, ast);
+
+    // Move forward a token.
+    curr_token += 1;
+}
+
+void try_add_for_node(
+    VALINOUT mflex::Tokens::const_iterator& curr_token,
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state
+) {
+    // Should only get here after knowing this is true.
+    assert(curr_token->type == mflex::TokenType::FOR);
+
+    // No validation needed for for node as only requirement is that we have seen an
+    // "for" token - which to get here we certainly have.
+
+    // TODO(Matthew): do we want to relax this as we might want to allow e.g.
+    //                  if x == for y in [ 1 .. 5 ] do y * y
+    //                but it is ugly.
+    if (parser_state.precedence[parser_state.cursor]
+        > mfast::parser_expects::EXPRESSION)
+    {
+        exit(1);
+    }
+
+    // Add vertex to AST for if node, and push it onto the stack.
+    auto vertex      = boost::add_vertex(ast);
+    auto prev_vertex = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[++parser_state.cursor] = vertex;
+
+    // Create the if node.
+    nodes.fors.emplace_back(curr_token, curr_token);
+    nodes.vertex_node_map[vertex] = &nodes.fors.back();
+
+    // Link if node to previous.
+    boost::add_edge(prev_vertex, vertex, ast);
+
+    // Move forward a token.
+    curr_token += 1;
+}
+
+void try_add_range_node(
+    VALINOUT mflex::Tokens::const_iterator& curr_token,
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state
+) {
+    // // Should only get here after knowing this is true.
+    // assert(curr_token->type == mflex::TokenType::FOR);
+
+    // // No validation needed for for node as only requirement is that we have seen an
+    // // "for" token - which to get here we certainly have.
+
+    // // TODO(Matthew): do we want to relax this as we might want to allow e.g.
+    // //                  if x == for y in [ 1 .. 5 ] do y * y
+    // //                but it is ugly.
+    // if (parser_state.precedence[parser_state.cursor] >
+    // mfast::parser_expects::EXPRESSION) {
+    //     exit(1);
+    // }
+
+    // // Add vertex to AST for if node, and push it onto the stack.
+    // auto vertex      = boost::add_vertex(ast);
+    // auto prev_vertex = parser_state.vertex[parser_state.cursor];
+    // parser_state.vertex[++parser_state.cursor] = vertex;
+
+    // // Create the if node.
+    // nodes.fors.emplace_back(curr_token, curr_token);
+    // nodes.vertex_node_map[vertex] = &nodes.fors.back();
+
+    // // Link if node to previous.
+    // boost::add_edge(prev_vertex, vertex, ast);
+
+    // // Move forward a token.
+    // curr_token += 1;
+}
+
 void add_number_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
