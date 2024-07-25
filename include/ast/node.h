@@ -5,6 +5,7 @@
 
 #include "ast/node/node.h"
 
+#include "ast/node/control_flow.h"
 #include "ast/node/function.h"
 #include "ast/node/number.h"
 #include "ast/node/operator.h"
@@ -15,6 +16,10 @@
 namespace mattflow {
     namespace ast {
         struct NodeBuffers {
+            std::vector<IfNode>          ifs;
+            std::vector<ForNode>         fors;
+            std::vector<RangeNode>       ranges;
+            std::vector<WhileNode>       whiles;
             std::vector<AssignmentNode>  assignments;
             std::vector<FunctionNode>    functions;
             std::vector<NumberNode>      numbers;
