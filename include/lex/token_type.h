@@ -94,7 +94,7 @@ namespace mattflow {
             {                   TokenType::RANGE,                                          "\\.\\."},
             {                     TokenType::DOT,                                             "\\."},
             {                   TokenType::ARROW,                                              "->"},
-            {                     TokenType::NOT,                                               "!"},
+            {                     TokenType::NOT,                                          "!(?!=)"},
             {                  TokenType::EQUALS,                                              "=="},
             {              TokenType::NOT_EQUALS,                                              "!="},
             {               TokenType::LESS_THAN,                                               "<"},
