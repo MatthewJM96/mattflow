@@ -13,33 +13,24 @@
 
 namespace mattflow {
     namespace ast {
+        /* clang-format off */
+
         using NodeInfo = std::variant<
-            IfNode,
-            ForNode,
-            RangeNode,
-            WhileNode,  // Control Flow
-            StructNode,
-            StructFieldNode,         // Struct
-            FunctionNode,            // Function
-            AssignmentOperatorNode,  // Assignment
-            OrOperatorNode,
-            AndOperatorNode,  // Logic
-            NotEqualOperatorNode,
-            EqualOperatorNode,  // Equality
-            LesserOperatorNode,
-            LesserOrEqualOperatorNode,
-            GreaterOperatorNode,
-            GreaterOrEqualOperatorNode,  // Comparison
-            SubtractionOperatorNode,
-            AdditionOperatorNode,  // Term
-            DivisionOperatorNode,
-            MultiplicationOperatorNode,  // Factor
-            NotOperatorNode,
-            NegationOperatorNode,  // Unary
-            NumberNode,
-            StringNode,
-            IdentifierNode  // Primary
-            >;
+            IfNode, ForNode, RangeNode, WhileNode,              // Control Flow
+            StructNode, StructFieldNode,                        // Struct
+            FunctionNode,                                       // Function
+            AssignmentOperatorNode,                             // Assignment
+            OrOperatorNode, AndOperatorNode,                    // Logic
+            NotEqualOperatorNode, EqualOperatorNode,            // Equality
+            LesserOperatorNode, LesserOrEqualOperatorNode,
+            GreaterOperatorNode, GreaterOrEqualOperatorNode,    // Comparison
+            SubtractionOperatorNode, AdditionOperatorNode,      // Term
+            DivisionOperatorNode, MultiplicationOperatorNode,   // Factor
+            NotOperatorNode, NegationOperatorNode,              // Unary
+            NumberNode, StringNode, IdentifierNode              // Primary
+        >;
+
+        /* clang-format on */
 
         struct NodeBuffers {
             std::vector<NodeInfo> node_info;
