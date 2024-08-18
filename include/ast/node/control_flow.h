@@ -2,6 +2,7 @@
 #define __mattflow_ast_node_control_flow_h
 
 #include "ast/node/node.h"
+#include "ast/node/node_properties.h"
 #include "literal/identifier.h"
 #include "type.h"
 
@@ -19,6 +20,9 @@ namespace mattflow {
         struct IfNode : public Node {
             // Empty.
         };
+
+        template <>
+        struct NodeProperties<IfNode> { };
 
         /**
          * @brief Node reflecting a for block.
