@@ -11,7 +11,7 @@ bool maybe_see_type(VALIN const mflex::Tokens::const_iterator& token) {
            || token->type == mflex::TokenType::LEFT_PAREN;
 }
 
-void try_add_if_node(
+void add_if_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -48,7 +48,7 @@ void try_add_if_node(
     curr_token += 1;
 }
 
-void try_add_for_node(
+void add_for_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -85,7 +85,7 @@ void try_add_for_node(
     curr_token += 1;
 }
 
-void try_add_range_node(
+void add_range_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
@@ -348,47 +348,47 @@ void mfast::parse(
         switch (it->type) {
             case mflex::TokenType::IF:
                 // Add if vertex, push precedence parser_expects::ASSIGNMENT
-                try_add_if_node(...);
+                add_if_node(...);
                 continue;
             case mflex::TokenType::THEN:
                 // Add if vertex, push precedence parser_expects::EXPRESSION
-                try_add_then_node(...);
+                add_then_node(...);
                 continue;
             case mflex::TokenType::ELIF:
                 // Add if vertex, push precedence parser_expects::ASSIGNMENT
-                try_add_elif_node(...);
+                add_elif_node(...);
                 continue;
             case mflex::TokenType::ELSE:
                 // Add if vertex, push precedence parser_expects::EXPRESSION
-                try_add_else_node(...);
+                add_else_node(...);
                 continue;
             case mflex::TokenType::FOR:
                 // Add for vertex, push precedence parser_expects::IDENTIFIER
-                try_add_for_node(...);
+                add_for_node(...);
                 continue;
             case mflex::TokenType::IN:
                 // Add in vertex, push precedence parser_expects::EXPRESSION
-                try_add_in_node(...);
+                add_in_node(...);
                 continue;
             case mflex::TokenType::WHERE:
                 // Add where vertex, push precedence parser_expects::LOGIC
-                try_add_where_node(...);
+                add_where_node(...);
                 continue;
             case mflex::TokenType::WHILE:
                 // Add while vertex, push precedence parser_expects::EXPRESSION
-                try_add_while_node(...);
+                add_while_node(...);
                 continue;
             case mflex::TokenType::DO:
                 // Add do vertex, push precedence parser_expects::EXPRESSION
-                try_add_do_node(...);
+                add_do_node(...);
                 continue;
             case mflex::TokenType::PRINT:
                 // Add print vertex, push precedence parser_expects::EXPRESSION
-                try_add_print_node(...);
+                add_print_node(...);
                 continue;
             case mflex::TokenType::LEFT_BRACE:
                 // Add block vertex, push precedence parser_expects::EXPRESSION
-                try_add_block_node(...);
+                add_block_node(...);
                 continue;
             case mflex::TokenType::RIGHT_BRACE:
                 // Pop block.
@@ -398,7 +398,7 @@ void mfast::parse(
             case mflex::TokenType::AND:
             case mflex::TokenType::OR:
                 // Add if vertex, push precedence parser_expects::expression.
-                try_add_logic_node(...);
+                add_logic_node(...);
                 continue;
             case mflex::TokenType::EQUALS:
             case mflex::TokenType::NOT_EQUALS:
@@ -408,7 +408,7 @@ void mfast::parse(
                 //                      4 != 3 != 4 == 2
                 //                  so great
                 // Add operator vertex, push precedence parser_expects::COMPARISON.
-                try_add_equality_node(...);
+                add_equality_node(...);
                 continue;
             case mflex::TokenType::LESS_THAN:
             case mflex::TokenType::LESS_THAN_OR_EQUAL_TO:
@@ -418,21 +418,21 @@ void mfast::parse(
                 //                  think I want to disallow e.g. 4 < 3 > 4 <= 2
                 //                  so great
                 // Add operator vertex, push precedence parser_expects::TERM.
-                try_add_comparison_node(...);
+                add_comparison_node(...);
                 continue;
             case mflex::TokenType::PLUS:
             case mflex::TokenType::MINUS:
                 // TODO(Matthew): grammar as written says we should push UNARY but I
                 //                  think I want to allow e.g. 4 + 3 + 4 - 2
                 // Add operator vertex, push precedence parser_expects::TERM.
-                try_add_term_node(...);
+                add_term_node(...);
                 continue;
             case mflex::TokenType::SLASH:
             case mflex::TokenType::STAR:
                 // TODO(Matthew): grammar as written says we should push UNARY but I
                 //                  think I want to allow e.g. 4 * 3 * 4 / 2
                 // Add operator vertex, push precedence parser_expects::FACTOR.
-                try_add_factor_node(...);
+                add_factor_node(...);
                 continue;
             case mflex::TokenType::NOT:
             // TODO(Matthew): how do we differentiate subtraction and negation in
@@ -440,41 +440,41 @@ void mfast::parse(
             //                  or layer of stack, or should we do something else?
             case mflex::TokenType::MINUS:
                 // Add operator vertex, push precedence parser_expects::UNARY.
-                try_add_unary_node(...);
+                add_unary_node(...);
                 continue;
             case mflex::TokenType::IDENTIFIER:
                 if ((it + 1)->type == mflex::TokenType::LEFT_PAREN) {
                     // Add call vertex, push precendence parser_expects::EXPRESSION.
-                    try_add_call_node(...);
+                    add_call_node(...);
                     continue;
                 } else {
                     // TODO(Matthew): can identifiers be anything but variables?
-                    //                  if so, try_add_identifier_node and resolve
+                    //                  if so, add_identifier_node and resolve
                     //                  later.
                     // Add variable vertex, pop precedence.
-                    try_add_variable_node(...);
+                    add_variable_node(...);
                     continue;
                 }
             case mflex::TokenType::TRUE:
             case mflex::TokenType::FALSE:
                 // Add Boolean vertex, pop precedence.
-                try_add_bool_node(...);
+                add_bool_node(...);
                 continue;
             case mflex::TokenType::NIL:
                 // Add null vertex, pop precedence.
-                try_add_null_node(...);
+                add_null_node(...);
                 continue;
             case mflex::TokenType::NUMBER:
                 // Add number vertex, pop precedence.
-                try_add_number_node(...);
+                add_number_node(...);
                 continue;
             case mflex::TokenType::STRING:
                 // Add string vertex, pop precedence.
-                try_add_string_node(...);
+                add_string_node(...);
                 continue;
             case mflex::TokenType::LEFT_PAREN:
                 // Add paren vertex, push precedence parser_expects::ASSIGNMENT.
-                try_add_paren_node(...);
+                add_paren_node(...);
                 continue;
             case mflex::TokenType::LEFT_BRACKET:
                 // TODO(Matthew): ambiguity as could be number range or list.
@@ -482,10 +482,10 @@ void mfast::parse(
                 //                  are we happy with this approach?
                 if ((it + 2)->type == mflex::TokenType::RANGE) {
                     // Add range vertex, push precedence parser_expects::PRIMARY.
-                    try_add_range_node(...);
+                    add_range_node(...);
                 } else {
                     // Add list vertex, push precedence parser_expects::EXPRESSION.
-                    try_add_list_node(...);
+                    add_list_node(...);
                 }
                 continue;
         }
