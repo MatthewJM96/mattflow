@@ -195,7 +195,7 @@ void add_variable_declaration_node(
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state,
-    VALOUT mfast::VariableTable& variable_table
+    VALINOUT mftype::TypeTable& type_table
 ) {
     // No validation needed here, the current token will be an identifier token which is
     // assured to be valid during lexing, and the type assignment character ":".
@@ -203,7 +203,7 @@ void add_variable_declaration_node(
     assert((curr_token + 1)->type == mflex::TokenType::ASSIGN_TYPE);
 
     // TODO(Matthew): this will need revisiting to deal with scope.
-    if (variable_table.contains(curr_token->identifier_idx)) {
+    if (type_table.contains(curr_token->identifier_idx)) {
         auto& ident = mflit::IdentifierTable::get();
         std::cout << "Variable " << ident.get(curr_token->identifier_idx)
                   << " already declared." << std::endl;
@@ -212,7 +212,7 @@ void add_variable_declaration_node(
 
     // Mark variable as existing, next token should assign type and if it doesn't we
     // have an issue.
-    variable_table[curr_token->identifier_idx] = nullptr;
+    type_table[curr_token->identifier_idx] = nullptr;
 
     nodes.variables.emplace_back(mfast::VariableNode{
         curr_token, curr_token, curr_token->identifier_idx });
@@ -233,7 +233,7 @@ void add_assignment_node(
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state,
-    VALOUT mfast::VariableTable& variable_table
+    VALINOUT mftype::TypeTable& type_table
 ) {
     // No validation needed here, the current token will be the value assignment
     // character "=".
@@ -257,7 +257,6 @@ void add_struct_node(
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state,
-    VALOUT mfast::VariableTable& variable_table,
     VALINOUT mftype::TypeTable& type_table
 ) {
     // No validation needed here, the current token will be a string token which is
@@ -284,7 +283,6 @@ void add_struct_field_node(
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state,
-    VALOUT mfast::VariableTable& variable_table,
     VALINOUT mftype::TypeTable& type_table
 ) {
     // TODO(Matthew): implement correctly... just copied add_struct_node.
@@ -316,7 +314,6 @@ void add_type_node(
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state,
-    VALOUT mfast::VariableTable& variable_table,
     VALINOUT mftype::TypeTable& type_table
 ) {
     // No validation needed for first token, guaranteed to be .
@@ -341,7 +338,6 @@ void mfast::parse(
     VALIN const mflex::Tokens& tokens,
     VALOUT AST&                ast,
     VALOUT NodeBuffers&        nodes,
-    VALOUT VariableTable&      variable_table,
     VALOUT mftype::TypeTable& type_table
 ) {
     (void)tokens;
