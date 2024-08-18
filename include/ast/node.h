@@ -7,28 +7,43 @@
 
 #include "ast/node/control_flow.h"
 #include "ast/node/function.h"
-#include "ast/node/number.h"
 #include "ast/node/operator.h"
-#include "ast/node/string.h"
+#include "ast/node/primary.h"
 #include "ast/node/struct.h"
-#include "ast/node/variable.h"
 
 namespace mattflow {
     namespace ast {
+        using NodeInfo = std::variant<
+            IfNode,
+            ForNode,
+            RangeNode,
+            WhileNode,  // Control Flow
+            StructNode,
+            StructFieldNode,         // Struct
+            FunctionNode,            // Function
+            AssignmentOperatorNode,  // Assignment
+            OrOperatorNode,
+            AndOperatorNode,  // Logic
+            NotEqualOperatorNode,
+            EqualOperatorNode,  // Equality
+            LesserOperatorNode,
+            LesserOrEqualOperatorNode,
+            GreaterOperatorNode,
+            GreaterOrEqualOperatorNode,  // Comparison
+            SubtractionOperatorNode,
+            AdditionOperatorNode,  // Term
+            DivisionOperatorNode,
+            MultiplicationOperatorNode,  // Factor
+            NotOperatorNode,
+            NegationOperatorNode,  // Unary
+            NumberNode,
+            StringNode,
+            IdentifierNode  // Primary
+            >;
+
         struct NodeBuffers {
-            std::vector<IfNode>          ifs;
-            std::vector<ForNode>         fors;
-            std::vector<RangeNode>       ranges;
-            std::vector<WhileNode>       whiles;
-            std::vector<AssignmentNode>  assignments;
-            std::vector<FunctionNode>    functions;
-            std::vector<NumberNode>      numbers;
-            std::vector<OperatorNode>    operators;
-            std::vector<StringNode>      strings;
-            std::vector<StructNode>      structs;
-            std::vector<StructFieldNode> struct_fields;
-            std::vector<VariableNode>    variables;
-            Node                         nil_node;
+            std::vector<NodeInfo> node_info;
+            Node                  nil_node;
 
             ASTVertexNodeMap vertex_node_map;
         };

@@ -6,52 +6,166 @@
 
 namespace mattflow {
     namespace ast {
-        enum class OperatorKind : int16_t {
-            // Boolean operators.
-            NOT        = static_cast<int16_t>(mflex::TokenType::NOT),
-            EQUALS     = static_cast<int16_t>(mflex::TokenType::EQUALS),
-            NOT_EQUALS = static_cast<int16_t>(mflex::TokenType::NOT_EQUALS),
-            LESS_THAN  = static_cast<int16_t>(mflex::TokenType::LESS_THAN),
-            LESS_THAN_OR_EQUAL_TO
-                = static_cast<int16_t>(mflex::TokenType::LESS_THAN_OR_EQUAL_TO),
-            GREATER_THAN = static_cast<int16_t>(mflex::TokenType::GREATER_THAN),
-            GREATER_THAN_OR_EQUAL_TO
-                = static_cast<int16_t>(mflex::TokenType::GREATER_THAN_OR_EQUAL_TO),
-
-            // Assignment.
-            ASSIGN_VALUE = static_cast<int16_t>(mflex::TokenType::ASSIGN_VALUE),
-
-            // Arithmetic operators.
-            MINUS = static_cast<int16_t>(mflex::TokenType::MINUS),
-            PLUS  = static_cast<int16_t>(mflex::TokenType::PLUS),
-            SLASH = static_cast<int16_t>(mflex::TokenType::SLASH),
-            STAR  = static_cast<int16_t>(mflex::TokenType::STAR)
+        /**
+         * @brief Node reflecting a value assignment operator.
+         *
+         * @inedge lvalue expression
+         * @outedge rvalue expression
+         */
+        struct AssignmentOperatorNode : public Node {
+            // Empty.
         };
 
-        OperatorKind cast_token_to_intrinsic(mflex::TokenType tok) {
-            assert(
-                static_cast<int16_t>(tok) >= static_cast<int16_t>(mflex::TokenType::NOT)
-            );
-            assert(
-                static_cast<int16_t>(tok)
-                <= static_cast<int16_t>(mflex::TokenType::STAR)
-            );
-            assert(
-                static_cast<int16_t>(tok)
-                != static_cast<int16_t>(mflex::TokenType::ASSIGN_TYPE)
-            );
-
-            return static_cast<OperatorKind>(static_cast<int16_t>(tok));
-        }
-
         /**
-         * @brief Node reflecting an operator.
+         * @brief Node reflecting a Not operator.
          *
          * @inedge operator | paren expression | assignment | block expression
-         * @outedges rvalue expression
+         * @outedge rvalue expression
          */
-        struct OperatorNode : public Node {
-            OperatorKind kind;
+        struct NotOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a Negation operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         */
+        struct NegationOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a Multiplication operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct MultiplicationOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a Division operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct DivisionOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting an Addition operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct AdditionOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a Subtraction operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct SubtractionOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a Greater operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct GreaterOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a GreaterOrEqual operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct GreaterOrEqualOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a Lesser operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct LesserOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a LesserOrEqual operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct LesserOrEqualOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting an Equal operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct EqualOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a NotEqual operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct NotEqualOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting an Or operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct OrOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting an And operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct AndOperatorNode : public Node {
+            // Empty.
         };
     }  // namespace ast
 }  // namespace mattflow
