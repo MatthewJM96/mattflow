@@ -11,6 +11,8 @@
 #include "ast/node/primary.h"
 #include "ast/node/struct.h"
 
+#include "ast/node_properties.h"
+
 namespace mattflow {
     namespace ast {
         /* clang-format off */
