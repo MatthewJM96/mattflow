@@ -333,19 +333,14 @@ void mfast::parse(
     nodes.variables.clear();
     nodes.nil_node = {};
 
-    // TODO(Matthew): balance memory usage better.
-    // Prepare stack for expectation, precedence, and associativity.
+    // Prepare stack for precedence, associativity, and last attachable vertex.
     ParserState parser_state;
-    parser_state.cursor        = 0;
-    parser_state.precedence    = new uint16_t[tokens.size()];
-    parser_state.associativity = new Associativity[tokens.size()];
-    parser_state.vertex        = new ASTVertex[tokens.size()];
 
     // Add top-level block node for module.
-    parser_state.precedence[0]                    = parser_expects::EXPRESSION;
-    parser_state.associativity[0]                 = Associativity::ANY;
-    parser_state.vertex[0]                        = boost::add_vertex(ast);
-    nodes.vertex_node_map[parser_state.vertex[0]] = &nodes.nil_node;
+    parser_state.precedence.emplace_back(parser_expects::EXPRESSION);
+    parser_state.associativity.emplace_back(Associativity::ANY);
+    parser_state.vertex.emplace_back(boost::add_vertex(ast));
+    nodes.vertex_node_map[parser_state.vertex.back()] = &nodes.nil_node;
 
     // Iterate tokens, parsing as appropriate.
     auto it = tokens.begin();

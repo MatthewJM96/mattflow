@@ -31,10 +31,9 @@ namespace mattflow {
         };
 
         struct ParserState {
-            size_t         cursor;
-            uint16_t*      precedence;
-            Associativity* associativity;
-            ASTVertex*     vertex;
+            std::vector<Precedence>    precedence;
+            std::vector<Associativity> associativity;
+            std::vector<ASTVertex>     vertex;
         };
 
         void parse(
