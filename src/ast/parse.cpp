@@ -32,10 +32,17 @@ void add_if_node(
         exit(1);
     }
 
+    // Increment parser cursor.
+    //   Layer below is: expression-accepting node.
+    parser_state.cursor += 1;
+
     // Add vertex to AST for if node, and push it onto the stack.
-    auto vertex      = boost::add_vertex(ast);
-    auto prev_vertex = parser_state.vertex[parser_state.cursor];
-    parser_state.vertex[++parser_state.cursor] = vertex;
+    auto vertex                              = boost::add_vertex(ast);
+    auto prev_vertex                         = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[parser_state.cursor] = vertex;
+
+    // Set parser expects.
+    parser_state.precedence[parser_state.cursor] = mfast::parser_expects::ASSIGNMENT;
 
     // Create the if node.
     nodes.ifs.emplace_back(curr_token, curr_token);
@@ -69,16 +76,23 @@ void add_for_node(
         exit(1);
     }
 
-    // Add vertex to AST for if node, and push it onto the stack.
-    auto vertex      = boost::add_vertex(ast);
-    auto prev_vertex = parser_state.vertex[parser_state.cursor];
-    parser_state.vertex[++parser_state.cursor] = vertex;
+    // Increment parser cursor.
+    //   Layer below is: expression-accepting node.
+    parser_state.cursor += 1;
 
-    // Create the if node.
+    // Add vertex to AST for for node, and push it onto the stack.
+    auto vertex                              = boost::add_vertex(ast);
+    auto prev_vertex                         = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[parser_state.cursor] = vertex;
+
+    // Set parser expects.
+    parser_state.precedence[parser_state.cursor] = mfast::parser_expects::IDENTIFIER;
+
+    // Create the for node.
     nodes.fors.emplace_back(curr_token, curr_token);
     nodes.vertex_node_map[vertex] = &nodes.fors.back();
 
-    // Link if node to previous.
+    // Link for node to previous.
     boost::add_edge(prev_vertex, vertex, ast);
 
     // Move forward a token.
@@ -91,34 +105,41 @@ void add_range_node(
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
 ) {
-    // // Should only get here after knowing this is true.
-    // assert(curr_token->type == mflex::TokenType::FOR);
+    // Should only get here after knowing this is true.
+    assert(curr_token->type == mflex::TokenType::IDENTIFIER);
+    assert((curr_token + 1)->type == mflex::TokenType::IN);
 
-    // // No validation needed for for node as only requirement is that we have seen an
-    // // "for" token - which to get here we certainly have.
+    // No validation needed for for node as only requirement is that we have seen an
+    // "for" token - which to get here we certainly have.
 
-    // // TODO(Matthew): do we want to relax this as we might want to allow e.g.
-    // //                  if x == for y in [ 1 .. 5 ] do y * y
-    // //                but it is ugly.
-    // if (parser_state.precedence[parser_state.cursor] >
-    // mfast::parser_expects::EXPRESSION) {
-    //     exit(1);
-    // }
+    if (parser_state.precedence[parser_state.cursor]
+        > mfast::parser_expects::IDENTIFIER)
+    {
+        exit(1);
+    }
 
-    // // Add vertex to AST for if node, and push it onto the stack.
-    // auto vertex      = boost::add_vertex(ast);
-    // auto prev_vertex = parser_state.vertex[parser_state.cursor];
-    // parser_state.vertex[++parser_state.cursor] = vertex;
+    // Increment parser cursor.
+    //   Layer below is: for node
+    parser_state.cursor += 1;
 
-    // // Create the if node.
-    // nodes.fors.emplace_back(curr_token, curr_token);
-    // nodes.vertex_node_map[vertex] = &nodes.fors.back();
+    // Add vertex to AST for range node, and push it onto the stack.
+    auto vertex                              = boost::add_vertex(ast);
+    auto prev_vertex                         = parser_state.vertex[parser_state.cursor];
+    parser_state.vertex[parser_state.cursor] = vertex;
 
-    // // Link if node to previous.
-    // boost::add_edge(prev_vertex, vertex, ast);
+    // Set parser expects.
+    parser_state.precedence[parser_state.cursor] = mfast::parser_expects::EXPRESSION;
 
-    // // Move forward a token.
-    // curr_token += 1;
+    // Create the range node.
+    nodes.ranges.emplace_back(curr_token, curr_token);
+    nodes.vertex_node_map[vertex] = &nodes.fors.back();
+
+    // Link range node to previous.
+    boost::add_edge(prev_vertex, vertex, ast);
+
+    // Increment token, then add identifier (incrementing a second time).
+    curr_token += 1;
+    try_add_identifier_node(...);
 }
 
 void add_number_node(
@@ -447,6 +468,10 @@ void mfast::parse(
                     // Add call vertex, push precendence parser_expects::EXPRESSION.
                     add_call_node(...);
                     continue;
+                } else if ((it + 1)->type == mflex::TokenType::IN) {
+                    // Add range vertex, and associate identifier, push precedence
+                    // parser_expects::EXPRESSION
+                    add_range_node(...);
                 } else {
                     // TODO(Matthew): can identifiers be anything but variables?
                     //                  if so, add_identifier_node and resolve
@@ -482,7 +507,7 @@ void mfast::parse(
                 //                  are we happy with this approach?
                 if ((it + 2)->type == mflex::TokenType::RANGE) {
                     // Add range vertex, push precedence parser_expects::PRIMARY.
-                    add_range_node(...);
+                    add_number_range_node(...);
                 } else {
                     // Add list vertex, push precedence parser_expects::EXPRESSION.
                     add_list_node(...);
