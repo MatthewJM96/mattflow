@@ -7,16 +7,6 @@
 namespace mattflow {
     namespace ast {
         /**
-         * @brief Node reflecting a value assignment operator.
-         *
-         * @inedge lvalue expression
-         * @outedge rvalue expression
-         */
-        struct AssignmentOperatorNode : public Node {
-            // Empty.
-        };
-
-        /**
          * @brief Node reflecting a Not operator.
          *
          * @inedge operator | paren expression | assignment | block expression
@@ -165,6 +155,16 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct AndOperatorNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a value assignment operator.
+         *
+         * @inedge lvalue expression
+         * @outedge rvalue expression
+         */
+        struct AssignmentOperatorNode : public Node {
             // Empty.
         };
     }  // namespace ast
