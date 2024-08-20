@@ -6,12 +6,6 @@
 
 namespace mattflow {
     namespace ast {
-        struct ParserState {
-            std::vector<Precedence>    precedence;
-            std::vector<Associativity> associativity;
-            std::vector<ASTVertex>     vertex;
-        };
-
         void parse(
             VALIN const mflex::Tokens& tokens,
             VALOUT AST&                ast,

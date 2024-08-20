@@ -9,7 +9,8 @@ namespace mattflow {
         enum class Associativity {
             NONE,
             LEFT,
-            RIGHT
+            RIGHT,
+            ANY
         };
 
         template <typename NodeType>
