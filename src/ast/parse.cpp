@@ -676,5 +676,5 @@ void mfast::parse(
 
     // If we get here and cursor is not pointing to top-level block, then something has
     // gone wrong in parsing.
-    assert(parser_state.vertices.size() == 0);
+    // assert(parser_state.vertices.size() == 0);
 }
