@@ -635,7 +635,7 @@ void mfast::parse(
             case mflex::TokenType::FLOAT32:
             case mflex::TokenType::FLOAT64:
             case mflex::TokenType::SENTINEL:
-                continue;
+                break;
             case mflex::TokenType::TRUE:
             case mflex::TokenType::FALSE:
                 // Add Boolean vertex, pop precedence.
