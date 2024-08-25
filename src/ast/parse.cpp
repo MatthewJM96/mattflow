@@ -473,7 +473,8 @@ void mfast::parse(
     // Ensure buffers are clear for building fresh AST.
     ast.clear();
     nodes.node_info.clear();
-    nodes.nil_node = {};
+    nodes.nil_node        = {};
+    nodes.vertex_node_map = boost::get(vertex_data, ast);
 
     // Prepare stack for precedence, associativity, and last attachable vertex with the
     // top-level block node for module.
