@@ -355,11 +355,6 @@ void add_bool_node(
     // No validation needed for bool node as only requirement is that we have seen a
     // boolean token - which to get here we certainly have.
 
-    if (parser_state.precedence.back() == mfast::Precedence::NONE) {
-        debug_printf("Precedence wasn't an expected value (> NONE).");
-        exit(1);
-    }
-
     // Add vertex to AST for bool node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
     parser_state.vertices.emplace_back(vertex);
@@ -385,11 +380,6 @@ void add_null_node(
     // No validation needed for bool node as only requirement is that we have seen a
     // boolean token - which to get here we certainly have.
 
-    if (parser_state.precedence.back() == mfast::Precedence::NONE) {
-        debug_printf("Precedence wasn't an expected value (> NONE).");
-        exit(1);
-    }
-
     // Add vertex to AST for bool node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
     parser_state.vertices.emplace_back(vertex);
@@ -413,11 +403,6 @@ void add_number_node(
 
     // No validation needed for bool node as only requirement is that we have seen a
     // boolean token - which to get here we certainly have.
-
-    if (parser_state.precedence.back() == mfast::Precedence::NONE) {
-        debug_printf("Precedence wasn't an expected value (> NONE).");
-        exit(1);
-    }
 
     // Add vertex to AST for bool node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
@@ -443,11 +428,6 @@ void add_string_node(
 
     // No validation needed for bool node as only requirement is that we have seen a
     // boolean token - which to get here we certainly have.
-
-    if (parser_state.precedence.back() == mfast::Precedence::NONE) {
-        debug_printf("Precedence wasn't an expected value (> NONE).");
-        exit(1);
-    }
 
     // Add vertex to AST for bool node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
