@@ -360,9 +360,8 @@ void add_bool_node(
     parser_state.vertices.emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
-    nodes.node_info.emplace_back(mfast::BoolNode{
+    nodes.vertex_node_map[vertex] = &nodes.node_info.emplace_back(mfast::BoolNode{
         curr_token, curr_token, curr_token->type == mflex::TokenType::TRUE });
-    nodes.vertex_node_map[vertex] = &nodes.node_info.back();
 
     // Move forward a token.
     curr_token += 1;
@@ -385,8 +384,8 @@ void add_null_node(
     parser_state.vertices.emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
-    nodes.node_info.emplace_back(mfast::NullNode{ curr_token, curr_token });
-    nodes.vertex_node_map[vertex] = &nodes.node_info.back();
+    nodes.vertex_node_map[vertex]
+        = &nodes.node_info.emplace_back(mfast::NullNode{ curr_token, curr_token });
 
     // Move forward a token.
     curr_token += 1;
@@ -409,9 +408,8 @@ void add_number_node(
     parser_state.vertices.emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
-    nodes.node_info.emplace_back(mfast::NumberNode{
+    nodes.vertex_node_map[vertex] = &nodes.node_info.emplace_back(mfast::NumberNode{
         curr_token, curr_token, curr_token->number });
-    nodes.vertex_node_map[vertex] = &nodes.node_info.back();
 
     // Move forward a token.
     curr_token += 1;
@@ -434,9 +432,8 @@ void add_string_node(
     parser_state.vertices.emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
-    nodes.node_info.emplace_back(mfast::StringNode{
+    nodes.vertex_node_map[vertex] = &nodes.node_info.emplace_back(mfast::StringNode{
         curr_token, curr_token, std::move(curr_token->string) });
-    nodes.vertex_node_map[vertex] = &nodes.node_info.back();
 
     // Move forward a token.
     curr_token += 1;
