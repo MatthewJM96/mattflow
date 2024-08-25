@@ -16,7 +16,15 @@ namespace mattflow {
 
             template <typename Type>
                 requires (std::floating_point<Type> || std::integral<Type>)
-            Type as();
+            Type as() {
+                if constexpr (std::floating_point<Type>) {
+                    assert(m_is_floating_point);
+                } else {
+                    assert(!m_is_floating_point);
+                }
+
+                return *reinterpret_cast<Type*>(reinterpret_cast<void*>(&m_int_value));
+            }
         protected:
             bool m_is_floating_point;
 
