@@ -145,6 +145,40 @@ void test_parser() {
     mfast::NodeBuffers node_buffers;
     mftype::TypeTable  type_table;
     mfast::parse(tokens, ast, node_buffers, type_table);
+
+    bool skip_first = true;
+    for (auto v : boost::make_iterator_range(boost::vertices(ast))) {
+        if (skip_first) {
+            skip_first = false;
+            continue;
+        }
+
+        mfast::NodeInfo __node_info
+            = *reinterpret_cast<mfast::NodeInfo*>(node_buffers.vertex_node_map[v]);
+        std::visit(
+            [](auto&& node_info) {
+                using T = std::decay_t<decltype(node_info)>;
+                if constexpr (std::is_same_v<T, mfast::BoolNode>) {
+                    if (node_info.value) {
+                        std::cout << "true ";
+                    } else {
+                        std::cout << "false ";
+                    }
+                } else if constexpr (std::is_same_v<T, mfast::NumberNode>) {
+                    if (node_info.value.is_floating_point()) {
+                        std::cout << node_info.value.template as<float>() << " ";
+                    } else {
+                        std::cout << node_info.value.template as<int>() << " ";
+                    }
+                } else if constexpr (std::is_same_v<T, mfast::StringNode>) {
+                    std::cout << node_info.value << " ";
+                } else if constexpr (std::is_same_v<T, mfast::NullNode>) {
+                    std::cout << "null ";
+                }
+            },
+            __node_info
+        );
+    }
 }
 
 int main() {
