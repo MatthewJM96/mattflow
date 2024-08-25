@@ -19,13 +19,11 @@ namespace boost {
 
 namespace mattflow {
     namespace ast {
-        struct Node;
-
         using AST = boost::adjacency_list<
             boost::vecS,
             boost::vecS,
             boost::directedS,
-            boost::property<vertex_data_t, Node*>>;
+            boost::property<vertex_data_t, void*>>;
 
         using ASTVertex = AST::vertex_descriptor;
 
