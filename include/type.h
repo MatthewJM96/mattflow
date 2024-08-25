@@ -9,30 +9,8 @@
 
 namespace mattflow {
     namespace type {
-        enum class TypeKind {
-            UNRESOLVED,
-            NUMBER,
-            STRUCT,
-            FUNCTION,
-            TYPE,
-            NULL_TYPE
-        };
-
-        struct Type {
-            ~Type() {
-                // Empty.
-            }
-
-            TypeKind type_kind;
-
-            union {
-                FunctionType function_type;
-                NumberType   number_type;
-                StructType   struct_type;
-                TypeType     type_type;
-                void*        null_type;
-            };
-        };
+        using Type
+            = std::variant<FunctionType, NumberType, StructType, TypeType, void*>;
 
         class TypeTable {
         public:

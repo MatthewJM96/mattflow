@@ -5,10 +5,8 @@
 
 namespace mattflow {
     namespace type {
-        struct Type;
-
         struct StructType {
-            std::vector<Type*> fields;
+            std::vector<void*> fields;
         };
     }  // namespace type
 }  // namespace mattflow

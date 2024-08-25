@@ -3,10 +3,8 @@
 
 namespace mattflow {
     namespace type {
-        struct Type;
-
         struct TypeType {
-            Type* type;
+            void* type;
         };
     }  // namespace type
 }  // namespace mattflow
