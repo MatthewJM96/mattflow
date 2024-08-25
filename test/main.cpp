@@ -2,7 +2,7 @@
 
 #include "lex/lexer.h"
 
-#include "ast/ast.h"
+#include "ast/parse.h"
 
 static char* read_file_to_string(const std::filesystem::path& path) {
     std::filesystem::path abs_path = std::filesystem::absolute(path);
@@ -33,13 +33,11 @@ static char* read_file_to_string(const std::filesystem::path& path) {
     return buffer;
 }
 
-int main() {
-    std::cout << "Running mattflow tests..." << std::endl;
-
+void test_lexer() {
     char* sample_0 = read_file_to_string("samples/hello_world.mf");
     if (sample_0 == nullptr) {
         std::cout << "Could not read samples/hello_world.mf." << std::endl;
-        return 0;
+        exit(1);
     }
 
     mf::SourceView source_view;
@@ -114,6 +112,47 @@ int main() {
         static_cast<int16_t>(tokens[12].type)
         == static_cast<int16_t>(mflex::TokenType::RIGHT_BRACE)
     );
+}
+
+void test_parser() {
+    char* sample_0 = read_file_to_string("samples/primary.mf");
+    if (sample_0 == nullptr) {
+        std::cout << "Could not read samples/primary.mf." << std::endl;
+        exit(1);
+    }
+
+    mf::SourceView source_view;
+    source_view.source       = std::string_view(sample_0);
+    source_view.file_id      = 0;
+    source_view.start_line   = 0;
+    source_view.start_column = 0;
+    source_view.end_line     = std::count_if(
+        source_view.source.begin(),
+        source_view.source.end(),
+        [](char c) { return c == '\n'; }
+    );
+    source_view.end_column = std::find_if(
+                                 source_view.source.rbegin(),
+                                 source_view.source.rend(),
+                                 [](char c) { return c == '\n'; }
+                             )
+                             - source_view.source.rbegin();
+
+    mflex::Tokens tokens;
+    mflex::parse(source_view, tokens);
+
+    mfast::AST         ast;
+    mfast::NodeBuffers node_buffers;
+    mftype::TypeTable  type_table;
+    mfast::parse(tokens, ast, node_buffers, type_table);
+}
+
+int main() {
+    std::cout << "Running mattflow tests..." << std::endl;
+
+    test_lexer();
+
+    test_parser();
 
     std::cout << "Tests passed!" << std::endl;
 }
