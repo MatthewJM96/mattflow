@@ -53,7 +53,7 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
                 remaining_source_view.source.begin(),
                 remaining_source_view.source.end(),
                 results,
-                std::regex("^" + token_pattern)
+                std::regex("^(?:" + token_pattern + ")")
             );
 
             // Construct token if we matched.
