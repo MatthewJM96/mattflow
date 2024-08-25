@@ -106,7 +106,7 @@ namespace mattflow {
 
         struct NodeBuffers {
             std::vector<NodeInfo> node_info;
-            Node                  nil_node;
+            NodeInfo              entry_node;
 
             ASTVertexNodeMap vertex_node_map;
         };

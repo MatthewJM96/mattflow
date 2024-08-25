@@ -13,7 +13,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct NotOperatorNode : public Node {
-            // Empty.
+            NotOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            NotOperatorNode(const NotOperatorNode& node) : Node(node) { }
+
+            NotOperatorNode(NotOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -23,7 +31,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct NegationOperatorNode : public Node {
-            // Empty.
+            NegationOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            NegationOperatorNode(const NegationOperatorNode& node) : Node(node) { }
+
+            NegationOperatorNode(NegationOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -34,7 +50,17 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct MultiplicationOperatorNode : public Node {
-            // Empty.
+            MultiplicationOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            MultiplicationOperatorNode(const MultiplicationOperatorNode& node) :
+                Node(node) { }
+
+            MultiplicationOperatorNode(MultiplicationOperatorNode&& node) :
+                Node(node) { }
         };
 
         /**
@@ -45,7 +71,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct DivisionOperatorNode : public Node {
-            // Empty.
+            DivisionOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            DivisionOperatorNode(const DivisionOperatorNode& node) : Node(node) { }
+
+            DivisionOperatorNode(DivisionOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -56,7 +90,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct AdditionOperatorNode : public Node {
-            // Empty.
+            AdditionOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            AdditionOperatorNode(const AdditionOperatorNode& node) : Node(node) { }
+
+            AdditionOperatorNode(AdditionOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -67,7 +109,16 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct SubtractionOperatorNode : public Node {
-            // Empty.
+            SubtractionOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            SubtractionOperatorNode(const SubtractionOperatorNode& node) :
+                Node(node) { }
+
+            SubtractionOperatorNode(SubtractionOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -78,7 +129,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct GreaterOperatorNode : public Node {
-            // Empty.
+            GreaterOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            GreaterOperatorNode(const GreaterOperatorNode& node) : Node(node) { }
+
+            GreaterOperatorNode(GreaterOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -89,7 +148,17 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct GreaterOrEqualOperatorNode : public Node {
-            // Empty.
+            GreaterOrEqualOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            GreaterOrEqualOperatorNode(const GreaterOrEqualOperatorNode& node) :
+                Node(node) { }
+
+            GreaterOrEqualOperatorNode(GreaterOrEqualOperatorNode&& node) :
+                Node(node) { }
         };
 
         /**
@@ -100,7 +169,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct LesserOperatorNode : public Node {
-            // Empty.
+            LesserOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            LesserOperatorNode(const LesserOperatorNode& node) : Node(node) { }
+
+            LesserOperatorNode(LesserOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -111,7 +188,16 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct LesserOrEqualOperatorNode : public Node {
-            // Empty.
+            LesserOrEqualOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            LesserOrEqualOperatorNode(const LesserOrEqualOperatorNode& node) :
+                Node(node) { }
+
+            LesserOrEqualOperatorNode(LesserOrEqualOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -122,7 +208,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct EqualOperatorNode : public Node {
-            // Empty.
+            EqualOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            EqualOperatorNode(const EqualOperatorNode& node) : Node(node) { }
+
+            EqualOperatorNode(EqualOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -133,7 +227,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct NotEqualOperatorNode : public Node {
-            // Empty.
+            NotEqualOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            NotEqualOperatorNode(const NotEqualOperatorNode& node) : Node(node) { }
+
+            NotEqualOperatorNode(NotEqualOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -144,7 +246,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct OrOperatorNode : public Node {
-            // Empty.
+            OrOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            OrOperatorNode(const OrOperatorNode& node) : Node(node) { }
+
+            OrOperatorNode(OrOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -155,7 +265,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct AndOperatorNode : public Node {
-            // Empty.
+            AndOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            AndOperatorNode(const AndOperatorNode& node) : Node(node) { }
+
+            AndOperatorNode(AndOperatorNode&& node) : Node(node) { }
         };
 
         /**
@@ -165,7 +283,15 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct AssignmentOperatorNode : public Node {
-            // Empty.
+            AssignmentOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            AssignmentOperatorNode(const AssignmentOperatorNode& node) : Node(node) { }
+
+            AssignmentOperatorNode(AssignmentOperatorNode&& node) : Node(node) { }
         };
     }  // namespace ast
 }  // namespace mattflow

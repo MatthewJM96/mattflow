@@ -18,6 +18,15 @@ namespace mattflow {
          */
         struct IfNode : public Node {
             // Empty.
+            IfNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            IfNode(const IfNode& node) : Node(node) { }
+
+            IfNode(IfNode&& node) : Node(node) { }
         };
 
         /**
@@ -29,6 +38,15 @@ namespace mattflow {
          */
         struct ForNode : public Node {
             // Empty.
+            ForNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            ForNode(const ForNode& node) : Node(node) { }
+
+            ForNode(ForNode&& node) : Node(node) { }
         };
 
         /**
@@ -44,6 +62,15 @@ namespace mattflow {
          */
         struct RangeNode : public Node {
             // Empty.
+            RangeNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            RangeNode(const RangeNode& node) : Node(node) { }
+
+            RangeNode(RangeNode&& node) : Node(node) { }
         };
 
         /**
@@ -57,6 +84,15 @@ namespace mattflow {
          */
         struct WhileNode : public Node {
             // Empty.
+            WhileNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            WhileNode(const WhileNode& node) : Node(node) { }
+
+            WhileNode(WhileNode&& node) : Node(node) { }
         };
     }  // namespace ast
 }  // namespace mattflow

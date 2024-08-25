@@ -16,6 +16,22 @@ namespace mattflow {
         struct FunctionNode : public Node {
             mftype::Type*                     type;
             std::vector<mflit::IdentifierIdx> argument_names;
+
+            FunctionNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            FunctionNode(const FunctionNode& node) : Node(node) {
+                type           = node.type;
+                argument_names = node.argument_names;
+            }
+
+            FunctionNode(FunctionNode&& node) : Node(node) {
+                type           = node.type;
+                argument_names = std::move(node.argument_names);
+            }
         };
     }  // namespace ast
 }  // namespace mattflow

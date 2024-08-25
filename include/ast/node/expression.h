@@ -16,6 +16,15 @@ namespace mattflow {
          */
         struct BlockExprNode : public Node {
             // Empty.
+            BlockExprNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) { }
+
+            BlockExprNode(const BlockExprNode& node) : Node(node) { }
+
+            BlockExprNode(BlockExprNode&& node) : Node(node) { }
         };
     }  // namespace ast
 }  // namespace mattflow
