@@ -2,10 +2,22 @@
 #define __mattflow_ast_parse_h
 
 #include "ast/ast.h"
+#include "ast/node.h"
 #include "lex/token.h"
 
 namespace mattflow {
     namespace ast {
+        /**
+         * @brief Holds state for a parse call. The vertices buffer is built up
+         * per-node while the precedence and associativity are built up per layer
+         * whether block expression, parantheses expression, etc.
+         */
+        struct ParserState {
+            std::vector<Precedence>    precedence;
+            std::vector<Associativity> associativity;
+            std::vector<ASTVertex>     vertices;
+        };
+
         void parse(
             VALIN const mflex::Tokens& tokens,
             VALOUT AST&                ast,

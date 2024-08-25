@@ -344,8 +344,7 @@ void add_bool_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::Precedence& last_precedence,
-    VALOUT mfast::Associativity& last_associativity
+    VALOUT mfast::ParserState& parser_state
 ) {
     // Should only get here after knowing this is true.
     assert(
@@ -356,30 +355,108 @@ void add_bool_node(
     // No validation needed for bool node as only requirement is that we have seen a
     // boolean token - which to get here we certainly have.
 
-    if (parser_state.precedence[parser_state.cursor]
-        > mfast::parser_expects::EXPRESSION)
-    {
+    if (parser_state.precedence.back() == mfast::Precedence::NONE) {
+        debug_printf("Precedence wasn't an expected value (> NONE).");
         exit(1);
     }
 
-    // Increment parser cursor.
-    //   Layer below is: expression-accepting node.
-    parser_state.cursor += 1;
+    // Add vertex to AST for bool node, and push it onto the stack.
+    auto vertex = boost::add_vertex(ast);
+    parser_state.vertices.emplace_back(vertex);
 
-    // Add vertex to AST for if node, and push it onto the stack.
-    auto vertex                              = boost::add_vertex(ast);
-    auto prev_vertex                         = parser_state.vertex[parser_state.cursor];
-    parser_state.vertex[parser_state.cursor] = vertex;
+    // Add node info about bool node and associate with vertex in AST.
+    nodes.node_info.emplace_back(mfast::BoolNode{
+        curr_token, curr_token, curr_token->type == mflex::TokenType::TRUE });
+    nodes.vertex_node_map[vertex] = &nodes.node_info.back();
 
-    // Set parser expects.
-    parser_state.precedence[parser_state.cursor] = mfast::parser_expects::ASSIGNMENT;
+    // Move forward a token.
+    curr_token += 1;
+}
 
-    // Create the if node.
-    nodes.ifs.emplace_back(curr_token, curr_token);
-    nodes.vertex_node_map[vertex] = &nodes.ifs.back();
+void add_null_node(
+    VALINOUT mflex::Tokens::const_iterator& curr_token,
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state
+) {
+    // Should only get here after knowing this is true.
+    assert(curr_token->type == mflex::TokenType::NIL);
 
-    // Link if node to previous.
-    boost::add_edge(prev_vertex, vertex, ast);
+    // No validation needed for bool node as only requirement is that we have seen a
+    // boolean token - which to get here we certainly have.
+
+    if (parser_state.precedence.back() == mfast::Precedence::NONE) {
+        debug_printf("Precedence wasn't an expected value (> NONE).");
+        exit(1);
+    }
+
+    // Add vertex to AST for bool node, and push it onto the stack.
+    auto vertex = boost::add_vertex(ast);
+    parser_state.vertices.emplace_back(vertex);
+
+    // Add node info about bool node and associate with vertex in AST.
+    nodes.node_info.emplace_back(mfast::NullNode{ curr_token, curr_token });
+    nodes.vertex_node_map[vertex] = &nodes.node_info.back();
+
+    // Move forward a token.
+    curr_token += 1;
+}
+
+void add_number_node(
+    VALINOUT mflex::Tokens::const_iterator& curr_token,
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state
+) {
+    // Should only get here after knowing this is true.
+    assert(curr_token->type == mflex::TokenType::NUMBER);
+
+    // No validation needed for bool node as only requirement is that we have seen a
+    // boolean token - which to get here we certainly have.
+
+    if (parser_state.precedence.back() == mfast::Precedence::NONE) {
+        debug_printf("Precedence wasn't an expected value (> NONE).");
+        exit(1);
+    }
+
+    // Add vertex to AST for bool node, and push it onto the stack.
+    auto vertex = boost::add_vertex(ast);
+    parser_state.vertices.emplace_back(vertex);
+
+    // Add node info about bool node and associate with vertex in AST.
+    nodes.node_info.emplace_back(mfast::NumberNode{
+        curr_token, curr_token, curr_token->number });
+    nodes.vertex_node_map[vertex] = &nodes.node_info.back();
+
+    // Move forward a token.
+    curr_token += 1;
+}
+
+void add_string_node(
+    VALINOUT mflex::Tokens::const_iterator& curr_token,
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state
+) {
+    // Should only get here after knowing this is true.
+    assert(curr_token->type == mflex::TokenType::STRING);
+
+    // No validation needed for bool node as only requirement is that we have seen a
+    // boolean token - which to get here we certainly have.
+
+    if (parser_state.precedence.back() == mfast::Precedence::NONE) {
+        debug_printf("Precedence wasn't an expected value (> NONE).");
+        exit(1);
+    }
+
+    // Add vertex to AST for bool node, and push it onto the stack.
+    auto vertex = boost::add_vertex(ast);
+    parser_state.vertices.emplace_back(vertex);
+
+    // Add node info about bool node and associate with vertex in AST.
+    nodes.node_info.emplace_back(mfast::StringNode{
+        curr_token, curr_token, std::move(curr_token->string) });
+    nodes.vertex_node_map[vertex] = &nodes.node_info.back();
 
     // Move forward a token.
     curr_token += 1;
@@ -391,21 +468,20 @@ void mfast::parse(
     VALOUT NodeBuffers&        nodes,
     VALOUT mftype::TypeTable& type_table
 ) {
-    (void)tokens;
+    (void)type_table;
 
     // Ensure buffers are clear for building fresh AST.
     ast.clear();
     nodes.node_info.clear();
     nodes.nil_node = {};
 
-    // Prepare stack for precedence, associativity, and last attachable vertex.
-    Precedence             precedence    = NO_PRECENDENCE;
-    Associativity          associativity = Associativity::ANY;
-    std::vector<ASTVertex> vertices;
-
-    // Add top-level block node for module.
-    vertices.emplace_back(boost::add_vertex(ast));
-    nodes.vertex_node_map[vertices.back()] = &nodes.nil_node;
+    // Prepare stack for precedence, associativity, and last attachable vertex with the
+    // top-level block node for module.
+    ParserState parser_state;
+    parser_state.precedence.emplace_back(Precedence::NONE);
+    parser_state.associativity.emplace_back(Associativity::NONE);
+    parser_state.vertices.emplace_back(boost::add_vertex(ast));
+    nodes.vertex_node_map[parser_state.vertices.back()] = &nodes.nil_node;
 
     // Iterate tokens, parsing as appropriate.
     auto it = tokens.begin();
@@ -525,43 +601,99 @@ void mfast::parse(
             //         add_variable_node(...);
             //         continue;
             //     }
+            case mflex::TokenType::IF:
+            case mflex::TokenType::THEN:
+            case mflex::TokenType::ELIF:
+            case mflex::TokenType::ELSE:
+            case mflex::TokenType::FOR:
+            case mflex::TokenType::IN:
+            case mflex::TokenType::WHERE:
+            case mflex::TokenType::WHILE:
+            case mflex::TokenType::DO:
+            case mflex::TokenType::PRINT:
+            case mflex::TokenType::LEFT_BRACE:
+            case mflex::TokenType::RIGHT_BRACE:
+            case mflex::TokenType::AND:
+            case mflex::TokenType::OR:
+            case mflex::TokenType::EQUALS:
+            case mflex::TokenType::NOT_EQUALS:
+            case mflex::TokenType::LESS_THAN:
+            case mflex::TokenType::LESS_THAN_OR_EQUAL_TO:
+            case mflex::TokenType::GREATER_THAN:
+            case mflex::TokenType::GREATER_THAN_OR_EQUAL_TO:
+            case mflex::TokenType::PLUS:
+            case mflex::TokenType::MINUS:
+            case mflex::TokenType::SLASH:
+            case mflex::TokenType::STAR:
+            case mflex::TokenType::NOT:
+            case mflex::TokenType::IDENTIFIER:
+            case mflex::TokenType::LEFT_PAREN:
+            case mflex::TokenType::RIGHT_PAREN:
+            case mflex::TokenType::LEFT_BRACKET:
+            case mflex::TokenType::RIGHT_BRACKET:
+            case mflex::TokenType::COMMA:
+            case mflex::TokenType::RANGE:
+            case mflex::TokenType::DOT:
+            case mflex::TokenType::ARROW:
+            case mflex::TokenType::ASSIGN_TYPE:
+            case mflex::TokenType::ASSIGN_VALUE:
+            case mflex::TokenType::MATCH:
+            case mflex::TokenType::STRUCT:
+            case mflex::TokenType::CHAR:
+            case mflex::TokenType::BOOL:
+            case mflex::TokenType::INT:
+            case mflex::TokenType::INT8:
+            case mflex::TokenType::INT16:
+            case mflex::TokenType::INT32:
+            case mflex::TokenType::INT64:
+            case mflex::TokenType::UINT:
+            case mflex::TokenType::UINT8:
+            case mflex::TokenType::UINT16:
+            case mflex::TokenType::UINT32:
+            case mflex::TokenType::UINT64:
+            case mflex::TokenType::FLOAT32:
+            case mflex::TokenType::FLOAT64:
+            case mflex::TokenType::SENTINEL:
+                continue;
             case mflex::TokenType::TRUE:
             case mflex::TokenType::FALSE:
                 // Add Boolean vertex, pop precedence.
-                add_bool_node(...);
+                add_bool_node(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::NIL:
                 // Add null vertex, pop precedence.
-                add_null_node(...);
+                add_null_node(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::NUMBER:
                 // Add number vertex, pop precedence.
-                add_number_node(...);
+                add_number_node(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::STRING:
                 // Add string vertex, pop precedence.
-                add_string_node(...);
+                add_string_node(it, ast, nodes, parser_state);
                 continue;
-            case mflex::TokenType::LEFT_PAREN:
-                // Add paren vertex, push precedence parser_expects::ASSIGNMENT.
-                add_paren_node(...);
-                continue;
-            case mflex::TokenType::LEFT_BRACKET:
-                // TODO(Matthew): ambiguity as could be number range or list.
-                //                  need a way to decide which we are seeing here.
-                //                  are we happy with this approach?
-                if ((it + 2)->type == mflex::TokenType::RANGE) {
-                    // Add range vertex, push precedence parser_expects::PRIMARY.
-                    add_number_range_node(...);
-                } else {
-                    // Add list vertex, push precedence parser_expects::EXPRESSION.
-                    add_list_node(...);
-                }
-                continue;
+                // case mflex::TokenType::LEFT_PAREN:
+                //     // Add paren vertex, push precedence parser_expects::ASSIGNMENT.
+                //     add_paren_node(it, ast, nodes, parser_state);
+                //     continue;
+                // case mflex::TokenType::LEFT_BRACKET:
+                //     // TODO(Matthew): ambiguity as could be number range or list.
+                //     //                  need a way to decide which we are seeing
+                //     here.
+                //     //                  are we happy with this approach?
+                //     if ((it + 2)->type == mflex::TokenType::RANGE) {
+                //         // Add range vertex, push precedence parser_expects::PRIMARY.
+                //         add_number_range_node(it, ast, nodes, parser_state);
+                //     } else {
+                //         // Add list vertex, push precedence
+                //         parser_expects::EXPRESSION. add_list_node(it, ast, nodes,
+                //         parser_state);
+                //     }
+                //     continue;
         }
     }
 
     // If we get here and cursor is not pointing to top-level block, then something has
     // gone wrong in parsing.
-    assert(vertices.size() == 0);
+    assert(parser_state.vertices.size() == 0);
 }
