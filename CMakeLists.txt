@@ -87,9 +87,9 @@ endif()
 add_library(mattflow
     "${PROJECT_SOURCE_DIR}/src/ast/parse.cpp"
     "${PROJECT_SOURCE_DIR}/src/lex/lexer.cpp"
+    "${PROJECT_SOURCE_DIR}/src/literal/identifier.cpp"
+    "${PROJECT_SOURCE_DIR}/src/literal/number.cpp"
     "${PROJECT_SOURCE_DIR}/src/type/number.cpp"
-    "${PROJECT_SOURCE_DIR}/src/identifier.cpp"
-    "${PROJECT_SOURCE_DIR}/src/number.cpp"
     "${PROJECT_SOURCE_DIR}/src/type.cpp"
 )
 
