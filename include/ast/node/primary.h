@@ -7,6 +7,24 @@
 namespace mattflow {
     namespace ast {
         /**
+         * @brief Node reflecting a null literal.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         */
+        struct NullNode : public Node {
+            // Empty.
+        };
+
+        /**
+         * @brief Node reflecting a boolean literal.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         */
+        struct BoolNode : public Node {
+            bool value;
+        };
+
+        /**
          * @brief Node reflecting a number literal.
          *
          * @inedge operator | paren expression | assignment | block expression

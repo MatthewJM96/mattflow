@@ -6,6 +6,7 @@
 #include "ast/node/node.h"
 
 #include "ast/node/control_flow.h"
+#include "ast/node/expression.h"
 #include "ast/node/function.h"
 #include "ast/node/operator.h"
 #include "ast/node/primary.h"
@@ -18,6 +19,7 @@ namespace mattflow {
         /* clang-format off */
 
         using NodeInfo = std::variant<
+            BlockExprNode,                                      // Expression
             IfNode, ForNode, RangeNode, WhileNode,              // Control Flow
             StructNode, StructFieldNode,                        // Struct
             FunctionNode,                                       // Function
@@ -29,7 +31,8 @@ namespace mattflow {
             SubtractionOperatorNode, AdditionOperatorNode,      // Term
             DivisionOperatorNode, MultiplicationOperatorNode,   // Factor
             NotOperatorNode, NegationOperatorNode,              // Unary
-            NumberNode, StringNode, IdentifierNode              // Primary
+            BoolNode, NumberNode, StringNode, IdentifierNode,
+            NullNode                                            // Primary
         >;
 
         /* clang-format on */
