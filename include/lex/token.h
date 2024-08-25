@@ -4,6 +4,7 @@
 #include "lex/token_type.h"
 #include "literal/identifier.h"
 #include "literal/number.h"
+#include "literal/string.h"
 #include "source.h"
 
 namespace mattflow {
@@ -13,7 +14,7 @@ namespace mattflow {
 
             // One required if token is of kind literal.
             mflit::IdentifierIdx identifier_idx;
-            std::string          string;
+            mflit::StringIdx     string_idx;
             mflit::Number        number;
 
             // How will modules work? 1:1 with files?
