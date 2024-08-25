@@ -1,3 +1,6 @@
 [requires]
 boost/1.85.0
 concurrentqueue/1.0.3
+
+[generators]
+CMakeDeps
