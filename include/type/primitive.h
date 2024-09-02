@@ -1,11 +1,15 @@
-#ifndef __mattflow_type_number_h
-#define __mattflow_type_number_h
+#ifndef __mattflow_type_primitive_h
+#define __mattflow_type_primitive_h
 
 #include "lex/token_type.h"
 
 namespace mattflow {
     namespace type {
-        enum class NumberType : int16_t {
+        enum class PrimitiveType : int16_t {
+            LOWER_SENTINEL = static_cast<int16_t>(mflex::TokenType::BOOL) - 1,
+            // Sentinel Guard
+            NIL     = static_cast<int16_t>(mflex::TokenType::NIL),
+            BOOL    = static_cast<int16_t>(mflex::TokenType::BOOL),
             CHAR    = static_cast<int16_t>(mflex::TokenType::CHAR),
             INT     = static_cast<int16_t>(mflex::TokenType::INT),
             INT8    = static_cast<int16_t>(mflex::TokenType::INT8),
@@ -19,11 +23,13 @@ namespace mattflow {
             UINT64  = static_cast<int16_t>(mflex::TokenType::UINT64),
             FLOAT32 = static_cast<int16_t>(mflex::TokenType::FLOAT32),
             FLOAT64 = static_cast<int16_t>(mflex::TokenType::FLOAT64),
+            // Sentinel Guard
+            UPPER_SENTINEL = static_cast<int16_t>(mflex::TokenType::FLOAT64) + 1
         };
 
-        NumberType cast_token_to_intrinsic(mflex::TokenType tok);
+        PrimitiveType cast_token_to_intrinsic(mflex::TokenType tok);
     }  // namespace type
 }  // namespace mattflow
 namespace mftype = mattflow::type;
 
-#endif  // __mattflow_type_number_h
+#endif  // __mattflow_type_primitive_h

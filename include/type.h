@@ -3,27 +3,44 @@
 
 #include "lex/token.h"
 #include "type/function.h"
-#include "type/number.h"
+#include "type/primitive.h"
 #include "type/struct.h"
 #include "type/type.h"
 
 namespace mattflow {
     namespace type {
-        using Type
-            = std::variant<FunctionType, NumberType, StructType, TypeType, void*>;
+        /**
+         * @brief Refers to any unresolved type.
+         *
+         * TODO: do we need to store any state to aid resolution?
+         */
+        struct UnresolvedType {
+            friend constexpr bool
+            operator==(const UnresolvedType&, const UnresolvedType&) {
+                return true;
+            }
+        };
 
-        class TypeTable {
+        using UserType = std::variant<FunctionType, StructType, UnresolvedType>;
+        using Type     = std::variant<UserType, PrimitiveType, TypeType>;
+
+        class IdentifierTypeTable {
         public:
-            TypeTable() {
+            using Map      = std::unordered_map<mflit::IdentifierIdx, Type>;
+            using MapEntry = Map::const_iterator;
+
+            IdentifierTypeTable() {
                 // Empty.
             }
 
-            MATTFLOW_NON_COPYABLE(TypeTable);
+            MATTFLOW_NON_COPYABLE(IdentifierTypeTable);
 
-            Type* register_type_from_token(const mflex::Token& tok);
+            MapEntry register_identifier(mflit::IdentifierIdx identifier);
+
+            std::tuple<bool, mftype::IdentifierTypeTable::MapEntry>
+            associate_type(mflit::IdentifierIdx identifier, const mflex::Token& token);
         protected:
-            std::vector<Type>                               m_types;
-            std::unordered_map<mflit::IdentifierIdx, Type*> m_ident_type_map;
+            Map m_ident_type_map;
         };
     }  // namespace type
 }  // namespace mattflow
