@@ -340,6 +340,30 @@
 //     ++curr_token;
 // }
 
+void add_fp64_node(
+    VALINOUT mflex::Tokens::const_iterator& curr_token,
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state
+) {
+    // Should only get here after knowing this is true.
+    assert(curr_token->type == mflex::TokenType::FLOAT64);
+
+    // No validation needed for bool node as only requirement is that we have seen a
+    // boolean token - which to get here we certainly have.
+
+    // Add vertex to AST for bool node, and push it onto the stack.
+    auto vertex = boost::add_vertex(ast);
+    parser_state.vertices.emplace_back(vertex);
+
+    // Add node info about bool node and associate with vertex in AST.
+    nodes.vertex_node_map[vertex] = &nodes.node_info.emplace_back(mfast::BoolNode{
+        curr_token, curr_token, curr_token->type == mflex::TokenType::TRUE });
+
+    // Move forward a token.
+    curr_token += 1;
+}
+
 void add_bool_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALOUT mfast::AST& ast,
@@ -618,6 +642,8 @@ void mfast::parse(
             case mflex::TokenType::ASSIGN_VALUE:
             case mflex::TokenType::MATCH:
             case mflex::TokenType::STRUCT:
+            case mflex::TokenType::SENTINEL:
+                break;
             case mflex::TokenType::CHAR:
             case mflex::TokenType::BOOL:
             case mflex::TokenType::INT:
@@ -632,8 +658,9 @@ void mfast::parse(
             case mflex::TokenType::UINT64:
             case mflex::TokenType::FLOAT32:
             case mflex::TokenType::FLOAT64:
-            case mflex::TokenType::SENTINEL:
-                break;
+                // Add FP64 vertex.
+                add_fp64_node(it, ast, nodes, parser_state);
+                continue;
             case mflex::TokenType::TRUE:
             case mflex::TokenType::FALSE:
                 // Add Boolean vertex, pop precedence.
