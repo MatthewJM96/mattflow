@@ -663,19 +663,19 @@ void mfast::parse(
                 continue;
             case mflex::TokenType::TRUE:
             case mflex::TokenType::FALSE:
-                // Add Boolean vertex, pop precedence.
+                // Add Boolean vertex.
                 add_bool_node(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::NIL:
-                // Add null vertex, pop precedence.
+                // Add null vertex.
                 add_null_node(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::NUMBER:
-                // Add number vertex, pop precedence.
+                // Add number vertex.
                 add_number_node(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::STRING:
-                // Add string vertex, pop precedence.
+                // Add string vertex.
                 add_string_node(it, ast, nodes, parser_state);
                 continue;
                 // case mflex::TokenType::LEFT_PAREN:
