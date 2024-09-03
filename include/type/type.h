@@ -4,6 +4,10 @@
 namespace mattflow {
     namespace type {
         struct TypeType {
+            friend constexpr bool operator==(const TypeType& lhs, const TypeType& rhs) {
+                return lhs.type == rhs.type;
+            }
+
             void* type;
         };
     }  // namespace type
