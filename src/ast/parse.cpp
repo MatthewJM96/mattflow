@@ -199,7 +199,7 @@
 //     VALOUT mfast::AST& ast,
 //     VALOUT mfast::NodeBuffers& nodes,
 //     VALOUT mfast::ParserState& parser_state,
-//     VALINOUT mftype::TypeTable& type_table
+//     VALINOUT mftype::IdentifierTypeTable& type_table
 // ) {
 //     // No validation needed here, the current token will be an identifier token which
 //     is
@@ -238,7 +238,7 @@
 //     VALOUT mfast::AST& ast,
 //     VALOUT mfast::NodeBuffers& nodes,
 //     VALOUT mfast::ParserState& parser_state,
-//     VALINOUT mftype::TypeTable& type_table
+//     VALINOUT mftype::IdentifierTypeTable& type_table
 // ) {
 //     // No validation needed here, the current token will be the value assignment
 //     // character "=".
@@ -262,7 +262,7 @@
 //     VALOUT mfast::AST& ast,
 //     VALOUT mfast::NodeBuffers& nodes,
 //     VALOUT mfast::ParserState& parser_state,
-//     VALINOUT mftype::TypeTable& type_table
+//     VALINOUT mftype::IdentifierTypeTable& type_table
 // ) {
 //     // No validation needed here, the current token will be a string token which is
 //     // assured to be valid during lexing.
@@ -288,7 +288,7 @@
 //     VALOUT mfast::AST& ast,
 //     VALOUT mfast::NodeBuffers& nodes,
 //     VALOUT mfast::ParserState& parser_state,
-//     VALINOUT mftype::TypeTable& type_table
+//     VALINOUT mftype::IdentifierTypeTable& type_table
 // ) {
 //     // TODO(Matthew): implement correctly... just copied add_struct_node.
 
@@ -320,7 +320,7 @@
 //     VALOUT mfast::AST& ast,
 //     VALOUT mfast::NodeBuffers& nodes,
 //     VALOUT mfast::ParserState& parser_state,
-//     VALINOUT mftype::TypeTable& type_table
+//     VALINOUT mftype::IdentifierTypeTable& type_table
 // ) {
 //     // No validation needed for first token, guaranteed to be .
 //     assert(curr_token->type == mflex::TokenType::ASSIGN_TYPE);
@@ -467,7 +467,7 @@ void mfast::parse(
     VALIN const mflex::Tokens& tokens,
     VALOUT AST&                ast,
     VALOUT NodeBuffers&        nodes,
-    VALOUT mftype::TypeTable& type_table
+    VALOUT mftype::IdentifierTypeTable& type_table
 ) {
     (void)type_table;
 

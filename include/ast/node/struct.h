@@ -15,10 +15,6 @@ namespace mattflow {
          */
         struct StructNode : public Node {
             mftype::Type* type;
-
-            StructNode(const StructNode& node) : Node(node) { type = node.type; }
-
-            StructNode(StructNode&& node) : Node(node) { type = node.type; }
         };
 
         /**
@@ -29,16 +25,6 @@ namespace mattflow {
         struct StructFieldNode : public Node {
             mflit::IdentifierIdx name;
             mftype::Type*        type;
-
-            StructFieldNode(const StructFieldNode& node) : Node(node) {
-                name = node.name;
-                type = node.type;
-            }
-
-            StructFieldNode(StructFieldNode&& node) : Node(node) {
-                name = node.name;
-                type = node.type;
-            }
         };
     }  // namespace ast
 }  // namespace mattflow

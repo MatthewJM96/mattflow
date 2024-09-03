@@ -22,7 +22,7 @@ namespace mattflow {
             VALIN const mflex::Tokens& tokens,
             VALOUT AST&                ast,
             VALOUT NodeBuffers&        nodes,
-            VALOUT mftype::TypeTable& type_table
+            VALOUT mftype::IdentifierTypeTable& type_table
         );
     }  // namespace ast
 }  // namespace mattflow
