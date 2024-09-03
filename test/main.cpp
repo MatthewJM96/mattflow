@@ -141,9 +141,9 @@ void test_parser() {
     mflex::Tokens tokens;
     mflex::parse(source_view, tokens);
 
-    mfast::AST         ast;
-    mfast::NodeBuffers node_buffers;
-    mftype::TypeTable  type_table;
+    mfast::AST                  ast;
+    mfast::NodeBuffers          node_buffers;
+    mftype::IdentifierTypeTable type_table;
     mfast::parse(tokens, ast, node_buffers, type_table);
 
     bool skip_first = true;
