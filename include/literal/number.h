@@ -12,6 +12,8 @@ namespace mattflow {
             Number();
             Number(std::string_view repr);
 
+            bool is_bad() { return m_is_bad; }
+
             bool is_floating_point() { return m_is_floating_point; }
 
             template <typename Type>
@@ -26,6 +28,13 @@ namespace mattflow {
                 return *reinterpret_cast<Type*>(reinterpret_cast<void*>(&m_int_value));
             }
         protected:
+        protected:
+            void parse_floating_point_repr(std::string_view repr);
+            void parse_scientific_notation_repr(std::string_view repr);
+            void parse_integral_repr(std::string_view repr);
+            void parse_repr(std::string_view repr);
+
+            bool m_is_bad;
             bool m_is_floating_point;
 
             union {
