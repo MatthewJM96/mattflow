@@ -23,7 +23,7 @@ namespace mattflow {
             boost::vecS,
             boost::vecS,
             boost::directedS,
-            boost::property<vertex_data_t, void*>>;
+            boost::property<vertex_data_t, size_t>>;
 
         using ASTVertex = AST::vertex_descriptor;
 

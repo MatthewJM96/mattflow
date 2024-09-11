@@ -357,7 +357,8 @@ void add_fp64_node(
     parser_state.vertices.emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
-    nodes.vertex_node_map[vertex] = &nodes.node_info.emplace_back(mfast::BoolNode{
+    nodes.vertex_node_map[vertex] = nodes.node_info.size();
+    nodes.node_info.emplace_back(mfast::BoolNode{
         curr_token, curr_token, curr_token->type == mflex::TokenType::TRUE });
 
     // Move forward a token.
@@ -384,7 +385,8 @@ void add_bool_node(
     parser_state.vertices.emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
-    nodes.vertex_node_map[vertex] = &nodes.node_info.emplace_back(mfast::BoolNode{
+    nodes.vertex_node_map[vertex] = nodes.node_info.size();
+    nodes.node_info.emplace_back(mfast::BoolNode{
         curr_token, curr_token, curr_token->type == mflex::TokenType::TRUE });
 
     // Move forward a token.
@@ -408,8 +410,8 @@ void add_null_node(
     parser_state.vertices.emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
-    nodes.vertex_node_map[vertex]
-        = &nodes.node_info.emplace_back(mfast::NullNode{ curr_token, curr_token });
+    nodes.vertex_node_map[vertex] = nodes.node_info.size();
+    nodes.node_info.emplace_back(mfast::NullNode{ curr_token, curr_token });
 
     // Move forward a token.
     curr_token += 1;
@@ -432,7 +434,8 @@ void add_number_node(
     parser_state.vertices.emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
-    nodes.vertex_node_map[vertex] = &nodes.node_info.emplace_back(mfast::NumberNode{
+    nodes.vertex_node_map[vertex] = nodes.node_info.size();
+    nodes.node_info.emplace_back(mfast::NumberNode{
         curr_token, curr_token, curr_token->number });
 
     // Move forward a token.
@@ -456,7 +459,8 @@ void add_string_node(
     parser_state.vertices.emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
-    nodes.vertex_node_map[vertex] = &nodes.node_info.emplace_back(mfast::StringNode{
+    nodes.vertex_node_map[vertex] = nodes.node_info.size();
+    nodes.node_info.emplace_back(mfast::StringNode{
         curr_token, curr_token, curr_token->string_idx });
 
     // Move forward a token.
@@ -474,8 +478,8 @@ void mfast::parse(
     // Ensure buffers are clear for building fresh AST.
     ast.clear();
     nodes.node_info.clear();
-    nodes.entry_node      = BlockExprNode{ tokens.begin(), tokens.begin() };
     nodes.vertex_node_map = boost::get(vertex_data, ast);
+    nodes.node_info.emplace_back(BlockExprNode{ tokens.begin(), tokens.begin() });
 
     // Prepare stack for precedence, associativity, and last attachable vertex with the
     // top-level block node for module.
@@ -483,7 +487,7 @@ void mfast::parse(
     parser_state.precedence.emplace_back(Precedence::NONE);
     parser_state.associativity.emplace_back(Associativity::NONE);
     parser_state.vertices.emplace_back(boost::add_vertex(ast));
-    nodes.vertex_node_map[parser_state.vertices.back()] = &nodes.entry_node;
+    nodes.vertex_node_map[parser_state.vertices.back()] = 0;
 
     // Iterate tokens, parsing as appropriate.
     auto it = tokens.begin();
