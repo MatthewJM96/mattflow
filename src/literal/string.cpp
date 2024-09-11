@@ -9,7 +9,7 @@ mflit::StringIdx mflit::StringTable::try_insert(std::string&& string) {
 
     if (!m_hash_idx_map.contains(hash)) {
         m_hash_idx_map[hash] = m_strings.size();
-        m_strings.emplace_back(std::string(string));
+        m_strings.emplace_back(std::forward<std::string>(string));
     }
 
     return m_hash_idx_map[hash];

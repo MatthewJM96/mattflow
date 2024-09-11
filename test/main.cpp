@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "lex/lexer.h"
+#include "literal/string.h"
 
 #include "ast/parse.h"
 
@@ -138,6 +139,8 @@ void test_parser() {
                              )
                              - source_view.source.rbegin();
 
+    auto& str_table = mflit::StringTable::get();
+
     mflex::Tokens tokens;
     mflex::parse(source_view, tokens);
 
@@ -156,7 +159,7 @@ void test_parser() {
         mfast::NodeInfo __node_info
             = node_buffers.node_info[node_buffers.vertex_node_map[v]];
         std::visit(
-            [](auto&& node_info) {
+            [&str_table](auto&& node_info) {
                 using T = std::decay_t<decltype(node_info)>;
                 if constexpr (std::is_same_v<T, mfast::BoolNode>) {
                     if (node_info.value) {
@@ -171,7 +174,7 @@ void test_parser() {
                         std::cout << node_info.value.template as<int>() << " ";
                     }
                 } else if constexpr (std::is_same_v<T, mfast::StringNode>) {
-                    std::cout << node_info.value << " ";
+                    std::cout << "\"" << str_table.get(node_info.value) << "\" ";
                 } else if constexpr (std::is_same_v<T, mfast::NullNode>) {
                     std::cout << "null ";
                 }
