@@ -20,7 +20,7 @@ namespace mattflow {
          *
          * @inedge operator | paren expression | assignment | block expression
          */
-        struct BoolNode : public Node {
+        struct BoolValNode : public Node {
             bool value;
         };
 
@@ -29,7 +29,7 @@ namespace mattflow {
          *
          * @inedge operator | paren expression | assignment | block expression
          */
-        struct NumberNode : public Node {
+        struct NumberValNode : public Node {
             mflit::Number value;
         };
 
@@ -38,7 +38,7 @@ namespace mattflow {
          *
          * @inedge operator | paren expression | assignment | block expression
          */
-        struct StringNode : public Node {
+        struct StringValNode : public Node {
             mflit::StringIdx value;
         };
 

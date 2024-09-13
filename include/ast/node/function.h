@@ -1,9 +1,9 @@
 #ifndef __mattflow_ast_node_function_h
 #define __mattflow_ast_node_function_h
 
+#include "../../type.h"
 #include "ast/node/node.h"
 #include "literal/identifier.h"
-#include "type.h"
 
 namespace mattflow {
     namespace ast {

@@ -161,19 +161,19 @@ void test_parser() {
         std::visit(
             [&str_table](auto&& node_info) {
                 using T = std::decay_t<decltype(node_info)>;
-                if constexpr (std::is_same_v<T, mfast::BoolNode>) {
+                if constexpr (std::is_same_v<T, mfast::BoolValNode>) {
                     if (node_info.value) {
                         std::cout << "true ";
                     } else {
                         std::cout << "false ";
                     }
-                } else if constexpr (std::is_same_v<T, mfast::NumberNode>) {
+                } else if constexpr (std::is_same_v<T, mfast::NumberValNode>) {
                     if (node_info.value.is_floating_point()) {
                         std::cout << node_info.value.template as<float>() << " ";
                     } else {
                         std::cout << node_info.value.template as<int>() << " ";
                     }
-                } else if constexpr (std::is_same_v<T, mfast::StringNode>) {
+                } else if constexpr (std::is_same_v<T, mfast::StringValNode>) {
                     std::cout << "\"" << str_table.get(node_info.value) << "\" ";
                 } else if constexpr (std::is_same_v<T, mfast::NullNode>) {
                     std::cout << "null ";
