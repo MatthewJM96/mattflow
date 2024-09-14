@@ -536,7 +536,7 @@ void mfast::parse(
             case mflex::TokenType::NIL:
                 // Add null vertex.
                 add_non_operating_node(
-                    it, mfast::NilNode{ it, it }, ast, nodes, parser_state
+                    it, mfast::NullNode{ it, it }, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::CHAR:

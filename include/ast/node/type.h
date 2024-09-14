@@ -6,15 +6,6 @@
 namespace mattflow {
     namespace ast {
         /**
-         * @brief Node reflecting the null type.
-         *
-         * @inedge TODO
-         */
-        struct NilNode : public Node {
-            // Empty.
-        };
-
-        /**
          * @brief Node reflecting the Boolean type.
          *
          * @inedge TODO

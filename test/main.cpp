@@ -177,6 +177,8 @@ void test_parser() {
                     std::cout << "\"" << str_table.get(node_info.value) << "\" ";
                 } else if constexpr (std::is_same_v<T, mfast::NullNode>) {
                     std::cout << "null ";
+                } else if constexpr (std::is_same_v<T, mfast::Int64Node>) {
+                    std::cout << "int64" << std::endl;
                 }
             },
             __node_info

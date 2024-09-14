@@ -103,10 +103,10 @@ namespace mattflow {
             NotOperatorNode, NegationOperatorNode,              // Unary
             BoolValNode, NumberValNode, StringValNode,
             IdentifierNode, NullNode,                           // Primary
-            NilNode, BoolNode, CharNode, IntNode, Int8Node,
-            Int16Node, Int32Node, Int64Node, UIntNode,
-            UInt8Node, UInt16Node, UInt32Node, UInt64Node,
-            Float32Node, Float64Node                            // Type
+            BoolNode, CharNode, IntNode, Int8Node, Int16Node,
+            Int32Node, Int64Node, UIntNode, UInt8Node,
+            UInt16Node, UInt32Node, UInt64Node, Float32Node,
+            Float64Node                                         // Type
         >;
 
         /* clang-format on */
