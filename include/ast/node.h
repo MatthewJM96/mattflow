@@ -29,7 +29,8 @@ namespace mattflow {
             SUBTRACTION, ADDITION,                              // Term
             DIVISION, MULTIPLICATION,                           // Factor
             NOT, NEGATION,                                      // Unary
-            BOOL, NUMBER, STRING, IDENTIFIER, NIL               // Primary
+            BOOL, NUMBER, STRING, IDENTIFIER, NIL,              // Primary
+            PRIMITIVE_TYPE                                      // Type
         };
 
         /* clang-format on */
@@ -84,6 +85,7 @@ namespace mattflow {
             {           NodeType::NUMBER,       { Precedence::NONE, Associativity::NONE  }},
             {           NodeType::STRING,       { Precedence::NONE, Associativity::NONE  }},
             {       NodeType::IDENTIFIER,       { Precedence::NONE, Associativity::NONE  }},
+            {   NodeType::PRIMITIVE_TYPE,       { Precedence::NONE, Associativity::NONE  }},
         };
 
         using NodeInfo = std::variant<
