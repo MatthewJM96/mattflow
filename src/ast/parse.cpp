@@ -502,7 +502,9 @@ void mfast::parse(
             case mflex::TokenType::WHERE:
             case mflex::TokenType::WHILE:
             case mflex::TokenType::DO:
+            case mflex::TokenType::MATCH:
             case mflex::TokenType::PRINT:
+            case mflex::TokenType::STRUCT:
             case mflex::TokenType::LEFT_BRACE:
             case mflex::TokenType::RIGHT_BRACE:
             case mflex::TokenType::AND:
@@ -515,6 +517,8 @@ void mfast::parse(
             case mflex::TokenType::GREATER_THAN_OR_EQUAL_TO:
             case mflex::TokenType::PLUS:
             case mflex::TokenType::MINUS:
+                // TODO(Matthew): for now this token can be both repr of unary and
+                //                binary operations (subtraction and negation).
             case mflex::TokenType::SLASH:
             case mflex::TokenType::STAR:
             case mflex::TokenType::NOT:
@@ -529,8 +533,6 @@ void mfast::parse(
             case mflex::TokenType::ARROW:
             case mflex::TokenType::ASSIGN_TYPE:
             case mflex::TokenType::ASSIGN_VALUE:
-            case mflex::TokenType::MATCH:
-            case mflex::TokenType::STRUCT:
             case mflex::TokenType::SENTINEL:
                 break;
             case mflex::TokenType::NIL:
