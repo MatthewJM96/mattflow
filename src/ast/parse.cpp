@@ -5,7 +5,7 @@
 
 #include "ast/parse.h"
 
-static void add_single_node(
+static void add_non_operating_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALIN mfast::NodeInfo&& node_info,
     VALOUT mfast::AST& ast,
@@ -353,308 +353,6 @@ static void add_single_node(
 //     ++curr_token;
 // }
 
-void add_nil_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::NIL);
-
-    add_single_node(
-        curr_token, mfast::NilNode{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_bool_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::BOOL);
-
-    add_single_node(
-        curr_token, mfast::BoolNode{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_char_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::CHAR);
-
-    add_single_node(
-        curr_token, mfast::CharNode{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_int_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::INT);
-
-    add_single_node(
-        curr_token, mfast::IntNode{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_int8_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::INT8);
-
-    add_single_node(
-        curr_token, mfast::Int8Node{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_int16_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::INT16);
-
-    add_single_node(
-        curr_token, mfast::Int16Node{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_int32_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::INT32);
-
-    add_single_node(
-        curr_token, mfast::Int32Node{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_int64_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::INT64);
-
-    add_single_node(
-        curr_token, mfast::Int64Node{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_uint_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::UINT);
-
-    add_single_node(
-        curr_token, mfast::UIntNode{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_uint8_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::UINT8);
-
-    add_single_node(
-        curr_token, mfast::UInt8Node{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_uint16_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::UINT16);
-
-    add_single_node(
-        curr_token,
-        mfast::UInt16Node{ curr_token, curr_token },
-        ast,
-        nodes,
-        parser_state
-    );
-}
-
-void add_uint32_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::UINT32);
-
-    add_single_node(
-        curr_token,
-        mfast::UInt32Node{ curr_token, curr_token },
-        ast,
-        nodes,
-        parser_state
-    );
-}
-
-void add_uint64_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::UINT64);
-
-    add_single_node(
-        curr_token,
-        mfast::UInt64Node{ curr_token, curr_token },
-        ast,
-        nodes,
-        parser_state
-    );
-}
-
-void add_fp32_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::FLOAT32);
-
-    add_single_node(
-        curr_token,
-        mfast::Float32Node{ curr_token, curr_token },
-        ast,
-        nodes,
-        parser_state
-    );
-}
-
-void add_fp64_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::FLOAT64);
-
-    add_single_node(
-        curr_token,
-        mfast::Float64Node{ curr_token, curr_token },
-        ast,
-        nodes,
-        parser_state
-    );
-}
-
-void add_bool_val_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(
-        curr_token->type == mflex::TokenType::FALSE
-        || curr_token->type == mflex::TokenType::TRUE
-    );
-
-    add_single_node(
-        curr_token,
-        mfast::BoolValNode{
-            curr_token, curr_token, curr_token->type == mflex::TokenType::TRUE },
-        ast,
-        nodes,
-        parser_state
-    );
-}
-
-void add_null_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::NIL);
-
-    add_single_node(
-        curr_token, mfast::NullNode{ curr_token, curr_token }, ast, nodes, parser_state
-    );
-}
-
-void add_number_val_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::NUMBER);
-
-    add_single_node(
-        curr_token,
-        mfast::NumberValNode{ curr_token, curr_token, curr_token->number },
-        ast,
-        nodes,
-        parser_state
-    );
-}
-
-void add_string_val_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Should only get here after knowing this is true.
-    assert(curr_token->type == mflex::TokenType::STRING);
-
-    add_single_node(
-        curr_token,
-        mfast::StringValNode{ curr_token, curr_token, curr_token->string_idx },
-        ast,
-        nodes,
-        parser_state
-    );
-}
-
 void mfast::parse(
     VALIN const mflex::Tokens& tokens,
     VALOUT AST&                ast,
@@ -835,78 +533,126 @@ void mfast::parse(
             case mflex::TokenType::STRUCT:
             case mflex::TokenType::SENTINEL:
                 break;
+            case mflex::TokenType::NIL:
+                // Add null vertex.
+                add_non_operating_node(
+                    it, mfast::NilNode{ it, it }, ast, nodes, parser_state
+                );
+                continue;
             case mflex::TokenType::CHAR:
                 // Add CHAR vertex.
-                add_char_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::CharNode{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::BOOL:
                 // Add BOOL vertex.
-                add_bool_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::BoolNode{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::INT:
                 // Add INT vertex.
-                add_int_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::IntNode{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::INT8:
                 // Add INT8 vertex.
-                add_int8_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::Int8Node{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::INT16:
                 // Add INT16 vertex.
-                add_int16_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::Int16Node{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::INT32:
                 // Add INT32 vertex.
-                add_int32_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::Int32Node{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::INT64:
                 // Add INT64 vertex.
-                add_int64_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::Int64Node{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::UINT:
                 // Add UINT vertex.
-                add_uint_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::UIntNode{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::UINT8:
                 // Add UINT8 vertex.
-                add_uint8_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::UInt8Node{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::UINT16:
                 // Add UINT16 vertex.
-                add_uint16_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::UInt16Node{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::UINT32:
                 // Add UINT32 vertex.
-                add_uint32_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::UInt32Node{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::UINT64:
                 // Add UINT64 vertex.
-                add_uint64_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::UInt64Node{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::FLOAT32:
                 // Add FP32 vertex.
-                add_fp32_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::Float32Node{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::FLOAT64:
                 // Add FP64 vertex.
-                add_fp64_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it, mfast::Float64Node{ it, it }, ast, nodes, parser_state
+                );
                 continue;
             case mflex::TokenType::TRUE:
             case mflex::TokenType::FALSE:
                 // Add Boolean value vertex.
-                add_bool_val_node(it, ast, nodes, parser_state);
-                continue;
-            case mflex::TokenType::NIL:
-                // Add null vertex.
-                add_null_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it,
+                    mfast::BoolValNode{ it, it, it->type == mflex::TokenType::TRUE },
+                    ast,
+                    nodes,
+                    parser_state
+                );
                 continue;
             case mflex::TokenType::NUMBER:
                 // Add number vertex.
-                add_number_val_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it,
+                    mfast::NumberValNode{ it, it, it->number },
+                    ast,
+                    nodes,
+                    parser_state
+                );
                 continue;
             case mflex::TokenType::STRING:
                 // Add string vertex.
-                add_string_val_node(it, ast, nodes, parser_state);
+                add_non_operating_node(
+                    it,
+                    mfast::StringValNode{ it, it, it->string_idx },
+                    ast,
+                    nodes,
+                    parser_state
+                );
                 continue;
                 // case mflex::TokenType::LEFT_PAREN:
                 //     // Add paren vertex, push precedence parser_expects::ASSIGNMENT.
