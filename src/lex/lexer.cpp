@@ -45,6 +45,7 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
     // source to leave out that token and any following whitespace.
     while (remaining_source_view.source.size() > 0) {
         Token token;
+        token.type = TokenType::SENTINEL;
 
         // For each regex pattern, try to match to the remaining source.
         for (auto [token_type, token_pattern] : TOKEN_REGEX_PATTERNS) {
@@ -102,6 +103,11 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
                 // Don't consider any other possible token matches.
                 break;
             }
+        }
+
+        if (token.type == TokenType::SENTINEL) {
+            debug_printf("Unidentified Lexical Object");
+            assert(false);
         }
 
         // Adjust remaining source view, trimming any whitespace subsequent to last-
