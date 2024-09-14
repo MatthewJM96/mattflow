@@ -5,6 +5,18 @@
 
 #include "ast/parse.h"
 
+static void link_operations_on_stack(
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state
+) {
+    (void)ast;
+    (void)nodes;
+    (void)parser_state;
+
+    // TODO(Matthew): Implement.
+}
+
 static void add_non_operating_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALIN mfast::NodeInfo&& node_info,
@@ -12,6 +24,50 @@ static void add_non_operating_node(
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
 ) {
+    // If we have two Associativity::NONE nodes in a row, we have a break of expression.
+    // TODO(Matthew): we kinda have to do more here as what if we have a parenexpr...
+    //                that can't possibly have TWO independent expressions in it!!! or
+    //                could it? or could it. Probably not. But I am thinking about what
+    //                that might mean.
+    if (parser_state.associativity.back() == mfast::Associativity::NONE) {
+        link_operations_on_stack(ast, nodes, parser_state);
+
+        // TODO(Matthew): also what about the simplest case of blockexpr?
+    }
+    parser_state.associativity.back() = mfast::Associativity::NONE;
+
+    // Add vertex to AST for node, and push it onto the stack.
+    auto vertex = boost::add_vertex(ast);
+    parser_state.vertices.emplace_back(vertex);
+
+    // Add node info about bool node and associate with vertex in AST.
+    nodes.vertex_node_map[vertex] = nodes.node_info.size();
+    nodes.node_info.emplace_back(std::forward<mfast::NodeInfo>(node_info));
+
+    // Move forward a token.
+    curr_token += 1;
+}
+
+static void add_operating_node(
+    VALINOUT mflex::Tokens::const_iterator& curr_token,
+    VALIN mfast::NodeInfo&& node_info,
+    VALIN const mfast::NodeProperties& node_props,
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state
+) {
+    // If operator has lower precedence than the highest we've so far encountered, we
+    // need to deal with the expression as formed so far before continuing on. In
+    // either case the current block/paren expr precedence must be overwritten with
+    // this operator's precedence.
+    if (node_props.precedence < parser_state.precedence.back()) {
+        link_operations_on_stack(ast, nodes, parser_state);
+    }
+    parser_state.precedence.back()    = node_props.precedence;
+    parser_state.associativity.back() = node_props.associativity;
+
+    // TODO(Matthew): now we can just add it right?
+
     // Add vertex to AST for node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
     parser_state.vertices.emplace_back(vertex);
@@ -521,7 +577,6 @@ void mfast::parse(
                 //                binary operations (subtraction and negation).
             case mflex::TokenType::SLASH:
             case mflex::TokenType::STAR:
-            case mflex::TokenType::NOT:
             case mflex::TokenType::IDENTIFIER:
             case mflex::TokenType::LEFT_PAREN:
             case mflex::TokenType::RIGHT_PAREN:
@@ -535,6 +590,17 @@ void mfast::parse(
             case mflex::TokenType::ASSIGN_VALUE:
             case mflex::TokenType::SENTINEL:
                 break;
+            case mflex::TokenType::NOT:
+                // Add NOT vertex.
+                add_operating_node(
+                    it,
+                    mfast::NotOperatorNode{ it, it },
+                    NODE_PROPERTIES.at(NodeType::NOT),
+                    ast,
+                    nodes,
+                    parser_state
+                );
+                continue;
             case mflex::TokenType::NIL:
                 // Add null vertex.
                 add_non_operating_node(
