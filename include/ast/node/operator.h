@@ -5,32 +5,45 @@
 #include "lex/token_type.h"
 
 namespace mattflow {
-    enum class Precedence : int16_t {
-        NONE       = 0,
-        ASSIGNMENT = 100,
-        LOGICAL    = 200,
-        EQUALITY   = 300,
-        COMPARISON = 400,
-        TERM       = 500,
-        FACTOR     = 600,
-        UNARY      = 700
-    };
-
-    enum class Associativity : int16_t {
-        SENTINEL,
-        NONE,
-        LEFT,
-        RIGHT
-    };
-
     namespace ast {
+        enum class Order {
+            UNARY,
+            BINARY
+        };
+
+        enum class Precedence : int16_t {
+            NONE       = 0,
+            ASSIGNMENT = 100,
+            LOGICAL    = 200,
+            EQUALITY   = 300,
+            COMPARISON = 400,
+            TERM       = 500,
+            FACTOR     = 600,
+            UNARY      = 700
+        };
+
+        enum class Associativity {
+            SENTINEL,
+            NONE,
+            LEFT,
+            RIGHT
+        };
+
+        /**
+         * @brief Node reflecting an operator.
+         */
+        struct OperatorNode : public Node {
+            // Empty.
+        };
+
         /**
          * @brief Node reflecting a Not operator.
          *
          * @inedge operator | paren expression | assignment | block expression
          * @outedge rvalue expression
          */
-        struct NotOperatorNode : public Node {
+        struct NotOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::UNARY;
             const Precedence    PRECEDENCE    = Precedence::UNARY;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
         };
@@ -41,7 +54,8 @@ namespace mattflow {
          * @inedge operator | paren expression | assignment | block expression
          * @outedge rvalue expression
          */
-        struct NegationOperatorNode : public Node {
+        struct NegationOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::UNARY;
             const Precedence    PRECEDENCE    = Precedence::UNARY;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
         };
@@ -53,7 +67,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct MultiplicationOperatorNode : public Node {
+        struct MultiplicationOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::FACTOR;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
         };
@@ -65,7 +80,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct DivisionOperatorNode : public Node {
+        struct DivisionOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::FACTOR;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
         };
@@ -77,7 +93,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct AdditionOperatorNode : public Node {
+        struct AdditionOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::TERM;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
         };
@@ -89,7 +106,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct SubtractionOperatorNode : public Node {
+        struct SubtractionOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::TERM;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
         };
@@ -101,7 +119,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct GreaterOperatorNode : public Node {
+        struct GreaterOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
         };
@@ -113,7 +132,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct GreaterOrEqualOperatorNode : public Node {
+        struct GreaterOrEqualOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
         };
@@ -125,7 +145,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct LesserOperatorNode : public Node {
+        struct LesserOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
         };
@@ -137,7 +158,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct LesserOrEqualOperatorNode : public Node {
+        struct LesserOrEqualOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
         };
@@ -149,7 +171,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct EqualOperatorNode : public Node {
+        struct EqualOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::EQUALITY;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
         };
@@ -161,7 +184,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct NotEqualOperatorNode : public Node {
+        struct NotEqualOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::EQUALITY;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
         };
@@ -173,7 +197,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct OrOperatorNode : public Node {
+        struct OrOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::LOGICAL;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
         };
@@ -185,7 +210,8 @@ namespace mattflow {
          * @outedge rvalue expression
          * @outedge rvalue expression
          */
-        struct AndOperatorNode : public Node {
+        struct AndOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::LOGICAL;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
         };
@@ -196,7 +222,8 @@ namespace mattflow {
          * @inedge lvalue expression
          * @outedge rvalue expression
          */
-        struct AssignmentOperatorNode : public Node {
+        struct AssignmentOperatorNode : public OperatorNode {
+            const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::ASSIGNMENT;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
         };
