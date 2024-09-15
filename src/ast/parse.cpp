@@ -105,9 +105,6 @@ void mfast::parse(
     parser_state.non_operating_vertices.push_back({});
     parser_state.enclosing_vertices.push_back({});
     parser_state.enclosing_vertices.emplace_back(boost::add_vertex(ast));
-    parser_state.non_operating_vertices.back().emplace_back(
-        parser_state.enclosing_vertices.back()
-    );
     parser_state.last_seen.emplace_back(NodeCategory::NONE);
     parser_state.enclosed_by.emplace_back(EnclosingCategory::ROOT);
     nodes.vertex_node_map[parser_state.enclosing_vertices.back()] = 0;
