@@ -156,8 +156,7 @@ void test_parser() {
             continue;
         }
 
-        mfast::NodeInfo __node_info
-            = node_buffers.node_info[node_buffers.vertex_node_map[v]];
+        mfast::NodeInfo& __node_info = node_buffers.get_node_info(v);
         std::visit(
             [&str_table](auto&& node_info) {
                 using T = std::decay_t<decltype(node_info)>;

@@ -15,7 +15,9 @@ namespace mattflow {
         struct ParserState {
             std::vector<Precedence>             precedence;
             std::vector<Associativity>          associativity;
-            std::vector<std::vector<ASTVertex>> vertices;
+            std::vector<std::vector<ASTVertex>> operating_vertices;
+            std::vector<std::vector<ASTVertex>> non_operating_vertices;
+            std::vector<ASTVertex>              enclosing_vertices;
             std::vector<EnclosingCategory>      enclosed_by;
             std::vector<NodeCategory>           last_seen;
         };

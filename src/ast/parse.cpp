@@ -38,7 +38,7 @@ static void add_non_operating_node(
 
     // Add vertex to AST for node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
-    parser_state.vertices.back().emplace_back(vertex);
+    parser_state.non_operating_vertices.back().emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
     nodes.vertex_node_map[vertex] = nodes.node_info.size();
@@ -48,10 +48,10 @@ static void add_non_operating_node(
     curr_token += 1;
 }
 
+template <typename Node>
 static void add_operating_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALIN mfast::NodeInfo&& node_info,
-    VALIN const mfast::NodeProperties& node_props,
+    VALIN Node&&                            node_info,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
@@ -63,19 +63,19 @@ static void add_operating_node(
     // need to deal with the expression as formed so far before continuing on. In
     // either case the current block/paren expr precedence must be overwritten with
     // this operator's precedence.
-    if (node_props.precedence < parser_state.precedence.back()) {
+    if (node_info.PRECEDENCE < parser_state.precedence.back()) {
         link_operations_on_stack(ast, nodes, parser_state);
     }
-    parser_state.precedence.back()    = node_props.precedence;
-    parser_state.associativity.back() = node_props.associativity;
+    parser_state.precedence.back()    = node_info.PRECEDENCE;
+    parser_state.associativity.back() = node_info.ASSOCIATIVITY;
 
     // Add vertex to AST for node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
-    parser_state.vertices.back().emplace_back(vertex);
+    parser_state.operating_vertices.back().emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
     nodes.vertex_node_map[vertex] = nodes.node_info.size();
-    nodes.node_info.emplace_back(std::forward<mfast::NodeInfo>(node_info));
+    nodes.node_info.emplace_back(std::forward<Node>(node_info));
 
     // Move forward a token.
     curr_token += 1;
@@ -99,12 +99,17 @@ void mfast::parse(
     // top-level block node for module.
     ParserState parser_state;
     parser_state.precedence.emplace_back(Precedence::NONE);
-    parser_state.associativity.emplace_back(Associativity::NONE);
-    parser_state.vertices.push_back({});
-    parser_state.vertices.back().emplace_back(boost::add_vertex(ast));
+    parser_state.associativity.emplace_back(Associativity::SENTINEL);
+    parser_state.operating_vertices.push_back({});
+    parser_state.non_operating_vertices.push_back({});
+    parser_state.enclosing_vertices.push_back({});
+    parser_state.enclosing_vertices.emplace_back(boost::add_vertex(ast));
+    parser_state.non_operating_vertices.back().emplace_back(
+        parser_state.enclosing_vertices.back()
+    );
     parser_state.last_seen.emplace_back(NodeCategory::NONE);
     parser_state.enclosed_by.emplace_back(EnclosingCategory::ROOT);
-    nodes.vertex_node_map[parser_state.vertices.back().back()] = 0;
+    nodes.vertex_node_map[parser_state.enclosing_vertices.back()] = 0;
 
     // Iterate tokens, parsing as appropriate.
     auto it = tokens.begin();
@@ -154,12 +159,7 @@ void mfast::parse(
             case mflex::TokenType::NOT:
                 // Add NOT vertex.
                 add_operating_node(
-                    it,
-                    mfast::NotOperatorNode{ it, it },
-                    NODE_PROPERTIES.at(NodeType::NOT),
-                    ast,
-                    nodes,
-                    parser_state
+                    it, mfast::NotOperatorNode{ it, it }, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::NIL:
