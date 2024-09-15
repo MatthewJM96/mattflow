@@ -27,8 +27,9 @@ static void add_non_operating_node(
     // If we have two non-operating nodes in a row, we have a break of expression.
     // TODO(Matthew): bare in mind that we have control-flow to include yet, and might
     //                complicate this.
-    if (parser_state.last_seen.back() != mfast::NodeCategory::BINOP
-        || parser_state.last_seen.back() != mfast::NodeCategory::UNOP)
+    if (parser_state.last_seen.back() != mfast::NodeCategory::NONE
+        && parser_state.last_seen.back() != mfast::NodeCategory::BINOP
+        && parser_state.last_seen.back() != mfast::NodeCategory::UNOP)
     {
         link_operations_on_stack(ast, nodes, parser_state);
 
