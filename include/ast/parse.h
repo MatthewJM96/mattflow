@@ -16,6 +16,8 @@ namespace mattflow {
             std::vector<Precedence>    precedence;
             std::vector<Associativity> associativity;
             std::vector<ASTVertex>     vertices;
+            NodeCategory               last_seen;
+            EnclosingCategory          enclosed_by;
         };
 
         void parse(
