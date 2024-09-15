@@ -37,7 +37,6 @@ static void add_non_operating_node(
         // TODO(Matthew): we kinda have to do more here as what if we have a parenexpr,
         //                blockexpr...
     }
-    parser_state.associativity.back() = mfast::Associativity::NONE;
 
     // Add vertex to AST for node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
@@ -59,6 +58,9 @@ static void add_operating_node(
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
 ) {
+    // TODO(Matthew): associativity needs to be handled here...
+    //                  in particular it can only change if we have a chance of
+    //                  precedence.
     // If operator has lower precedence than the highest we've so far encountered, we
     // need to deal with the expression as formed so far before continuing on. In
     // either case the current block/paren expr precedence must be overwritten with
@@ -68,8 +70,6 @@ static void add_operating_node(
     }
     parser_state.precedence.back()    = node_props.precedence;
     parser_state.associativity.back() = node_props.associativity;
-
-    // TODO(Matthew): now we can just add it right?
 
     // Add vertex to AST for node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
