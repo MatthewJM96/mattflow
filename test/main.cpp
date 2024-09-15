@@ -158,7 +158,7 @@ void test_parser() {
 
         mfast::NodeInfo& __node_info = node_buffers.get_node_info(v);
         std::visit(
-            [&str_table](auto&& node_info) {
+            [&str_table](auto& node_info) {
                 using T = std::decay_t<decltype(node_info)>;
                 if constexpr (std::is_same_v<T, mfast::BoolValNode>) {
                     if (node_info.value) {
