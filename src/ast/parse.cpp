@@ -1,26 +1,42 @@
 #include "stdafx.h"
 
 #include "ast/node.h"
+#include "ast/operator.h"
 #include "literal/identifier.h"
 
 #include "ast/parse.h"
 
 static void link_operations_on_stack(
+    VALIN mfast::Precedence target_precedence,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
 ) {
     (void)ast;
+
+    mfast::GetOrderVisitor         get_order_visitor;
+    mfast::GetPrecedenceVisitor    get_precedence_visitor;
+    mfast::GetAssociativityVisitor get_associativity_visitor;
+
     // Current operator to link up.
-    auto op_vert = parser_state.operating_vertices.back().back();
-    auto op      = nodes.get_node_info(op_vert);
+    auto  op_vert   = parser_state.operating_vertices.back().back();
+    auto  stitch_to = std::numeric_limits<decltype(op_vert)>::max();
+    auto* op        = &nodes.get_node_info(op_vert);
     while (parser_state.operating_vertices.size() != 0) {
         // Pop the current operator so we can deal with left associativity if needed.
         parser_state.operating_vertices.back().pop_back();
 
+        std::visit(get_order_visitor, *op);
+        std::visit(get_precedence_visitor, *op);
+        std::visit(get_associativity_visitor, *op);
+
+        if (get_order_visitor.result == mfast::Order::UNARY) {
+        } else {
+        }
+
         // Get next operator to link up.
         op_vert = parser_state.operating_vertices.back().back();
-        // op = nodes.get_node_info(op_vert);
+        op      = &nodes.get_node_info(op_vert);
     }
 }
 
@@ -40,7 +56,7 @@ static void add_non_operating_node(
         && parser_state.last_seen.back() != mfast::NodeCategory::BINOP
         && parser_state.last_seen.back() != mfast::NodeCategory::UNOP)
     {
-        link_operations_on_stack(ast, nodes, parser_state);
+        link_operations_on_stack(mfast::Precedence::NONE, ast, nodes, parser_state);
 
         // TODO(Matthew): we kinda have to do more here as what if we have a parenexpr,
         //                blockexpr...
@@ -70,11 +86,12 @@ static void add_operating_node(
     //                  in particular it can only change if we have a chance of
     //                  precedence.
     // If operator has lower precedence than the highest we've so far encountered, we
-    // need to deal with the expression as formed so far before continuing on. In
+    // need to deal with the expression as formed so far (up to any preceding operation
+    // with the same precedence as this to-be-added operation) before continuing on. In
     // either case the current block/paren expr precedence must be overwritten with
     // this operator's precedence.
     if (node_info.PRECEDENCE < parser_state.precedence.back()) {
-        link_operations_on_stack(ast, nodes, parser_state);
+        link_operations_on_stack(node_info.PRECEDENCE, ast, nodes, parser_state);
     }
     parser_state.precedence.back()    = node_info.PRECEDENCE;
     parser_state.associativity.back() = node_info.ASSOCIATIVITY;
