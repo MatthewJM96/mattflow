@@ -34,11 +34,11 @@ namespace mattflow {
         };
 
         enum class NodeCategory {
-            BINOP, UNOP, PRIMARY, PRIMITIVE_TYPE
+            NONE, BINOP, UNOP, PRIMARY, PRIMITIVE_TYPE
         };
 
         enum class EnclosingCategory {
-            BLOCK, PARENTHESES, LIST_OR_RANGE, STRUCT, FUNCTION_PARAMS, FUNCTION_BODY
+            ROOT, BLOCK, PARENTHESES, LIST_OR_RANGE, STRUCT, FUNCTION_PARAMS, FUNCTION_BODY
         };
 
         /* clang-format on */

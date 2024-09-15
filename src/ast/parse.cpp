@@ -100,6 +100,8 @@ void mfast::parse(
     parser_state.precedence.emplace_back(Precedence::NONE);
     parser_state.associativity.emplace_back(Associativity::NONE);
     parser_state.vertices.emplace_back(boost::add_vertex(ast));
+    parser_state.last_seen.emplace_back(NodeCategory::NONE);
+    parser_state.enclosed_by.emplace_back(EnclosingCategory::ROOT);
     nodes.vertex_node_map[parser_state.vertices.back()] = 0;
 
     // Iterate tokens, parsing as appropriate.
