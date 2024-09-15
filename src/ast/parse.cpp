@@ -17,6 +17,8 @@ static void link_operations_on_stack(
     // TODO(Matthew): Implement.
 }
 
+// TODO(Matthew): probably rename, need to differentiate control flow, operators, and
+//                primaries at least.
 static void add_non_operating_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALIN mfast::NodeInfo&& node_info,
