@@ -1,20 +1,6 @@
 program         -> expression* EOF 
 
-expression      -> for
-                    | if
-                    | print
-                    | while
-                    | block
-                    | assignment
-
-for             -> "for" range ("," range )* "do" expression
-range           -> identifier "in" expression "where" logic
-if              -> "if" assignment "then" expression
-                    ("elif" assignment "then" expression)*
-                    ( "else" expression )? 
-print           -> "print" "(" arguments ")"
-while           -> "while" expression "do" expression
-block           -> "{" expression* "}"
+expression      -> assignment
 
 // TODO(Matthew): can a call return an lvalue? e.g.:
 //                  unwrap := (s: &some_struct_of_structs) -> s.some_sub_struct
@@ -29,20 +15,31 @@ term            -> factor ( ( "-" | "+" ) factor )*
 factor          -> unary ( ( "/" | "*" ) unary )*
 unary           -> ( "!" | "-" ) unary | call
 call            -> primary ( "(" arguments? ")" | "." IDENTIFIER )*
-arguments       -> expression ( "," expression )*
 primary         -> "true" | "false" | "null"
                     | NUMBER | STRING | IDENTIFIER | "(" expression ")" | block
-                    | number_range | list
+                    | number_range | list | for | if | while | block | type
+
+for             -> "for" range ("," range )* "do" expression
+if              -> "if" assignment "then" expression
+                    ("elif" assignment "then" expression)*
+                    ( "else" expression )?
+print           -> "print" "(" arguments ")"
+while           -> "while" expression "do" expression
+block           -> "{" expression* "}"
+
+arguments       -> expression ( "," expression )*
+range           -> identifier "in" expression "where" logic
 
 intrinsic_type  -> "null" | "char" | "int" | "int8" | "int16" | "int32" | "int64"
                     | "uint" | "uint8" | "uint16" | "uint32" | "uint64" | "float32"
                     | "float64"
 struct          -> "struct" "{" field* "}"
-field           -> variable ( "=" expression )?
 function        -> "(" parameters? ")" "->" type
+type            -> intrinsic_type | struct | function | IDENTIFIER
+
+field           -> variable ( "=" expression )?
 parameters      -> variable ( "," variable )*
 variable        -> IDENTIFIER ":" type
-type            -> intrinsic_type | struct | function | IDENTIFIER
 
 number_range    -> "[" NUMBER ".." NUMBER "]"
 list            -> "[" (expression ("," expression)*)? "]"
