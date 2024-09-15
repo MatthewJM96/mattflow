@@ -13,8 +13,6 @@ static void link_operations_on_stack(
     (void)ast;
     (void)nodes;
     (void)parser_state;
-
-    // TODO(Matthew): Implement.
 }
 
 // TODO(Matthew): probably rename, need to differentiate control flow, operators, and
@@ -40,7 +38,7 @@ static void add_non_operating_node(
 
     // Add vertex to AST for node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
-    parser_state.vertices.emplace_back(vertex);
+    parser_state.vertices.back().emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
     nodes.vertex_node_map[vertex] = nodes.node_info.size();
@@ -73,7 +71,7 @@ static void add_operating_node(
 
     // Add vertex to AST for node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
-    parser_state.vertices.emplace_back(vertex);
+    parser_state.vertices.back().emplace_back(vertex);
 
     // Add node info about bool node and associate with vertex in AST.
     nodes.vertex_node_map[vertex] = nodes.node_info.size();
@@ -102,10 +100,11 @@ void mfast::parse(
     ParserState parser_state;
     parser_state.precedence.emplace_back(Precedence::NONE);
     parser_state.associativity.emplace_back(Associativity::NONE);
-    parser_state.vertices.emplace_back(boost::add_vertex(ast));
+    parser_state.vertices.push_back({});
+    parser_state.vertices.back().emplace_back(boost::add_vertex(ast));
     parser_state.last_seen.emplace_back(NodeCategory::NONE);
     parser_state.enclosed_by.emplace_back(EnclosingCategory::ROOT);
-    nodes.vertex_node_map[parser_state.vertices.back()] = 0;
+    nodes.vertex_node_map[parser_state.vertices.back().back()] = 0;
 
     // Iterate tokens, parsing as appropriate.
     auto it = tokens.begin();

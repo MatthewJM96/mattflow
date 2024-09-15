@@ -13,11 +13,11 @@ namespace mattflow {
          * whether block expression, parantheses expression, etc.
          */
         struct ParserState {
-            std::vector<Precedence>        precedence;
-            std::vector<Associativity>     associativity;
-            std::vector<ASTVertex>         vertices;
-            std::vector<EnclosingCategory> enclosed_by;
-            std::vector<NodeCategory>      last_seen;
+            std::vector<Precedence>             precedence;
+            std::vector<Associativity>          associativity;
+            std::vector<std::vector<ASTVertex>> vertices;
+            std::vector<EnclosingCategory>      enclosed_by;
+            std::vector<NodeCategory>           last_seen;
         };
 
         void parse(
