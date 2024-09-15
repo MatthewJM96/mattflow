@@ -19,23 +19,34 @@ static void link_operations_on_stack(
     mfast::GetAssociativityVisitor get_associativity_visitor;
 
     // Current operator to link up.
-    auto  op_vert   = parser_state.operating_vertices.back().back();
-    auto  stitch_to = std::numeric_limits<decltype(op_vert)>::max();
-    auto* op        = &nodes.get_node_info(op_vert);
-    while (parser_state.operating_vertices.size() != 0) {
-        // Pop the current operator so we can deal with left associativity if needed.
-        parser_state.operating_vertices.back().pop_back();
+    size_t op_idx  = parser_state.operating_vertices.back().size() - 1;
+    auto   op_vert = parser_state.operating_vertices.back()[op_idx];
+    auto*  op      = &nodes.get_node_info(op_vert);
 
+    auto stitch_to = std::numeric_limits<decltype(op_vert)>::max();
+
+    while (parser_state.operating_vertices.size() != 0) {
+        // Get order, precedence, and associativity of operator.
         std::visit(get_order_visitor, *op);
         std::visit(get_precedence_visitor, *op);
         std::visit(get_associativity_visitor, *op);
 
+        // We are done stitching if the operator we are about to consider has the
+        // target precedence.
+        if (get_precedence_visitor.result == target_precedence) return;
+
         if (get_order_visitor.result == mfast::Order::UNARY) {
+            // Any unary operator should be right-associative.
+            assert(get_associativity_visitor.result == mfast::Associativity::RIGHT);
+
+            // Pop the current operator so we can deal with left associativity if
+            // needed.
+            parser_state.operating_vertices.back().pop_back();
         } else {
         }
 
         // Get next operator to link up.
-        op_vert = parser_state.operating_vertices.back().back();
+        op_vert = parser_state.operating_vertices.back()[--op_idx];
         op      = &nodes.get_node_info(op_vert);
     }
 }
