@@ -11,8 +11,17 @@ static void link_operations_on_stack(
     VALOUT mfast::ParserState& parser_state
 ) {
     (void)ast;
-    (void)nodes;
-    (void)parser_state;
+    // Current operator to link up.
+    auto op_vert = parser_state.operating_vertices.back().back();
+    auto op      = nodes.get_node_info(op_vert);
+    while (parser_state.operating_vertices.size() != 0) {
+        // Pop the current operator so we can deal with left associativity if needed.
+        parser_state.operating_vertices.back().pop_back();
+
+        // Get next operator to link up.
+        op_vert = parser_state.operating_vertices.back().back();
+        // op = nodes.get_node_info(op_vert);
+    }
 }
 
 // TODO(Matthew): probably rename, need to differentiate control flow, operators, and
