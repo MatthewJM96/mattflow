@@ -24,15 +24,16 @@ static void add_non_operating_node(
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
 ) {
-    // If we have two Associativity::NONE nodes in a row, we have a break of expression.
-    // TODO(Matthew): we kinda have to do more here as what if we have a parenexpr...
-    //                that can't possibly have TWO independent expressions in it!!! or
-    //                could it? or could it. Probably not. But I am thinking about what
-    //                that might mean.
-    if (parser_state.associativity.back() == mfast::Associativity::NONE) {
+    // If we have two non-operating nodes in a row, we have a break of expression.
+    // TODO(Matthew): bare in mind that we have control-flow to include yet, and might
+    //                complicate this.
+    if (parser_state.last_seen.back() != mfast::NodeCategory::BINOP
+        || parser_state.last_seen.back() != mfast::NodeCategory::UNOP)
+    {
         link_operations_on_stack(ast, nodes, parser_state);
 
-        // TODO(Matthew): also what about the simplest case of blockexpr?
+        // TODO(Matthew): we kinda have to do more here as what if we have a parenexpr,
+        //                blockexpr...
     }
     parser_state.associativity.back() = mfast::Associativity::NONE;
 

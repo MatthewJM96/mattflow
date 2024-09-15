@@ -34,7 +34,7 @@ namespace mattflow {
         };
 
         enum class NodeCategory {
-            NONE, BINOP, UNOP, PRIMARY, PRIMITIVE_TYPE
+            NONE, BINOP, UNOP, PRIMARY
         };
 
         enum class EnclosingCategory {
