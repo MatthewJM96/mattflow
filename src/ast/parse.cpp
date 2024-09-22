@@ -12,36 +12,39 @@ static void link_operations_on_stack(
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
 ) {
-    mfast::GetOrderVisitor         get_order_visitor;
-    mfast::GetPrecedenceVisitor    get_precedence_visitor;
-    mfast::GetAssociativityVisitor get_associativity_visitor;
+    mfast::GetOrderVisitor         op_order;
+    mfast::GetPrecedenceVisitor    op_precedence;
+    mfast::GetAssociativityVisitor op_associativity;
 
     // Current operator to link up.
-    size_t op_idx  = parser_state.operating_vertices.back().size() - 1;
-    auto   op_vert = parser_state.operating_vertices.back()[op_idx];
-    auto*  op      = &nodes.get_node_info(op_vert);
+    auto  op_vert = parser_state.operating_vertices.back().back();
+    auto* op      = &nodes.get_node_info(op_vert);
 
     const auto STITCH_TO_NEXT_NON_OP = std::numeric_limits<decltype(op_vert)>::max();
-    auto stitch_to = STITCH_TO_NEXT_NON_OP;
+    auto       stitch_to             = STITCH_TO_NEXT_NON_OP;
 
     while (parser_state.operating_vertices.size() != 0) {
         // Get order, precedence, and associativity of operator.
-        std::visit(get_order_visitor, *op);
-        std::visit(get_precedence_visitor, *op);
-        std::visit(get_associativity_visitor, *op);
+        std::visit(op_order, *op);
+        std::visit(op_precedence, *op);
+        std::visit(op_associativity, *op);
 
         // We are done stitching if the operator we are about to consider has the
         // target precedence.
-        if (get_precedence_visitor.result == target_precedence) return;
+        if (op_precedence.result == target_precedence) return;
 
-        if (get_order_visitor.result == mfast::Order::UNARY) {
+        if (op_order.result == mfast::Order::UNARY) {
+            // Unary operator.
+
             // Any unary operator should be right-associative.
-            assert(get_associativity_visitor.result == mfast::Associativity::RIGHT);
+            assert(op_associativity.result == mfast::Associativity::RIGHT);
 
-            // If we don't have an operator to stitch to, then stitch to last non-operating
-            // vertex. If we do, then stitch to that operator.
+            // If we don't have an operator to stitch to, then stitch to last
+            // non-operating vertex. If we do, then stitch to that operator.
             if (stitch_to == STITCH_TO_NEXT_NON_OP) {
-                boost::add_edge(op_vert, parser_state.non_operating_vertices.back().back(), ast);
+                boost::add_edge(
+                    op_vert, parser_state.non_operating_vertices.back().back(), ast
+                );
                 parser_state.non_operating_vertices.back().pop_back();
             } else {
                 boost::add_edge(op_vert, stitch_to, ast);
@@ -50,27 +53,40 @@ static void link_operations_on_stack(
             // We should now stitch to this operator we have just dealt with.
             stitch_to = op_vert;
 
-            // Pop the current operator so we can deal with left associativity if
-            // needed.
+            // Pop the current operator.
             parser_state.operating_vertices.back().pop_back();
         } else {
-            if (get_associativity_visitor.result == mfast::Associativity::RIGHT) {
-                // Simple case. We can just deal with this operator without worrying about
-                // subsequent operators.
+            // Binary operator.
 
-                // If we don't have an operator to stitch to, then stitch to last non-operating
-                // vertex. If we do, then stitch to that operator.
+            if (op_associativity.result == mfast::Associativity::RIGHT) {
+                // Binary right-associative opeartor.
+
+                // Simple case. We can just deal with this operator without worrying
+                // about subsequent operators.
+
+                // If we don't have an operator to stitch to, then stitch to last
+                // non-operating vertex. If we do, then stitch to that operator.
                 if (stitch_to == STITCH_TO_NEXT_NON_OP) {
                     // Stitch to last two non-operating vertices.
-                    boost::add_edge(op_vert, *(parser_state.non_operating_vertices.back().end() - 2), ast);
-                    boost::add_edge(op_vert, *(parser_state.non_operating_vertices.back().end() - 1), ast);
+                    boost::add_edge(
+                        op_vert,
+                        *(parser_state.non_operating_vertices.back().end() - 2),
+                        ast
+                    );
+                    boost::add_edge(
+                        op_vert,
+                        *(parser_state.non_operating_vertices.back().end() - 1),
+                        ast
+                    );
 
                     // Pop those non-operating vertices.
                     parser_state.non_operating_vertices.back().pop_back();
                     parser_state.non_operating_vertices.back().pop_back();
                 } else {
                     // Stitch to last non-operating vertex, and the stitch_to target.
-                    boost::add_edge(op_vert, parser_state.non_operating_vertices.back().back(), ast);
+                    boost::add_edge(
+                        op_vert, parser_state.non_operating_vertices.back().back(), ast
+                    );
                     boost::add_edge(op_vert, stitch_to, ast);
 
                     // Pop the non-operating vertex.
@@ -80,18 +96,136 @@ static void link_operations_on_stack(
                 // We should now stitch to this operator we have just dealt with.
                 stitch_to = op_vert;
 
-                // Pop the current operator so we can deal with left associativity if
-                // needed.
+                // Pop the current operator.
                 parser_state.operating_vertices.back().pop_back();
             } else {
-                // Hard case, here we have to traverse the set of operators with the same
-                // precedence and then stitch them in starting with the last of them working
-                // to the current operator we are dealing with.
+                // Binary left-associative opeartor.
+
+                // Hard case, here we have to traverse the set of operators with the
+                // same precedence and then stitch them in starting with the last of
+                // them working to the current operator we are dealing with.
+
+                // TODO(Matthew) loop down stack of operators til precedence changes -
+                //               by necessity associativity of all should be the same
+                //               (but maybe assert this) - and then work from the
+                //               bottom-most back up to the top one and pop all
+                //               subsequently.
+
+                mfast::GetOrderVisitor         next_op_order;
+                mfast::GetPrecedenceVisitor    next_op_precedence;
+                mfast::GetAssociativityVisitor next_op_associativity;
+
+                // Look at operator subsequent to the top op of the stack.
+                size_t next_op_idx = parser_state.operating_vertices.back().size() - 2;
+                auto next_op_vert = parser_state.operating_vertices.back()[next_op_idx];
+                auto* next_op     = &nodes.get_node_info(next_op_vert);
+
+                // Get order, precedence, and associativity of the next operator.
+                std::visit(next_op_order, *next_op);
+                std::visit(next_op_precedence, *next_op);
+                std::visit(next_op_associativity, *next_op);
+
+                // Consider each operator in turn walking down the stack, if the
+                // precedence is still the same, it gets included in the operators that
+                // will be stitched.
+                while (next_op_precedence.result == op_precedence.result) {
+                    // Operators of same precedence as the first we have considered here
+                    // MUST also be binary operators of the same associativity.
+                    assert(next_op_order.result == mfast::Order::BINARY);
+                    assert(next_op_associativity.result == op_associativity.result);
+
+                    // If we have just considered the last operator on the stack, then
+                    // we are done and need to stitch everything.
+                    if (next_op_idx == 0) break;
+
+                    // Look at the next operator on the stack.
+                    --next_op_idx;
+                    next_op_vert = parser_state.operating_vertices.back()[next_op_idx];
+                    next_op      = &nodes.get_node_info(next_op_vert);
+
+                    // Get order, precedence, and associativity of that operator.
+                    std::visit(next_op_order, *op);
+                    std::visit(next_op_precedence, *op);
+                    std::visit(next_op_associativity, *op);
+                }
+
+                // next_op_idx is pointing to the operator after where we intend to
+                // stitch to.
+                ++next_op_idx;
+                // Number of ops we'll be stitching. NOTE: as we are stitching binary
+                // operators we know for sure that the number of non-operator nodes
+                // involved in the stitching will be one greater than the number of
+                // operators.
+                size_t num_ops
+                    = parser_state.operating_vertices.back().size() - next_op_idx;
+                size_t num_non_ops = num_ops + 1;
+
+                // Stitch to for next operator. This should be == to stitch_to for the
+                // operator at the top of the stack.
+                size_t non_op_idx_offset = num_ops + 1;
+                auto   stitch_next_to    = STITCH_TO_NEXT_NON_OP;
+
+                // We have the level of operator to go down to, stitch starting with the
+                // one lowest in the stack and work back up.
+                for (; next_op_idx <= parser_state.operating_vertices.back().size() - 1;
+                     ++next_op_idx)
+                {
+                    // Update vertex for next operator to point to next lowest operator
+                    // we need to stitch.
+                    next_op_vert = parser_state.operating_vertices.back()[next_op_idx];
+
+                    // If we don't have an operator to stitch to, then stitch to last
+                    // non-operating vertex. If we do, then stitch to that operator.
+                    if (stitch_next_to == STITCH_TO_NEXT_NON_OP) {
+                        // Stitch to last two non-operating vertices.
+                        boost::add_edge(
+                            next_op_vert,
+                            *(parser_state.non_operating_vertices.back().end()
+                              - non_op_idx_offset--),
+                            ast
+                        );
+                        boost::add_edge(
+                            next_op_vert,
+                            *(parser_state.non_operating_vertices.back().end()
+                              - non_op_idx_offset--),
+                            ast
+                        );
+                    } else {
+                        // Stitch the stitch_to target and then the last non-operating
+                        // vertex.
+                        boost::add_edge(next_op_vert, stitch_next_to, ast);
+                        boost::add_edge(
+                            next_op_vert,
+                            *(parser_state.non_operating_vertices.back().end()
+                              - non_op_idx_offset--),
+                            ast
+                        );
+                    }
+
+                    // We should now stitch to this operator we have just dealt with.
+                    stitch_next_to = next_op_vert;
+                }
+
+                // Set stitch_to to the last of the operators.
+                stitch_to = parser_state.operating_vertices.back().back();
+
+                // Erase the operators and non-operators we have stitched.
+                parser_state.operating_vertices.back().erase(
+                    parser_state.operating_vertices.back().end() - num_ops,
+                    parser_state.operating_vertices.back().end()
+                );
+                parser_state.non_operating_vertices.back().erase(
+                    parser_state.non_operating_vertices.back().end() - num_non_ops,
+                    parser_state.non_operating_vertices.back().end()
+                );
             }
         }
 
+        // TODO(Matthew): probably add the stitch_to vertex back onto the
+        //                operating_vertices stack?
+
         // Get next operator to link up.
-        op_vert = parser_state.operating_vertices.back()[--op_idx];
+        op_vert = parser_state.operating_vertices.back().back();
         op      = &nodes.get_node_info(op_vert);
     }
 }
