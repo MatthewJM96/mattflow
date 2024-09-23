@@ -19,7 +19,8 @@ namespace mattflow {
             COMPARISON = 400,
             TERM       = 500,
             FACTOR     = 600,
-            UNARY      = 700
+            POWER      = 700,
+            UNARY      = 800
         };
 
         enum class Associativity {
@@ -84,6 +85,29 @@ namespace mattflow {
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
             std::string debug_repr() override { return "op -"; }
+        };
+
+        /**
+         * @brief Node reflecting a Power operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct PowerOperatorNode : public OperatorNode {
+            PowerOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            const Order         ORDER         = Order::BINARY;
+            const Precedence    PRECEDENCE    = Precedence::POWER;
+            const Associativity ASSOCIATIVITY = Associativity::RIGHT;
+
+            std::string debug_repr() override { return "op ^"; }
         };
 
         /**

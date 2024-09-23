@@ -443,6 +443,12 @@ void mfast::parse(
                     parser_state
                 );
                 continue;
+            case mflex::TokenType::POWER:
+                // Add POWER vertex.
+                add_operating_node(
+                    it, mfast::PowerOperatorNode{ it, it }, ast, nodes, parser_state
+                );
+                continue;
             case mflex::TokenType::NOT:
                 // Add NOT vertex.
                 add_operating_node(

@@ -46,6 +46,7 @@ namespace mattflow {
             GreaterOperatorNode, GreaterOrEqualOperatorNode,    // Comparison
             SubtractionOperatorNode, AdditionOperatorNode,      // Term
             DivisionOperatorNode, MultiplicationOperatorNode,   // Factor
+            PowerOperatorNode,                                  // Power
             NotOperatorNode, NegationOperatorNode,              // Unary
             BoolValNode, NumberValNode, StringValNode,
             IdentifierNode, NullNode,                           // Primary

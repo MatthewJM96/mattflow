@@ -40,6 +40,7 @@ namespace mattflow {
             PLUS,   // +
             SLASH,  // /
             STAR,   // *
+            POWER,  // ^
 
             // Keywords
             IF,      // if
@@ -109,6 +110,7 @@ namespace mattflow {
             {                    TokenType::PLUS,                     "\\+"},
             {                   TokenType::SLASH,                       "/"},
             {                    TokenType::STAR,                     "\\*"},
+            {                   TokenType::POWER,                     "\\^"},
             {                      TokenType::IF,      "if(?![a-zA-Z0-9_])"},
             {                    TokenType::THEN,    "then(?![a-zA-Z0-9_])"},
             {                    TokenType::ELIF,    "elif(?![a-zA-Z0-9_])"},
