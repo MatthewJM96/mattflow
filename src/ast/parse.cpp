@@ -43,8 +43,8 @@ static void link_operations_on_stack(
         // We are done stitching if the operator we are about to consider has the
         // target precedence.
         if (op_precedence.result == target_precedence) {
-            // Make sure to update the stitch target for next link phase.
-            parser_state.stitch_to.emplace_back(prev_op_vert);
+            // Make sure to add the stitch target for next link phase.
+            nonop_verts.emplace_back(prev_op_vert);
             return;
         }
 
@@ -77,56 +77,40 @@ static void link_operations_on_stack(
                 // Simple case. We can just deal with this operator without worrying
                 // about subsequent operators.
 
-                size_t non_op_idx_offset = 2;
-                // Deduct one non-op if the RHS is stitching into an operator.
-                if (stitch_to != mfast::STITCH_TO_NEXT_NON_OP) {
-                    --non_op_idx_offset;
-                }
-                // Deduct one non-op if parser_state.stitch_to indicates a previous
-                // operator to stitch to.
-                if (op_verts.size() == 1
-                    && parser_state.stitch_to.back() != mfast::STITCH_TO_NEXT_NON_OP)
-                {
-                    --non_op_idx_offset;
-                }
-
-                size_t num_non_ops = 0;
-
-                // If stitch_next_to is set, then the LHS points to that operator,
-                // otherwise it points to the appropriate non-operator.
-                size_t lhs_stitch;
-                if (op_verts.size() == 1
-                    && parser_state.stitch_to.back() != mfast::STITCH_TO_NEXT_NON_OP)
-                {
-                    lhs_stitch = parser_state.stitch_to.back();
-                    parser_state.stitch_to.pop_back();
-                } else {
-                    ++num_non_ops;
-                    lhs_stitch = *(nonop_verts.end() - non_op_idx_offset--);
-                }
-
-                // If we are considering the last operator in the sequence of
-                // same-precedence, same-associativity operators, then we stitch
-                // to an operator if stitch_to is set, or else to the appropriate
-                // non-operator.
-                size_t rhs_stitch;
+                // If we don't have an operator to stitch to, then stitch to last
+                // non-operating vertex. If we do, then stitch to that operator.
                 if (stitch_to == mfast::STITCH_TO_NEXT_NON_OP) {
-                    ++num_non_ops;
-                    rhs_stitch = *(nonop_verts.end() - non_op_idx_offset--);
-                } else {
-                    rhs_stitch = stitch_to;
-                }
+                    // Stitch to last two non-operating vertices.
+                    boost::add_edge(
+                        op_vert,
+                        *(parser_state.non_operating_vertices.back().end() - 2),
+                        ast
+                    );
+                    boost::add_edge(
+                        op_vert,
+                        *(parser_state.non_operating_vertices.back().end() - 1),
+                        ast
+                    );
 
-                // Do the stitching.
-                boost::add_edge(op_vert, lhs_stitch, ast);
-                boost::add_edge(op_vert, rhs_stitch, ast);
+                    // Pop those non-operating vertices.
+                    parser_state.non_operating_vertices.back().pop_back();
+                    parser_state.non_operating_vertices.back().pop_back();
+                } else {
+                    // Stitch to last non-operating vertex, and the stitch_to target.
+                    boost::add_edge(
+                        op_vert, parser_state.non_operating_vertices.back().back(), ast
+                    );
+                    boost::add_edge(op_vert, stitch_to, ast);
+
+                    // Pop the non-operating vertex.
+                    parser_state.non_operating_vertices.back().pop_back();
+                }
 
                 // We should now stitch to this operator we have just dealt with.
                 stitch_to = op_vert;
 
                 // Pop the current operator and consumed non-operators.
                 op_verts.pop_back();
-                nonop_verts.erase(nonop_verts.end() - num_non_ops, nonop_verts.end());
             } else {
                 // Binary left-associative opeartor.
 
@@ -204,13 +188,6 @@ static void link_operations_on_stack(
                 if (stitch_to != mfast::STITCH_TO_NEXT_NON_OP) {
                     --num_non_ops;
                 }
-                // Deduct one non-op if parser_state.stitch_to indicates a previous
-                // operator to stitch to.
-                if (op_verts.size() == num_ops
-                    && parser_state.stitch_to.back() != mfast::STITCH_TO_NEXT_NON_OP)
-                {
-                    --num_non_ops;
-                }
 
                 // Stitch to for next operator. This should be == to stitch_to for the
                 // operator at the top of the stack.
@@ -227,13 +204,7 @@ static void link_operations_on_stack(
                     // If stitch_next_to is set, then the LHS points to that operator,
                     // otherwise it points to the appropriate non-operator.
                     size_t lhs_stitch;
-                    if (next_op_idx == 0
-                        && parser_state.stitch_to.back()
-                               != mfast::STITCH_TO_NEXT_NON_OP)
-                    {
-                        lhs_stitch = parser_state.stitch_to.back();
-                        parser_state.stitch_to.pop_back();
-                    } else if (stitch_next_to == mfast::STITCH_TO_NEXT_NON_OP) {
+                    if (stitch_next_to == mfast::STITCH_TO_NEXT_NON_OP) {
                         lhs_stitch = *(nonop_verts.end() - non_op_idx_offset--);
                     } else {
                         lhs_stitch = stitch_next_to;
@@ -272,7 +243,7 @@ static void link_operations_on_stack(
         }
     }
 
-    parser_state.stitch_to.emplace_back(op_vert);
+    nonop_verts.emplace_back(op_vert);
 }
 
 // TODO(Matthew): probably rename, need to differentiate control flow, operators, and
@@ -368,7 +339,6 @@ void mfast::parse(
     parser_state.enclosing_vertices.emplace_back(boost::add_vertex(ast));
     parser_state.last_seen.emplace_back(NodeCategory::NONE);
     parser_state.enclosed_by.emplace_back(EnclosingCategory::ROOT);
-    parser_state.stitch_to.emplace_back(STITCH_TO_NEXT_NON_OP);
     nodes.vertex_node_map[parser_state.enclosing_vertices.back()] = 0;
 
     // Iterate tokens, parsing as appropriate.
