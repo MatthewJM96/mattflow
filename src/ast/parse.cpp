@@ -16,14 +16,20 @@ static void link_operations_on_stack(
     mfast::GetPrecedenceVisitor    op_precedence;
     mfast::GetAssociativityVisitor op_associativity;
 
+    auto& op_verts    = parser_state.operating_vertices.back();
+    auto& nonop_verts = parser_state.non_operating_vertices.back();
+
+    // Done if nothing to link.
+    if (op_verts.size() == 0) return;
+
     // Current operator to link up.
-    auto  op_vert = parser_state.operating_vertices.back().back();
-    auto* op      = &nodes.get_node_info(op_vert);
+    size_t           op_vert = op_verts.back();
+    mfast::NodeInfo* op      = &nodes.get_node_info(op_vert);
 
-    const auto STITCH_TO_NEXT_NON_OP = std::numeric_limits<decltype(op_vert)>::max();
-    auto       stitch_to             = STITCH_TO_NEXT_NON_OP;
+    const size_t STITCH_TO_NEXT_NON_OP = std::numeric_limits<size_t>::max();
+    size_t       stitch_to             = STITCH_TO_NEXT_NON_OP;
 
-    while (parser_state.operating_vertices.size() != 0) {
+    while (op_verts.size() != 0) {
         // Get order, precedence, and associativity of operator.
         std::visit(op_order, *op);
         std::visit(op_precedence, *op);
@@ -42,10 +48,8 @@ static void link_operations_on_stack(
             // If we don't have an operator to stitch to, then stitch to last
             // non-operating vertex. If we do, then stitch to that operator.
             if (stitch_to == STITCH_TO_NEXT_NON_OP) {
-                boost::add_edge(
-                    op_vert, parser_state.non_operating_vertices.back().back(), ast
-                );
-                parser_state.non_operating_vertices.back().pop_back();
+                boost::add_edge(op_vert, nonop_verts.back(), ast);
+                nonop_verts.pop_back();
             } else {
                 boost::add_edge(op_vert, stitch_to, ast);
             }
@@ -54,7 +58,7 @@ static void link_operations_on_stack(
             stitch_to = op_vert;
 
             // Pop the current operator.
-            parser_state.operating_vertices.back().pop_back();
+            op_verts.pop_back();
         } else {
             // Binary operator.
 
@@ -68,36 +72,26 @@ static void link_operations_on_stack(
                 // non-operating vertex. If we do, then stitch to that operator.
                 if (stitch_to == STITCH_TO_NEXT_NON_OP) {
                     // Stitch to last two non-operating vertices.
-                    boost::add_edge(
-                        op_vert,
-                        *(parser_state.non_operating_vertices.back().end() - 2),
-                        ast
-                    );
-                    boost::add_edge(
-                        op_vert,
-                        *(parser_state.non_operating_vertices.back().end() - 1),
-                        ast
-                    );
+                    boost::add_edge(op_vert, *(nonop_verts.end() - 2), ast);
+                    boost::add_edge(op_vert, *(nonop_verts.end() - 1), ast);
 
                     // Pop those non-operating vertices.
-                    parser_state.non_operating_vertices.back().pop_back();
-                    parser_state.non_operating_vertices.back().pop_back();
+                    nonop_verts.pop_back();
+                    nonop_verts.pop_back();
                 } else {
                     // Stitch to last non-operating vertex, and the stitch_to target.
-                    boost::add_edge(
-                        op_vert, parser_state.non_operating_vertices.back().back(), ast
-                    );
+                    boost::add_edge(op_vert, nonop_verts.back(), ast);
                     boost::add_edge(op_vert, stitch_to, ast);
 
                     // Pop the non-operating vertex.
-                    parser_state.non_operating_vertices.back().pop_back();
+                    nonop_verts.pop_back();
                 }
 
                 // We should now stitch to this operator we have just dealt with.
                 stitch_to = op_vert;
 
                 // Pop the current operator.
-                parser_state.operating_vertices.back().pop_back();
+                op_verts.pop_back();
             } else {
                 // Binary left-associative opeartor.
 
@@ -115,109 +109,112 @@ static void link_operations_on_stack(
                 mfast::GetPrecedenceVisitor    next_op_precedence;
                 mfast::GetAssociativityVisitor next_op_associativity;
 
-                // Look at operator subsequent to the top op of the stack.
-                size_t next_op_idx = parser_state.operating_vertices.back().size() - 2;
-                auto next_op_vert = parser_state.operating_vertices.back()[next_op_idx];
-                auto* next_op     = &nodes.get_node_info(next_op_vert);
+                size_t           next_op_idx;
+                size_t           next_op_vert;
+                mfast::NodeInfo* next_op;
 
-                // Get order, precedence, and associativity of the next operator.
-                std::visit(next_op_order, *next_op);
-                std::visit(next_op_precedence, *next_op);
-                std::visit(next_op_associativity, *next_op);
-
-                // Consider each operator in turn walking down the stack, if the
-                // precedence is still the same, it gets included in the operators that
-                // will be stitched.
-                while (next_op_precedence.result == op_precedence.result) {
-                    // Operators of same precedence as the first we have considered here
-                    // MUST also be binary operators of the same associativity.
-                    assert(next_op_order.result == mfast::Order::BINARY);
-                    assert(next_op_associativity.result == op_associativity.result);
-
-                    // If we have just considered the last operator on the stack, then
-                    // we are done and need to stitch everything.
-                    if (next_op_idx == 0) break;
-
-                    // Look at the next operator on the stack.
-                    --next_op_idx;
-                    next_op_vert = parser_state.operating_vertices.back()[next_op_idx];
+                if (op_verts.size() > 1) {
+                    // Look at operator subsequent to the top op of the stack.
+                    next_op_idx  = op_verts.size() - 2;
+                    next_op_vert = op_verts[next_op_idx];
                     next_op      = &nodes.get_node_info(next_op_vert);
 
-                    // Get order, precedence, and associativity of that operator.
-                    std::visit(next_op_order, *op);
-                    std::visit(next_op_precedence, *op);
-                    std::visit(next_op_associativity, *op);
+                    // Get order, precedence, and associativity of the next operator.
+                    std::visit(next_op_order, *next_op);
+                    std::visit(next_op_precedence, *next_op);
+                    std::visit(next_op_associativity, *next_op);
+
+                    // Consider each operator in turn walking down the stack, if the
+                    // precedence is still the same, it gets included in the operators
+                    // that will be stitched.
+                    while (next_op_precedence.result == op_precedence.result) {
+                        // Operators of same precedence as the first we have considered
+                        // here MUST also be binary operators of the same associativity.
+                        assert(next_op_order.result == mfast::Order::BINARY);
+                        assert(next_op_associativity.result == op_associativity.result);
+
+                        // If we have just considered the last operator on the stack,
+                        // then we are done and need to stitch everything.
+                        if (next_op_idx == 0) break;
+
+                        // Look at the next operator on the stack.
+                        --next_op_idx;
+                        next_op_vert = op_verts[next_op_idx];
+                        next_op      = &nodes.get_node_info(next_op_vert);
+
+                        // Get order, precedence, and associativity of that operator.
+                        std::visit(next_op_order, *op);
+                        std::visit(next_op_precedence, *op);
+                        std::visit(next_op_associativity, *op);
+                    }
+
+                    // next_op_idx is pointing to the operator after where we intend to
+                    // stitch to.
+                    ++next_op_idx;
+                } else {
+                    next_op_idx = 0;
                 }
 
-                // next_op_idx is pointing to the operator after where we intend to
-                // stitch to.
-                ++next_op_idx;
                 // Number of ops we'll be stitching. NOTE: as we are stitching binary
                 // operators we know for sure that the number of non-operator nodes
                 // involved in the stitching will be one greater than the number of
                 // operators.
-                size_t num_ops
-                    = parser_state.operating_vertices.back().size() - next_op_idx;
+                size_t num_ops     = op_verts.size() - next_op_idx;
                 size_t num_non_ops = num_ops + 1;
+                // Deduct one non-op if the RHS is stitching into an operator.
+                if (stitch_to != STITCH_TO_NEXT_NON_OP) {
+                    --num_non_ops;
+                }
 
                 // Stitch to for next operator. This should be == to stitch_to for the
                 // operator at the top of the stack.
-                size_t non_op_idx_offset = num_ops + 1;
-                auto   stitch_next_to    = STITCH_TO_NEXT_NON_OP;
+                size_t non_op_idx_offset = num_non_ops;
+                size_t stitch_next_to    = STITCH_TO_NEXT_NON_OP;
 
                 // We have the level of operator to go down to, stitch starting with the
                 // one lowest in the stack and work back up.
-                for (; next_op_idx <= parser_state.operating_vertices.back().size() - 1;
-                     ++next_op_idx)
-                {
+                for (; next_op_idx < op_verts.size(); ++next_op_idx) {
                     // Update vertex for next operator to point to next lowest operator
                     // we need to stitch.
-                    next_op_vert = parser_state.operating_vertices.back()[next_op_idx];
+                    next_op_vert = op_verts[next_op_idx];
 
-                    // If we don't have an operator to stitch to, then stitch to last
-                    // non-operating vertex. If we do, then stitch to that operator.
+                    // If stitch_next_to is set, then the LHS points to that operator,
+                    // otherwise it points to the appropriate non-operator.
+                    size_t lhs_stitch;
                     if (stitch_next_to == STITCH_TO_NEXT_NON_OP) {
-                        // Stitch to last two non-operating vertices.
-                        boost::add_edge(
-                            next_op_vert,
-                            *(parser_state.non_operating_vertices.back().end()
-                              - non_op_idx_offset--),
-                            ast
-                        );
-                        boost::add_edge(
-                            next_op_vert,
-                            *(parser_state.non_operating_vertices.back().end()
-                              - non_op_idx_offset--),
-                            ast
-                        );
+                        lhs_stitch = *(nonop_verts.end() - non_op_idx_offset--);
                     } else {
-                        // Stitch the stitch_to target and then the last non-operating
-                        // vertex.
-                        boost::add_edge(next_op_vert, stitch_next_to, ast);
-                        boost::add_edge(
-                            next_op_vert,
-                            *(parser_state.non_operating_vertices.back().end()
-                              - non_op_idx_offset--),
-                            ast
-                        );
+                        lhs_stitch = stitch_next_to;
                     }
+
+                    // If we are considering the last operator in the sequence of
+                    // same-precedence, same-associativity operators, then we stitch
+                    // to an operator if stitch_to is set, or else to the appropriate
+                    // non-operator.
+                    size_t rhs_stitch;
+                    if (next_op_idx == op_verts.size() - 1) {
+                        if (stitch_to == STITCH_TO_NEXT_NON_OP) {
+                            rhs_stitch = *(nonop_verts.end() - non_op_idx_offset--);
+                        } else {
+                            rhs_stitch = stitch_to;
+                        }
+                    } else {
+                        rhs_stitch = *(nonop_verts.end() - non_op_idx_offset--);
+                    }
+
+                    boost::add_edge(next_op_vert, lhs_stitch, ast);
+                    boost::add_edge(next_op_vert, rhs_stitch, ast);
 
                     // We should now stitch to this operator we have just dealt with.
                     stitch_next_to = next_op_vert;
                 }
 
                 // Set stitch_to to the last of the operators.
-                stitch_to = parser_state.operating_vertices.back().back();
+                stitch_to = op_verts.back();
 
                 // Erase the operators and non-operators we have stitched.
-                parser_state.operating_vertices.back().erase(
-                    parser_state.operating_vertices.back().end() - num_ops,
-                    parser_state.operating_vertices.back().end()
-                );
-                parser_state.non_operating_vertices.back().erase(
-                    parser_state.non_operating_vertices.back().end() - num_non_ops,
-                    parser_state.non_operating_vertices.back().end()
-                );
+                op_verts.erase(op_verts.end() - num_ops, op_verts.end());
+                nonop_verts.erase(nonop_verts.end() - num_non_ops, nonop_verts.end());
             }
         }
 
@@ -225,7 +222,7 @@ static void link_operations_on_stack(
         //                operating_vertices stack?
 
         // Get next operator to link up.
-        op_vert = parser_state.operating_vertices.back().back();
+        op_vert = op_verts.back();
         op      = &nodes.get_node_info(op_vert);
     }
 }
@@ -343,20 +340,6 @@ void mfast::parse(
             case mflex::TokenType::STRUCT:
             case mflex::TokenType::LEFT_BRACE:
             case mflex::TokenType::RIGHT_BRACE:
-            case mflex::TokenType::AND:
-            case mflex::TokenType::OR:
-            case mflex::TokenType::EQUALS:
-            case mflex::TokenType::NOT_EQUALS:
-            case mflex::TokenType::LESS_THAN:
-            case mflex::TokenType::LESS_THAN_OR_EQUAL_TO:
-            case mflex::TokenType::GREATER_THAN:
-            case mflex::TokenType::GREATER_THAN_OR_EQUAL_TO:
-            case mflex::TokenType::PLUS:
-            case mflex::TokenType::MINUS:
-                // TODO(Matthew): for now this token can be both repr of unary and
-                //                binary operations (subtraction and negation).
-            case mflex::TokenType::SLASH:
-            case mflex::TokenType::STAR:
             case mflex::TokenType::IDENTIFIER:
             case mflex::TokenType::LEFT_PAREN:
             case mflex::TokenType::RIGHT_PAREN:
@@ -370,6 +353,96 @@ void mfast::parse(
             case mflex::TokenType::ASSIGN_VALUE:
             case mflex::TokenType::SENTINEL:
                 break;
+            case mflex::TokenType::AND:
+                // Add AND vertex.
+                add_operating_node(
+                    it, mfast::AndOperatorNode{ it, it }, ast, nodes, parser_state
+                );
+                continue;
+            case mflex::TokenType::OR:
+                // Add OR vertex.
+                add_operating_node(
+                    it, mfast::OrOperatorNode{ it, it }, ast, nodes, parser_state
+                );
+                continue;
+            case mflex::TokenType::EQUALS:
+                // Add EQUALS vertex.
+                add_operating_node(
+                    it, mfast::EqualOperatorNode{ it, it }, ast, nodes, parser_state
+                );
+                continue;
+            case mflex::TokenType::NOT_EQUALS:
+                // Add NOT EQUALS vertex.
+                add_operating_node(
+                    it, mfast::NotEqualOperatorNode{ it, it }, ast, nodes, parser_state
+                );
+                continue;
+            case mflex::TokenType::LESS_THAN:
+                // Add LESS THAN vertex.
+                add_operating_node(
+                    it, mfast::LesserOperatorNode{ it, it }, ast, nodes, parser_state
+                );
+                continue;
+            case mflex::TokenType::LESS_THAN_OR_EQUAL_TO:
+                // Add LESS THAN OR EQUAL TO vertex.
+                add_operating_node(
+                    it,
+                    mfast::LesserOrEqualOperatorNode{ it, it },
+                    ast,
+                    nodes,
+                    parser_state
+                );
+                continue;
+            case mflex::TokenType::GREATER_THAN:
+                // Add GREATER THAN vertex.
+                add_operating_node(
+                    it, mfast::GreaterOperatorNode{ it, it }, ast, nodes, parser_state
+                );
+                continue;
+            case mflex::TokenType::GREATER_THAN_OR_EQUAL_TO:
+                // Add GREATER THAN OR EQUAL TO vertex.
+                add_operating_node(
+                    it,
+                    mfast::GreaterOrEqualOperatorNode{ it, it },
+                    ast,
+                    nodes,
+                    parser_state
+                );
+                continue;
+            case mflex::TokenType::PLUS:
+                // Add ADDITION vertex.
+                add_operating_node(
+                    it, mfast::AdditionOperatorNode{ it, it }, ast, nodes, parser_state
+                );
+                continue;
+            case mflex::TokenType::MINUS:
+                // TODO(Matthew): for now this token can be both repr of unary and
+                //                binary operations (subtraction and negation).
+                // Add SUBTRACTION vertex.
+                add_operating_node(
+                    it,
+                    mfast::SubtractionOperatorNode{ it, it },
+                    ast,
+                    nodes,
+                    parser_state
+                );
+                continue;
+            case mflex::TokenType::SLASH:
+                // Add DIVIDE vertex.
+                add_operating_node(
+                    it, mfast::DivisionOperatorNode{ it, it }, ast, nodes, parser_state
+                );
+                continue;
+            case mflex::TokenType::STAR:
+                // Add MULTIPLY vertex.
+                add_operating_node(
+                    it,
+                    mfast::MultiplicationOperatorNode{ it, it },
+                    ast,
+                    nodes,
+                    parser_state
+                );
+                continue;
             case mflex::TokenType::NOT:
                 // Add NOT vertex.
                 add_operating_node(
@@ -517,6 +590,8 @@ void mfast::parse(
                 //     continue;
         }
     }
+
+    link_operations_on_stack(Precedence::NONE, ast, nodes, parser_state);
 
     // If we get here and cursor is not pointing to top-level block, then something has
     // gone wrong in parsing.
