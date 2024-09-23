@@ -3,3 +3,7 @@
 
 # Build artifacts
 build/
+
+# Debug artifacts
+*.png
+*.dot
