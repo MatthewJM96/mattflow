@@ -22,7 +22,7 @@ namespace mattflow {
             std::vector<ASTVertex>              enclosing_vertices;
             std::vector<EnclosingCategory>      enclosed_by;
             std::vector<NodeCategory>           last_seen;
-            ASTVertex                           stitch_to;
+            std::vector<ASTVertex>              stitch_to;
         };
 
         void parse(
