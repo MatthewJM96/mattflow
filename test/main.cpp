@@ -115,10 +115,25 @@ void test_lexer() {
     );
 }
 
+class NodeInfoWriter {
+public:
+    NodeInfoWriter(mfast::NodeBuffers* _node_buffers) : node_buffers(_node_buffers) { }
+
+    void operator()(std::ostream& out, size_t v) const {
+        auto& node_info = node_buffers->get_node_info(v);
+
+        std::visit(
+            [&](auto& n) { out << "[label=\"" + n.debug_repr() + "\"]"; }, node_info
+        );
+    }
+private:
+    mfast::NodeBuffers* node_buffers;
+};
+
 void test_parser() {
-    char* sample_0 = read_file_to_string("samples/primary.mf");
+    char* sample_0 = read_file_to_string("samples/test_parser.mf");
     if (sample_0 == nullptr) {
-        std::cout << "Could not read samples/primary.mf." << std::endl;
+        std::cout << "Could not read samples/test_parser.mf." << std::endl;
         exit(1);
     }
 
@@ -139,8 +154,6 @@ void test_parser() {
                              )
                              - source_view.source.rbegin();
 
-    auto& str_table = mflit::StringTable::get();
-
     mflex::Tokens tokens;
     mflex::parse(source_view, tokens);
 
@@ -149,42 +162,8 @@ void test_parser() {
     mftype::IdentifierTypeTable type_table;
     mfast::parse(tokens, ast, node_buffers, type_table);
 
-    bool skip_first = true;
-    for (auto v : boost::make_iterator_range(boost::vertices(ast))) {
-        if (skip_first) {
-            skip_first = false;
-            continue;
-        }
-
-        mfast::NodeInfo& __node_info = node_buffers.get_node_info(v);
-        std::visit(
-            [&str_table](auto& node_info) {
-                using T = std::decay_t<decltype(node_info)>;
-                if constexpr (std::is_same_v<T, mfast::BoolValNode>) {
-                    if (node_info.value) {
-                        std::cout << "true ";
-                    } else {
-                        std::cout << "false ";
-                    }
-                } else if constexpr (std::is_same_v<T, mfast::NumberValNode>) {
-                    if (node_info.value.is_floating_point()) {
-                        std::cout << node_info.value.template as<float>() << " ";
-                    } else {
-                        std::cout << node_info.value.template as<int>() << " ";
-                    }
-                } else if constexpr (std::is_same_v<T, mfast::StringValNode>) {
-                    std::cout << "\"" << str_table.get(node_info.value) << "\" ";
-                } else if constexpr (std::is_same_v<T, mfast::NullNode>) {
-                    std::cout << "null ";
-                } else if constexpr (std::is_same_v<T, mfast::Int64Node>) {
-                    std::cout << "int64" << std::endl;
-                }
-            },
-            __node_info
-        );
-
-        std::cout << std::endl;
-    }
+    std::ofstream graph_file("graph.dot");
+    boost::write_graphviz(graph_file, ast, NodeInfoWriter(&node_buffers));
 }
 
 int main() {
