@@ -23,13 +23,16 @@ static void link_operations_on_stack(
     if (op_verts.size() == 0) return;
 
     // Current operator to link up.
-    size_t           op_vert = op_verts.back();
-    mfast::NodeInfo* op      = &nodes.get_node_info(op_vert);
+    size_t           op_vert;
+    mfast::NodeInfo* op;
 
-    const size_t STITCH_TO_NEXT_NON_OP = std::numeric_limits<size_t>::max();
-    size_t       stitch_to             = STITCH_TO_NEXT_NON_OP;
+    size_t stitch_to = mfast::STITCH_TO_NEXT_NON_OP;
 
     while (op_verts.size() != 0) {
+        // Get next operator to link up.
+        op_vert = op_verts.back();
+        op      = &nodes.get_node_info(op_vert);
+
         // Get order, precedence, and associativity of operator.
         std::visit(op_order, *op);
         std::visit(op_precedence, *op);
@@ -47,7 +50,7 @@ static void link_operations_on_stack(
 
             // If we don't have an operator to stitch to, then stitch to last
             // non-operating vertex. If we do, then stitch to that operator.
-            if (stitch_to == STITCH_TO_NEXT_NON_OP) {
+            if (stitch_to == mfast::STITCH_TO_NEXT_NON_OP) {
                 boost::add_edge(op_vert, nonop_verts.back(), ast);
                 nonop_verts.pop_back();
             } else {
@@ -70,7 +73,7 @@ static void link_operations_on_stack(
 
                 // If we don't have an operator to stitch to, then stitch to last
                 // non-operating vertex. If we do, then stitch to that operator.
-                if (stitch_to == STITCH_TO_NEXT_NON_OP) {
+                if (stitch_to == mfast::STITCH_TO_NEXT_NON_OP) {
                     // Stitch to last two non-operating vertices.
                     boost::add_edge(op_vert, *(nonop_verts.end() - 2), ast);
                     boost::add_edge(op_vert, *(nonop_verts.end() - 1), ast);
@@ -135,7 +138,11 @@ static void link_operations_on_stack(
 
                         // If we have just considered the last operator on the stack,
                         // then we are done and need to stitch everything.
-                        if (next_op_idx == 0) break;
+                        if (next_op_idx == 0) {
+                            // Decrement as we expect that afterwards.
+                            --next_op_idx;
+                            break;
+                        }
 
                         // Look at the next operator on the stack.
                         --next_op_idx;
@@ -162,14 +169,21 @@ static void link_operations_on_stack(
                 size_t num_ops     = op_verts.size() - next_op_idx;
                 size_t num_non_ops = num_ops + 1;
                 // Deduct one non-op if the RHS is stitching into an operator.
-                if (stitch_to != STITCH_TO_NEXT_NON_OP) {
+                if (stitch_to != mfast::STITCH_TO_NEXT_NON_OP) {
+                    --num_non_ops;
+                }
+                // Deduct one non-op if parser_state.stitch_to indicates a previous
+                // operator to stitch to.
+                if (op_verts.size() == num_ops
+                    && parser_state.stitch_to != mfast::STITCH_TO_NEXT_NON_OP)
+                {
                     --num_non_ops;
                 }
 
                 // Stitch to for next operator. This should be == to stitch_to for the
                 // operator at the top of the stack.
                 size_t non_op_idx_offset = num_non_ops;
-                size_t stitch_next_to    = STITCH_TO_NEXT_NON_OP;
+                size_t stitch_next_to    = mfast::STITCH_TO_NEXT_NON_OP;
 
                 // We have the level of operator to go down to, stitch starting with the
                 // one lowest in the stack and work back up.
@@ -181,7 +195,11 @@ static void link_operations_on_stack(
                     // If stitch_next_to is set, then the LHS points to that operator,
                     // otherwise it points to the appropriate non-operator.
                     size_t lhs_stitch;
-                    if (stitch_next_to == STITCH_TO_NEXT_NON_OP) {
+                    if (next_op_idx == 0
+                        && parser_state.stitch_to != mfast::STITCH_TO_NEXT_NON_OP)
+                    {
+                        lhs_stitch = parser_state.stitch_to;
+                    } else if (stitch_next_to == mfast::STITCH_TO_NEXT_NON_OP) {
                         lhs_stitch = *(nonop_verts.end() - non_op_idx_offset--);
                     } else {
                         lhs_stitch = stitch_next_to;
@@ -193,7 +211,7 @@ static void link_operations_on_stack(
                     // non-operator.
                     size_t rhs_stitch;
                     if (next_op_idx == op_verts.size() - 1) {
-                        if (stitch_to == STITCH_TO_NEXT_NON_OP) {
+                        if (stitch_to == mfast::STITCH_TO_NEXT_NON_OP) {
                             rhs_stitch = *(nonop_verts.end() - non_op_idx_offset--);
                         } else {
                             rhs_stitch = stitch_to;
@@ -217,14 +235,9 @@ static void link_operations_on_stack(
                 nonop_verts.erase(nonop_verts.end() - num_non_ops, nonop_verts.end());
             }
         }
-
-        // TODO(Matthew): probably add the stitch_to vertex back onto the
-        //                operating_vertices stack?
-
-        // Get next operator to link up.
-        op_vert = op_verts.back();
-        op      = &nodes.get_node_info(op_vert);
     }
+
+    parser_state.stitch_to = op_vert;
 }
 
 // TODO(Matthew): probably rename, need to differentiate control flow, operators, and
@@ -320,6 +333,7 @@ void mfast::parse(
     parser_state.enclosing_vertices.emplace_back(boost::add_vertex(ast));
     parser_state.last_seen.emplace_back(NodeCategory::NONE);
     parser_state.enclosed_by.emplace_back(EnclosingCategory::ROOT);
+    parser_state.stitch_to = STITCH_TO_NEXT_NON_OP;
     nodes.vertex_node_map[parser_state.enclosing_vertices.back()] = 0;
 
     // Iterate tokens, parsing as appropriate.

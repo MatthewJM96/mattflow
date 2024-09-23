@@ -7,6 +7,8 @@
 
 namespace mattflow {
     namespace ast {
+        const size_t STITCH_TO_NEXT_NON_OP = std::numeric_limits<size_t>::max();
+
         /**
          * @brief Holds state for a parse call. The vertices buffer is built up
          * per-node while the precedence and associativity are built up per layer
@@ -20,6 +22,7 @@ namespace mattflow {
             std::vector<ASTVertex>              enclosing_vertices;
             std::vector<EnclosingCategory>      enclosed_by;
             std::vector<NodeCategory>           last_seen;
+            ASTVertex                           stitch_to;
         };
 
         void parse(
