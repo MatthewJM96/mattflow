@@ -11,7 +11,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct BoolNode : public Node {
-            // Empty.
+            BoolNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: bool"; }
         };
 
         /**
@@ -20,7 +28,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct CharNode : public Node {
-            // Empty.
+            CharNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: char"; }
         };
 
         /**
@@ -29,7 +45,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct IntNode : public Node {
-            // Empty.
+            IntNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: int"; }
         };
 
         /**
@@ -38,7 +62,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct Int8Node : public Node {
-            // Empty.
+            Int8Node(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: int8"; }
         };
 
         /**
@@ -47,7 +79,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct Int16Node : public Node {
-            // Empty.
+            Int16Node(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: int16"; }
         };
 
         /**
@@ -56,7 +96,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct Int32Node : public Node {
-            // Empty.
+            Int32Node(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: int32"; }
         };
 
         /**
@@ -65,7 +113,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct Int64Node : public Node {
-            // Empty.
+            Int64Node(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: int64"; }
         };
 
         /**
@@ -74,7 +130,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct UIntNode : public Node {
-            // Empty.
+            UIntNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: uint"; }
         };
 
         /**
@@ -83,7 +147,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct UInt8Node : public Node {
-            // Empty.
+            UInt8Node(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: uint8"; }
         };
 
         /**
@@ -92,7 +164,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct UInt16Node : public Node {
-            // Empty.
+            UInt16Node(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: uint16"; }
         };
 
         /**
@@ -101,7 +181,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct UInt32Node : public Node {
-            // Empty.
+            UInt32Node(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: uint32"; }
         };
 
         /**
@@ -110,7 +198,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct UInt64Node : public Node {
-            // Empty.
+            UInt64Node(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: uint64"; }
         };
 
         /**
@@ -119,7 +215,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct Float32Node : public Node {
-            // Empty.
+            Float32Node(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: float32"; }
         };
 
         /**
@@ -128,7 +232,15 @@ namespace mattflow {
          * @inedge TODO
          */
         struct Float64Node : public Node {
-            // Empty.
+            Float64Node(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "type: float64"; }
         };
     }  // namespace ast
 }  // namespace mattflow

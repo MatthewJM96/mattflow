@@ -14,8 +14,24 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct FunctionNode : public Node {
+            FunctionNode(
+                mflex::Tokens::const_iterator       _first_token,
+                mflex::Tokens::const_iterator       _last_token,
+                mftype::Type*                       _type,
+                std::vector<mflit::IdentifierIdx>&& _argument_names
+            ) :
+                Node(_first_token, _last_token),
+                type(_type),
+                argument_names(
+                    std::forward<std::vector<mflit::IdentifierIdx>>(_argument_names)
+                ) {
+                // Empty.
+            }
+
             mftype::Type*                     type;
             std::vector<mflit::IdentifierIdx> argument_names;
+
+            std::string debug_repr() override { return "func"; }
         };
     }  // namespace ast
 }  // namespace mattflow

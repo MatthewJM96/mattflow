@@ -14,7 +14,18 @@ namespace mattflow {
          * @outedges struct field
          */
         struct StructNode : public Node {
+            StructNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token,
+                mftype::Type*                 _type
+            ) :
+                Node(_first_token, _last_token), type(_type) {
+                // Empty.
+            }
+
             mftype::Type* type;
+
+            std::string debug_repr() override { return "struct"; }
         };
 
         /**
@@ -23,8 +34,20 @@ namespace mattflow {
          * @inedge variable
          */
         struct StructFieldNode : public Node {
+            StructFieldNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token,
+                mflit::IdentifierIdx          _name,
+                mftype::Type*                 _type
+            ) :
+                Node(_first_token, _last_token), name(_name), type(_type) {
+                // Empty.
+            }
+
             mflit::IdentifierIdx name;
             mftype::Type*        type;
+
+            std::string debug_repr() override { return "struct field"; }
         };
     }  // namespace ast
 }  // namespace mattflow

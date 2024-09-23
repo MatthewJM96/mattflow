@@ -33,7 +33,13 @@ namespace mattflow {
          * @brief Node reflecting an operator.
          */
         struct OperatorNode : public Node {
-            // Empty.
+            OperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
         };
 
         /**
@@ -43,9 +49,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct NotOperatorNode : public OperatorNode {
+            NotOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::UNARY;
             const Precedence    PRECEDENCE    = Precedence::UNARY;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
+
+            std::string debug_repr() override { return "op !"; }
         };
 
         /**
@@ -55,9 +71,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct NegationOperatorNode : public OperatorNode {
+            NegationOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::UNARY;
             const Precedence    PRECEDENCE    = Precedence::UNARY;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
+
+            std::string debug_repr() override { return "op -"; }
         };
 
         /**
@@ -68,9 +94,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct MultiplicationOperatorNode : public OperatorNode {
+            MultiplicationOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::FACTOR;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() override { return "op *"; }
         };
 
         /**
@@ -81,9 +117,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct DivisionOperatorNode : public OperatorNode {
+            DivisionOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::FACTOR;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() override { return "op /"; }
         };
 
         /**
@@ -94,9 +140,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct AdditionOperatorNode : public OperatorNode {
+            AdditionOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::TERM;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() override { return "op +"; }
         };
 
         /**
@@ -107,9 +163,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct SubtractionOperatorNode : public OperatorNode {
+            SubtractionOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::TERM;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() override { return "op -"; }
         };
 
         /**
@@ -120,9 +186,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct GreaterOperatorNode : public OperatorNode {
+            GreaterOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
+
+            std::string debug_repr() override { return "op >"; }
         };
 
         /**
@@ -133,9 +209,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct GreaterOrEqualOperatorNode : public OperatorNode {
+            GreaterOrEqualOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
+
+            std::string debug_repr() override { return "op >="; }
         };
 
         /**
@@ -146,9 +232,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct LesserOperatorNode : public OperatorNode {
+            LesserOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
+
+            std::string debug_repr() override { return "op <"; }
         };
 
         /**
@@ -159,9 +255,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct LesserOrEqualOperatorNode : public OperatorNode {
+            LesserOrEqualOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
+
+            std::string debug_repr() override { return "op <="; }
         };
 
         /**
@@ -172,9 +278,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct EqualOperatorNode : public OperatorNode {
+            EqualOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::EQUALITY;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() override { return "op =="; }
         };
 
         /**
@@ -185,9 +301,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct NotEqualOperatorNode : public OperatorNode {
+            NotEqualOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::EQUALITY;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() override { return "op !="; }
         };
 
         /**
@@ -198,9 +324,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct OrOperatorNode : public OperatorNode {
+            OrOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::LOGICAL;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() override { return "op or"; }
         };
 
         /**
@@ -211,9 +347,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct AndOperatorNode : public OperatorNode {
+            AndOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::LOGICAL;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() override { return "op and"; }
         };
 
         /**
@@ -223,9 +369,19 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct AssignmentOperatorNode : public OperatorNode {
+            AssignmentOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::ASSIGNMENT;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
+
+            std::string debug_repr() override { return "op ="; }
         };
     }  // namespace ast
 }  // namespace mattflow

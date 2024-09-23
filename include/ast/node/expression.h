@@ -15,7 +15,15 @@ namespace mattflow {
          * @outedge TODO
          */
         struct BlockExprNode : public Node {
-            // Empty.
+            BlockExprNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "block"; }
         };
     }  // namespace ast
 }  // namespace mattflow

@@ -12,7 +12,15 @@ namespace mattflow {
          * @inedge operator | paren expression | assignment | block expression
          */
         struct NullNode : public Node {
-            // Empty.
+            NullNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "null"; }
         };
 
         /**
@@ -21,7 +29,20 @@ namespace mattflow {
          * @inedge operator | paren expression | assignment | block expression
          */
         struct BoolValNode : public Node {
+            BoolValNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token,
+                bool                          _value
+            ) :
+                Node(_first_token, _last_token), value(_value) {
+                // Empty.
+            }
+
             bool value;
+
+            std::string debug_repr() override {
+                return "bool: " + std::string(value ? "true" : "false");
+            }
         };
 
         /**
@@ -30,7 +51,24 @@ namespace mattflow {
          * @inedge operator | paren expression | assignment | block expression
          */
         struct NumberValNode : public Node {
+            NumberValNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token,
+                mflit::Number                 _value
+            ) :
+                Node(_first_token, _last_token), value(_value) {
+                // Empty.
+            }
+
             mflit::Number value;
+
+            std::string debug_repr() override {
+                return "num: "
+                       + std::to_string(
+                           value.is_floating_point() ? value.template as<float>() :
+                                                       value.template as<int>()
+                       );
+            }
         };
 
         /**
@@ -39,7 +77,21 @@ namespace mattflow {
          * @inedge operator | paren expression | assignment | block expression
          */
         struct StringValNode : public Node {
+            StringValNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token,
+                mflit::StringIdx              _value
+            ) :
+                Node(_first_token, _last_token), value(_value) {
+                // Empty.
+            }
+
             mflit::StringIdx value;
+
+            std::string debug_repr() override {
+                static auto& str_table = mflit::StringTable::get();
+                return "str: " + std::string(str_table.get(value));
+            }
         };
 
         /**
@@ -50,7 +102,21 @@ namespace mattflow {
          * @outedge rvalue expression
          */
         struct IdentifierNode : public Node {
+            IdentifierNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token,
+                mflit::IdentifierIdx          _name
+            ) :
+                Node(_first_token, _last_token), name(_name) {
+                // Empty.
+            }
+
             mflit::IdentifierIdx name;
+
+            std::string debug_repr() override {
+                static auto& ident_table = mflit::IdentifierTable::get();
+                return "ident: " + std::string(ident_table.get(name));
+            }
         };
     }  // namespace ast
 }  // namespace mattflow

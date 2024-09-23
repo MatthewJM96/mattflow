@@ -17,7 +17,15 @@ namespace mattflow {
          * @outedge expression
          */
         struct IfNode : public Node {
-            // Empty.
+            IfNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "if"; }
         };
 
         /**
@@ -28,7 +36,15 @@ namespace mattflow {
          * @outedge expression
          */
         struct ForNode : public Node {
-            // Empty.
+            ForNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "for"; }
         };
 
         /**
@@ -43,7 +59,15 @@ namespace mattflow {
          * @outedge logic
          */
         struct RangeNode : public Node {
-            // Empty.
+            RangeNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "range"; }
         };
 
         /**
@@ -56,7 +80,15 @@ namespace mattflow {
          * @outedge expression
          */
         struct WhileNode : public Node {
-            // Empty.
+            WhileNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() override { return "while"; }
         };
     }  // namespace ast
 }  // namespace mattflow
