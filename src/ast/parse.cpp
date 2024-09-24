@@ -241,6 +241,7 @@ static void link_operations_on_stack(
         }
     }
 
+    // Make sure to put whatever operator we've just consumed onto the non-op stack.
     nonop_verts.emplace_back(op_vert);
 }
 
