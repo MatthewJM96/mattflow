@@ -19,7 +19,7 @@ namespace mattflow {
             NONE,
             BINOP,
             UNOP,
-            PRIMARY
+            NONOP
         };
 
         enum class EnclosingCategory {

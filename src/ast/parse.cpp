@@ -16,16 +16,12 @@ static void add_non_operating_node(
     // If we have two non-operating nodes in a row, we have a break of expression.
     // TODO(Matthew): bare in mind that we have control-flow to include yet, and might
     //                complicate this.
-    if (parser_state.last_seen.back() != mfast::NodeCategory::NONE
-        && parser_state.last_seen.back() != mfast::NodeCategory::BINOP
-        && parser_state.last_seen.back() != mfast::NodeCategory::UNOP)
-    {
+    if (parser_state.last_seen.back() == mfast::NodeCategory::NONOP) {
         mfast::link_operations_on_stack(
             mfast::Precedence::NONE, ast, nodes, parser_state
         );
 
-        // TODO(Matthew): we kinda have to do more here as what if we have a parenexpr,
-        //                blockexpr...
+        // TODO(Matthew): we kinda have to do more here as what if we have a blockexpr?
     }
 
     // Add vertex to AST for node, and push it onto the stack.
@@ -35,6 +31,8 @@ static void add_non_operating_node(
     // Add node info about bool node and associate with vertex in AST.
     nodes.vertex_node_map[vertex] = nodes.node_info.size();
     nodes.node_info.emplace_back(std::forward<mfast::NodeInfo>(node_info));
+
+    parser_state.last_seen.back() = mfast::NodeCategory::NONOP;
 
     // Move forward a token.
     curr_token += 1;
@@ -73,6 +71,12 @@ static void add_operating_node(
     // Add node info about bool node and associate with vertex in AST.
     nodes.vertex_node_map[vertex] = nodes.node_info.size();
     nodes.node_info.emplace_back(std::forward<Node>(node_info));
+
+    if (node_info.ORDER == mfast::Order::UNARY) {
+        parser_state.last_seen.back() = mfast::NodeCategory::UNOP;
+    } else {
+        parser_state.last_seen.back() = mfast::NodeCategory::BINOP;
+    }
 
     // Move forward a token.
     curr_token += 1;
@@ -135,6 +139,7 @@ void mfast::parse(
                 // Push a new stack of vertices for ops and non-ops.
                 parser_state.non_operating_vertices.push_back({});
                 parser_state.operating_vertices.push_back({});
+                parser_state.last_seen.push_back(mfast::NodeCategory::NONE);
 
                 // Move forward a token.
                 it += 1;
@@ -149,6 +154,7 @@ void mfast::parse(
                         = parser_state.non_operating_vertices.back().back();
                     parser_state.non_operating_vertices.pop_back();
                     parser_state.operating_vertices.pop_back();
+                    parser_state.last_seen.pop_back();
 
                     assert(parser_state.non_operating_vertices.size() > 0);
                     assert(parser_state.operating_vertices.size() > 0);
