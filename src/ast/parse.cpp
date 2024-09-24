@@ -245,8 +245,6 @@ static void link_operations_on_stack(
     nonop_verts.emplace_back(op_vert);
 }
 
-// TODO(Matthew): probably rename, need to differentiate control flow, operators, and
-//                primaries at least.
 static void add_non_operating_node(
     VALINOUT mflex::Tokens::const_iterator& curr_token,
     VALIN mfast::NodeInfo&& node_info,
