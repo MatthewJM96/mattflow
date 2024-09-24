@@ -363,7 +363,6 @@ void mfast::parse(
             case mflex::TokenType::STRUCT:
             case mflex::TokenType::LEFT_BRACE:
             case mflex::TokenType::RIGHT_BRACE:
-            case mflex::TokenType::IDENTIFIER:
             case mflex::TokenType::LEFT_PAREN:
             case mflex::TokenType::RIGHT_PAREN:
             case mflex::TokenType::LEFT_BRACKET:
@@ -612,6 +611,16 @@ void mfast::parse(
                 add_non_operating_node(
                     it,
                     mfast::StringValNode{ it, it, it->string_idx },
+                    ast,
+                    nodes,
+                    parser_state
+                );
+                continue;
+            case mflex::TokenType::IDENTIFIER:
+                // Add identifier vertex.
+                add_non_operating_node(
+                    it,
+                    mfast::IdentifierNode{ it, it, it->identifier_idx },
                     ast,
                     nodes,
                     parser_state
