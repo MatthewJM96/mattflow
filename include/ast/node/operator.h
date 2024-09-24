@@ -7,6 +7,7 @@
 namespace mattflow {
     namespace ast {
         enum class Order {
+            NONE,
             UNARY,
             BINARY
         };

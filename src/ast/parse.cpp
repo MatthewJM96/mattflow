@@ -12,9 +12,9 @@ static void link_operations_on_stack(
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
 ) {
-    mfast::GetOrderVisitor         op_order;
-    mfast::GetPrecedenceVisitor    op_precedence;
-    mfast::GetAssociativityVisitor op_associativity;
+    mfast::Order         op_order;
+    mfast::Precedence    op_precedence;
+    mfast::Associativity op_associativity;
 
     auto& op_verts    = parser_state.operating_vertices.back();
     auto& nonop_verts = parser_state.non_operating_vertices.back();
@@ -36,23 +36,23 @@ static void link_operations_on_stack(
         op           = &nodes.get_node_info(op_vert);
 
         // Get order, precedence, and associativity of operator.
-        std::visit(op_order, *op);
-        std::visit(op_precedence, *op);
-        std::visit(op_associativity, *op);
+        op_order         = std::visit(mfast::GetOrderVisitor{}, *op);
+        op_precedence    = std::visit(mfast::GetPrecedenceVisitor{}, *op);
+        op_associativity = std::visit(mfast::GetAssociativityVisitor{}, *op);
 
         // We are done stitching if the operator we are about to consider has the
         // target precedence.
-        if (op_precedence.result == target_precedence) {
+        if (op_precedence == target_precedence) {
             // Make sure to add the stitch target for next link phase.
             nonop_verts.emplace_back(prev_op_vert);
             return;
         }
 
-        if (op_order.result == mfast::Order::UNARY) {
+        if (op_order == mfast::Order::UNARY) {
             // Unary operator.
 
             // Any unary operator should be right-associative.
-            assert(op_associativity.result == mfast::Associativity::RIGHT);
+            assert(op_associativity == mfast::Associativity::RIGHT);
 
             // If we don't have an operator to stitch to, then stitch to last
             // non-operating vertex. If we do, then stitch to that operator.
@@ -71,7 +71,7 @@ static void link_operations_on_stack(
         } else {
             // Binary operator.
 
-            if (op_associativity.result == mfast::Associativity::RIGHT) {
+            if (op_associativity == mfast::Associativity::RIGHT) {
                 // Binary right-associative opeartor.
 
                 // Simple case. We can just deal with this operator without worrying
@@ -124,9 +124,9 @@ static void link_operations_on_stack(
                 //               bottom-most back up to the top one and pop all
                 //               subsequently.
 
-                mfast::GetOrderVisitor         next_op_order;
-                mfast::GetPrecedenceVisitor    next_op_precedence;
-                mfast::GetAssociativityVisitor next_op_associativity;
+                mfast::Order         next_op_order;
+                mfast::Precedence    next_op_precedence;
+                mfast::Associativity next_op_associativity;
 
                 size_t           next_op_idx;
                 size_t           next_op_vert;
@@ -139,18 +139,20 @@ static void link_operations_on_stack(
                     next_op      = &nodes.get_node_info(next_op_vert);
 
                     // Get order, precedence, and associativity of the next operator.
-                    std::visit(next_op_order, *next_op);
-                    std::visit(next_op_precedence, *next_op);
-                    std::visit(next_op_associativity, *next_op);
+                    next_op_order = std::visit(mfast::GetOrderVisitor{}, *next_op);
+                    next_op_precedence
+                        = std::visit(mfast::GetPrecedenceVisitor{}, *next_op);
+                    next_op_associativity
+                        = std::visit(mfast::GetAssociativityVisitor{}, *next_op);
 
                     // Consider each operator in turn walking down the stack, if the
                     // precedence is still the same, it gets included in the operators
                     // that will be stitched.
-                    while (next_op_precedence.result == op_precedence.result) {
+                    while (next_op_precedence == op_precedence) {
                         // Operators of same precedence as the first we have considered
                         // here MUST also be binary operators of the same associativity.
-                        assert(next_op_order.result == mfast::Order::BINARY);
-                        assert(next_op_associativity.result == op_associativity.result);
+                        assert(next_op_order == mfast::Order::BINARY);
+                        assert(next_op_associativity == op_associativity);
 
                         // If we have just considered the last operator on the stack,
                         // then we are done and need to stitch everything.
@@ -166,9 +168,11 @@ static void link_operations_on_stack(
                         next_op      = &nodes.get_node_info(next_op_vert);
 
                         // Get order, precedence, and associativity of that operator.
-                        std::visit(next_op_order, *op);
-                        std::visit(next_op_precedence, *op);
-                        std::visit(next_op_associativity, *op);
+                        next_op_order = std::visit(mfast::GetOrderVisitor{}, *next_op);
+                        next_op_precedence
+                            = std::visit(mfast::GetPrecedenceVisitor{}, *next_op);
+                        next_op_associativity
+                            = std::visit(mfast::GetAssociativityVisitor{}, *next_op);
                     }
 
                     // next_op_idx is pointing to the operator after where we intend to
