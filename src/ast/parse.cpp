@@ -118,12 +118,6 @@ static void link_operations_on_stack(
                 // same precedence and then stitch them in starting with the last of
                 // them working to the current operator we are dealing with.
 
-                // TODO(Matthew) loop down stack of operators til precedence changes -
-                //               by necessity associativity of all should be the same
-                //               (but maybe assert this) - and then work from the
-                //               bottom-most back up to the top one and pop all
-                //               subsequently.
-
                 mfast::Order         next_op_order;
                 mfast::Precedence    next_op_precedence;
                 mfast::Associativity next_op_associativity;
