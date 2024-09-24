@@ -39,7 +39,7 @@ namespace mattflow {
             IfNode, ForNode, RangeNode, WhileNode,              // Control Flow
             StructNode, StructFieldNode,                        // Struct
             FunctionNode,                                       // Function
-            AssignmentOperatorNode,                             // Assignment
+            AssignValueOperatorNode, AssignTypeOperatorNode,    // Assignment
             OrOperatorNode, AndOperatorNode,                    // Logic
             NotEqualOperatorNode, EqualOperatorNode,            // Equality
             LesserOperatorNode, LesserOrEqualOperatorNode,

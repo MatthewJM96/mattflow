@@ -372,10 +372,28 @@ void mfast::parse(
             case mflex::TokenType::RANGE:
             case mflex::TokenType::DOT:
             case mflex::TokenType::ARROW:
-            case mflex::TokenType::ASSIGN_TYPE:
-            case mflex::TokenType::ASSIGN_VALUE:
             case mflex::TokenType::SENTINEL:
                 break;
+            case mflex::TokenType::ASSIGN_TYPE:
+                // Add ASSIGN_TYPE vertex.
+                add_operating_node(
+                    it,
+                    mfast::AssignTypeOperatorNode{ it, it },
+                    ast,
+                    nodes,
+                    parser_state
+                );
+                continue;
+            case mflex::TokenType::ASSIGN_VALUE:
+                // Add ASSIGN_VALUE vertex.
+                add_operating_node(
+                    it,
+                    mfast::AssignValueOperatorNode{ it, it },
+                    ast,
+                    nodes,
+                    parser_state
+                );
+                continue;
             case mflex::TokenType::AND:
                 // Add AND vertex.
                 add_operating_node(

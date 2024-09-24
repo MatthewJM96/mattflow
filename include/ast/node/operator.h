@@ -13,15 +13,16 @@ namespace mattflow {
         };
 
         enum class Precedence : int16_t {
-            NONE       = 0,
-            ASSIGNMENT = 100,
-            LOGICAL    = 200,
-            EQUALITY   = 300,
-            COMPARISON = 400,
-            TERM       = 500,
-            FACTOR     = 600,
-            POWER      = 700,
-            UNARY      = 800
+            NONE             = 0,
+            VALUE_ASSIGNMENT = 100,
+            LOGICAL          = 200,
+            EQUALITY         = 300,
+            COMPARISON       = 400,
+            TERM             = 500,
+            FACTOR           = 600,
+            POWER            = 700,
+            UNARY            = 800,
+            TYPE_ASSIGNMENT  = 900
         };
 
         enum class Associativity {
@@ -393,8 +394,8 @@ namespace mattflow {
          * @inedge lvalue expression
          * @outedge rvalue expression
          */
-        struct AssignmentOperatorNode : public OperatorNode {
-            AssignmentOperatorNode(
+        struct AssignValueOperatorNode : public OperatorNode {
+            AssignValueOperatorNode(
                 mflex::Tokens::const_iterator _first_token,
                 mflex::Tokens::const_iterator _last_token
             ) :
@@ -403,10 +404,32 @@ namespace mattflow {
             }
 
             const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::ASSIGNMENT;
+            const Precedence    PRECEDENCE    = Precedence::VALUE_ASSIGNMENT;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
             std::string debug_repr() override { return "op ="; }
+        };
+
+        /**
+         * @brief Node reflecting a type assignment operator.
+         *
+         * @inedge lvalue expression
+         * @outedge rvalue expression
+         */
+        struct AssignTypeOperatorNode : public OperatorNode {
+            AssignTypeOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            const Order         ORDER         = Order::BINARY;
+            const Precedence    PRECEDENCE    = Precedence::TYPE_ASSIGNMENT;
+            const Associativity ASSOCIATIVITY = Associativity::NONE;
+
+            std::string debug_repr() override { return "op :"; }
         };
     }  // namespace ast
 }  // namespace mattflow
