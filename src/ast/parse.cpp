@@ -42,7 +42,7 @@ static void link_operations_on_stack(
 
         // We are done stitching if the operator we are about to consider has the
         // target precedence.
-        if (op_precedence == target_precedence) {
+        if (op_precedence <= target_precedence) {
             // Make sure to add the stitch target for next link phase.
             nonop_verts.emplace_back(prev_op_vert);
             return;
