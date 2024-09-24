@@ -7,34 +7,34 @@
 namespace mattflow {
     namespace ast {
         struct GetOrderVisitor {
-            Order result;
-
             template <typename OperatorNodeType>
-            void operator()(const OperatorNodeType& node_info) {
+            Order operator()(const OperatorNodeType& node_info) {
                 if constexpr (std::is_base_of_v<OperatorNode, OperatorNodeType>) {
-                    result = node_info.ORDER;
+                    return node_info.ORDER;
+                } else {
+                    return Order::NONE;
                 }
             }
         };
 
         struct GetPrecedenceVisitor {
-            Precedence result;
-
             template <typename OperatorNodeType>
-            void operator()(const OperatorNodeType& node_info) {
+            Precedence operator()(const OperatorNodeType& node_info) {
                 if constexpr (std::is_base_of_v<OperatorNode, OperatorNodeType>) {
-                    result = node_info.PRECEDENCE;
+                    return node_info.PRECEDENCE;
+                } else {
+                    return Precedence::NONE;
                 }
             }
         };
 
         struct GetAssociativityVisitor {
-            Associativity result;
-
             template <typename OperatorNodeType>
-            void operator()(const OperatorNodeType& node_info) {
+            Associativity operator()(const OperatorNodeType& node_info) {
                 if constexpr (std::is_base_of_v<OperatorNode, OperatorNodeType>) {
-                    result = node_info.ASSOCIATIVITY;
+                    return node_info.ASSOCIATIVITY;
+                } else {
+                    return Associativity::SENTINEL;
                 }
             }
         };
