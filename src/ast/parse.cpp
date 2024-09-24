@@ -48,9 +48,13 @@ static void add_operating_node(
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
 ) {
-    // TODO(Matthew): associativity needs to be handled here...
-    //                  in particular it can only change if we have a chance of
-    //                  precedence.
+#if DEBUG
+    // If precedence is the same, associativity must be too.
+    if (node_info.PRECEDENCE == parser_state.precedence.back()) {
+        assert(node_info.ASSOCIATIVITY == parser_state.associativity.back());
+    }
+#endif  // DEBUG
+
     // If operator has lower precedence than the highest we've so far encountered, we
     // need to deal with the expression as formed so far (up to any preceding operation
     // with the same precedence as this to-be-added operation) before continuing on. In
