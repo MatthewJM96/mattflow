@@ -358,8 +358,6 @@ void mfast::parse(
             case mflex::TokenType::STRUCT:
             case mflex::TokenType::LEFT_BRACE:
             case mflex::TokenType::RIGHT_BRACE:
-            case mflex::TokenType::LEFT_PAREN:
-            case mflex::TokenType::RIGHT_PAREN:
             case mflex::TokenType::LEFT_BRACKET:
             case mflex::TokenType::RIGHT_BRACKET:
             case mflex::TokenType::COMMA:
@@ -368,6 +366,35 @@ void mfast::parse(
             case mflex::TokenType::ARROW:
             case mflex::TokenType::SENTINEL:
                 break;
+            case mflex::TokenType::LEFT_PAREN:
+                // Push a new stack of vertices for ops and non-ops.
+                parser_state.non_operating_vertices.push_back({});
+                parser_state.operating_vertices.push_back({});
+
+                // Move forward a token.
+                it += 1;
+                continue;
+            case mflex::TokenType::RIGHT_PAREN:
+                // Link any remaining operators in the paren expression.
+                link_operations_on_stack(Precedence::NONE, ast, nodes, parser_state);
+
+                {
+                    // Get root node of the paren expression and then pop the stack.
+                    size_t paren_root
+                        = parser_state.non_operating_vertices.back().back();
+                    parser_state.non_operating_vertices.pop_back();
+                    parser_state.operating_vertices.pop_back();
+
+                    assert(parser_state.non_operating_vertices.size() > 0);
+                    assert(parser_state.operating_vertices.size() > 0);
+
+                    // Push root node onto the stack below.
+                    parser_state.non_operating_vertices.back().emplace_back(paren_root);
+                }
+
+                // Move forward a token.
+                it += 1;
+                continue;
             case mflex::TokenType::ASSIGN_TYPE:
                 // Add ASSIGN_TYPE vertex.
                 add_operating_node(
@@ -621,10 +648,6 @@ void mfast::parse(
                     parser_state
                 );
                 continue;
-                // case mflex::TokenType::LEFT_PAREN:
-                //     // Add paren vertex, push precedence parser_expects::ASSIGNMENT.
-                //     add_paren_node(it, ast, nodes, parser_state);
-                //     continue;
                 // case mflex::TokenType::LEFT_BRACKET:
                 //     // TODO(Matthew): ambiguity as could be number range or list.
                 //     //                  need a way to decide which we are seeing
