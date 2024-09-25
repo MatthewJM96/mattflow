@@ -3,175 +3,169 @@
 #include "lex/lexer.h"
 #include "literal/string.h"
 
+#include "ast/debug.h"
 #include "ast/parse.h"
 
-static char* read_file_to_string(const std::filesystem::path& path) {
-    std::filesystem::path abs_path = std::filesystem::absolute(path);
-    if (!std::filesystem::exists(abs_path)) return nullptr;
+using recurse_directory = std::filesystem::recursive_directory_iterator;
 
-    // Open file, if we can't then fail.
-    FILE* file = fopen(abs_path.string().data(), "rb");
-    if (file == nullptr) return nullptr;
-
-    // NOTE: Only support files up to 4GB in size. Would need some paging approach
-    //       for larger files.
-
-    // Get length of file contents in bytes.
-    fseek(file, 0, SEEK_END);
-    uint32_t length = static_cast<uint32_t>(ftell(file));
-    fseek(file, 0, SEEK_SET);
-
-    // Reserve memory in buffer.
-    char* buffer = new char[length + 1];
-
-    // Read data into buffer.
-    fread(buffer, 1, length, file);
-    buffer[length] = '\0';
-
-    // Close file.
-    fclose(file);
-
-    return buffer;
-}
-
-void test_lexer() {
-    char* sample_0 = read_file_to_string("samples/hello_world.mf");
-    if (sample_0 == nullptr) {
-        std::cout << "Could not read samples/hello_world.mf." << std::endl;
-        exit(1);
-    }
-
-    mf::SourceView source_view;
-    source_view.source       = std::string_view(sample_0);
-    source_view.file_id      = 0;
-    source_view.start_line   = 0;
-    source_view.start_column = 0;
-    source_view.end_line     = std::count_if(
-        source_view.source.begin(),
-        source_view.source.end(),
-        [](char c) { return c == '\n'; }
-    );
-    source_view.end_column = std::find_if(
-                                 source_view.source.rbegin(),
-                                 source_view.source.rend(),
-                                 [](char c) { return c == '\n'; }
-                             )
-                             - source_view.source.rbegin();
-
-    mflex::Tokens tokens;
-    mflex::parse(source_view, tokens);
-
-    assert(
-        static_cast<int16_t>(tokens[0].type)
-        == static_cast<int16_t>(mflex::TokenType::IDENTIFIER)
-    );
-    assert(
-        static_cast<int16_t>(tokens[1].type)
-        == static_cast<int16_t>(mflex::TokenType::ASSIGN_TYPE)
-    );
-    assert(
-        static_cast<int16_t>(tokens[2].type)
-        == static_cast<int16_t>(mflex::TokenType::ASSIGN_VALUE)
-    );
-    assert(
-        static_cast<int16_t>(tokens[3].type)
-        == static_cast<int16_t>(mflex::TokenType::LEFT_PAREN)
-    );
-    assert(
-        static_cast<int16_t>(tokens[4].type)
-        == static_cast<int16_t>(mflex::TokenType::RIGHT_PAREN)
-    );
-    assert(
-        static_cast<int16_t>(tokens[5].type)
-        == static_cast<int16_t>(mflex::TokenType::ARROW)
-    );
-    assert(
-        static_cast<int16_t>(tokens[6].type)
-        == static_cast<int16_t>(mflex::TokenType::LEFT_BRACE)
-    );
-    assert(
-        static_cast<int16_t>(tokens[7].type)
-        == static_cast<int16_t>(mflex::TokenType::PRINT)
-    );
-    assert(
-        static_cast<int16_t>(tokens[8].type)
-        == static_cast<int16_t>(mflex::TokenType::LEFT_PAREN)
-    );
-    assert(
-        static_cast<int16_t>(tokens[9].type)
-        == static_cast<int16_t>(mflex::TokenType::STRING)
-    );
-    assert(
-        static_cast<int16_t>(tokens[10].type)
-        == static_cast<int16_t>(mflex::TokenType::RIGHT_PAREN)
-    );
-    assert(
-        static_cast<int16_t>(tokens[11].type)
-        == static_cast<int16_t>(mflex::TokenType::NUMBER)
-    );
-    assert(
-        static_cast<int16_t>(tokens[12].type)
-        == static_cast<int16_t>(mflex::TokenType::RIGHT_BRACE)
-    );
-}
-
-class NodeInfoWriter {
-public:
-    NodeInfoWriter(mfast::NodeBuffers* _node_buffers) : node_buffers(_node_buffers) { }
-
-    void operator()(std::ostream& out, size_t v) const {
-        auto& node_info = node_buffers->get_node_info(v);
-
-        std::visit(
-            [&](auto& n) { out << "[label=\"" + n.debug_repr() + "\"]"; }, node_info
-        );
-    }
-private:
-    mfast::NodeBuffers* node_buffers;
+enum class TestResult {
+    UNSPECIFIED_FAILURE,
+    LEXING_FAILURE,
+    SYNTAX_PARSING_FAILURE,
+    SUCCESS
 };
 
-void test_parser() {
-    char* sample_0 = read_file_to_string("samples/test_parser.mf");
-    if (sample_0 == nullptr) {
-        std::cout << "Could not read samples/test_parser.mf." << std::endl;
+static std::tuple<std::filesystem::path, std::filesystem::path>
+validation_paths(const std::filesystem::path& path) {
+    const auto token_filename = path.filename().replace_extension(".token");
+    const auto ast_filename   = path.filename().replace_extension(".dot");
+
+    auto validation_directory = std::filesystem::path("validation");
+
+    bool is_root_part = true;
+    for (const auto& part : path.parent_path()) {
+        if (is_root_part) {
+            is_root_part = false;
+            continue;
+        }
+
+        validation_directory /= part;
+    }
+
+    return { validation_directory / token_filename,
+             validation_directory / ast_filename };
+}
+
+TestResult
+run_test(const std::filesystem::path& path, bool generate_validations = false) {
+    mattflow::SourceView source_view;
+    if (!mattflow::SourceView::from_filepath(path, source_view)) {
+        std::cout << "Could not read test case at path:\n" << path << std::endl;
         exit(1);
     }
 
-    mf::SourceView source_view;
-    source_view.source       = std::string_view(sample_0);
-    source_view.file_id      = 0;
-    source_view.start_line   = 0;
-    source_view.start_column = 0;
-    source_view.end_line     = std::count_if(
-        source_view.source.begin(),
-        source_view.source.end(),
-        [](char c) { return c == '\n'; }
-    );
-    source_view.end_column = std::find_if(
-                                 source_view.source.rbegin(),
-                                 source_view.source.rend(),
-                                 [](char c) { return c == '\n'; }
-                             )
-                             - source_view.source.rbegin();
+    const auto [token_filepath, ast_filepath] = validation_paths(path);
+
+    std::cout << "\nLexing source code..." << std::endl;
 
     mflex::Tokens tokens;
     mflex::parse(source_view, tokens);
+
+    if (generate_validations) {
+        std::cout << "    ...generating token validation file:\n        "
+                  << token_filepath << std::endl;
+
+        std::ofstream token_os(token_filepath);
+        for (const auto& token : tokens) {
+            token_os << static_cast<std::underlying_type_t<mflex::TokenType>>(token.type
+            ) << std::endl;
+        }
+    } else {
+        std::cout << "    ...validating tokens generated against:\n        "
+                  << token_filepath << std::endl;
+
+        std::stringstream token_ss;
+        for (const auto& token : tokens) {
+            token_ss << static_cast<std::underlying_type_t<mflex::TokenType>>(token.type
+            ) << "..."
+                     << std::endl;
+        }
+
+        std::ifstream     token_is(token_filepath);
+        std::stringstream buffer;
+        buffer << token_is.rdbuf();
+
+        std::string result   = token_ss.str();
+        std::string expected = buffer.str();
+
+        if (result != expected) return TestResult::LEXING_FAILURE;
+
+        std::cout << "validated." << std::endl;
+    }
+
+    std::cout << "\nParsing syntax of source code..." << std::endl;
 
     mfast::AST                  ast;
     mfast::NodeBuffers          node_buffers;
     mftype::IdentifierTypeTable type_table;
     mfast::parse(tokens, ast, node_buffers, type_table);
 
-    std::ofstream graph_file("graph.dot");
-    boost::write_graphviz(graph_file, ast, NodeInfoWriter(&node_buffers));
+    if (generate_validations) {
+        std::cout << "    ...generating AST validation file:\n        " << ast_filepath
+                  << std::endl;
+
+        std::ofstream ast_os(ast_filepath);
+        boost::write_graphviz(ast_os, ast, mfast::NodeInfoWriter(&node_buffers));
+    } else {
+        std::cout << "    ...validating AST generated against:\n        "
+                  << ast_filepath << "..." << std::endl;
+
+        std::stringstream ast_ss;
+        boost::write_graphviz(ast_ss, ast, mfast::NodeInfoWriter(&node_buffers));
+
+        std::ifstream     ast_is(ast_filepath);
+        std::stringstream buffer;
+        buffer << ast_is.rdbuf();
+
+        std::string result   = ast_ss.str();
+        std::string expected = buffer.str();
+
+        if (result != expected) return TestResult::SYNTAX_PARSING_FAILURE;
+
+        std::cout << "validated." << std::endl;
+    }
+
+    std::cout << std::endl;
+
+    return TestResult::SUCCESS;
+}
+
+void run_tests(bool generate_validations = false) {
+    std::cout << "Running tests...\n" << std::endl;
+
+    size_t successes               = 0;
+    size_t lexing_failures         = 0;
+    size_t syntax_parsing_failures = 0;
+    size_t unspecified_failures    = 0;
+
+    for (const auto& test_case : recurse_directory("samples")) {
+        if (!test_case.is_regular_file()) continue;
+
+        std::cout << "\n-------- " << test_case.path() << " --------" << std::endl;
+        switch (run_test(test_case.path(), generate_validations)) {
+            case TestResult::SUCCESS:
+                std::cout << "Result   : SUCCESS" << std::endl;
+                successes += 1;
+                break;
+            case TestResult::LEXING_FAILURE:
+                std::cout << "Result   : LEXING_FAILURE" << std::endl;
+                lexing_failures += 1;
+                break;
+            case TestResult::SYNTAX_PARSING_FAILURE:
+                std::cout << "Result   : SYNTAX_PARSING_FAILURE" << std::endl;
+                syntax_parsing_failures += 1;
+                break;
+            case TestResult::UNSPECIFIED_FAILURE:
+            default:
+                std::cout << "Result   : UNSPECIFIED_FAILURE" << std::endl;
+                unspecified_failures += 1;
+                break;
+        }
+        std::cout << "\n--------------------";
+        for (const auto& _ : test_case.path().string()) std::cout << "-";
+        std::cout << std::endl;
+    }
+
+    std::cout << "\n----------- SUMMARY -----------\n" << std::endl;
+    std::cout << "  Unspecified Failures    : " << unspecified_failures << std::endl;
+    std::cout << "  Lexing Failures         : " << lexing_failures << std::endl;
+    std::cout << "  Syntax Parsing Failures : " << syntax_parsing_failures << std::endl;
+    std::cout << "  Successes               : " << successes << std::endl;
+    std::cout << "\n-------------------------------" << std::endl;
+
+    std::cout << "\nTests complete." << std::endl;
 }
 
 int main() {
-    std::cout << "Running mattflow tests..." << std::endl;
-
-    test_lexer();
-
-    test_parser();
-
-    std::cout << "Tests passed!" << std::endl;
+    run_tests();
 }
