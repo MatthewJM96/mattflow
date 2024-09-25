@@ -1,0 +1,17 @@
+digraph G {
+0[label="block"];
+1[label="num: 5.000000"];
+2[label="op +"];
+3[label="num: 1.000000"];
+4[label="op +"];
+5[label="num: 2.000000"];
+6[label="num: 3.000000"];
+7[label="op +"];
+8[label="num: 4.000000"];
+2->1 ;
+2->7 ;
+4->3 ;
+4->5 ;
+7->6 ;
+7->8 ;
+}
