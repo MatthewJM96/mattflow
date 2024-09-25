@@ -17,6 +17,11 @@ static void add_non_operating_node(
     // TODO(Matthew): bare in mind that we have control-flow to include yet, and might
     //                complicate this.
     if (parser_state.last_seen.back() == mfast::NodeCategory::NONOP) {
+        mfassert(
+            parser_state.enclosed_by.back() != mfast::EnclosingCategory::PARENTHESES,
+            "Cannot have multiple expressions inside a single parentheses."
+        );
+
         mfast::link_operations_on_stack(
             mfast::Precedence::NONE, ast, nodes, parser_state
         );
@@ -145,6 +150,8 @@ void mfast::parse(
                 parser_state.non_operating_vertices.push_back({});
                 parser_state.operating_vertices.push_back({});
                 parser_state.last_seen.push_back(mfast::NodeCategory::NONE);
+                parser_state.enclosed_by.push_back(mfast::EnclosingCategory::PARENTHESES
+                );
 
                 // Move forward a token.
                 it += 1;
@@ -153,6 +160,13 @@ void mfast::parse(
                 // Link any remaining operators in the paren expression.
                 link_operations_on_stack(Precedence::NONE, ast, nodes, parser_state);
 
+                mfassert(
+                    parser_state.enclosed_by.back()
+                        == mfast::EnclosingCategory::PARENTHESES,
+                    "Expected to be closing a parentheses but lowest enclosure still "
+                    "open is of a different kind."
+                );
+
                 {
                     // Get root node of the paren expression and then pop the stack.
                     size_t paren_root
@@ -160,6 +174,7 @@ void mfast::parse(
                     parser_state.non_operating_vertices.pop_back();
                     parser_state.operating_vertices.pop_back();
                     parser_state.last_seen.pop_back();
+                    parser_state.enclosed_by.pop_back();
 
                     mfassert(
                         parser_state.non_operating_vertices.size() > 0,
