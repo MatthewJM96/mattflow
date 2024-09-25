@@ -28,6 +28,7 @@ namespace mattflow {
                 throw std::runtime_error(formatted_msg);
             } else {
                 std::printf(formatted_msg);
+                assert(false);
             }
         }
     protected:
