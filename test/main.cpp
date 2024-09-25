@@ -6,7 +6,8 @@
 #include "ast/debug.h"
 #include "ast/parse.h"
 
-using recurse_directory = std::filesystem::recursive_directory_iterator;
+using recurse_directory   = std::filesystem::recursive_directory_iterator;
+using TokenTypeUnderlying = std::underlying_type_t<mflex::TokenType>;
 
 enum class TestResult {
     UNSPECIFIED_FAILURE,
@@ -57,8 +58,7 @@ run_test(const std::filesystem::path& path, bool generate_validations = false) {
 
         std::ofstream token_os(token_filepath);
         for (const auto& token : tokens) {
-            token_os << static_cast<std::underlying_type_t<mflex::TokenType>>(token.type
-            ) << std::endl;
+            token_os << static_cast<TokenTypeUnderlying>(token.type) << std::endl;
         }
     } else {
         std::cout << "    ...validating tokens generated against:\n        "
@@ -66,8 +66,7 @@ run_test(const std::filesystem::path& path, bool generate_validations = false) {
 
         std::stringstream token_ss;
         for (const auto& token : tokens) {
-            token_ss << static_cast<std::underlying_type_t<mflex::TokenType>>(token.type
-            ) << "..."
+            token_ss << static_cast<TokenTypeUnderlying>(token.type) << "..."
                      << std::endl;
         }
 
