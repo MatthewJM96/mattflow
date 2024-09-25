@@ -9,6 +9,11 @@
 using recurse_directory   = std::filesystem::recursive_directory_iterator;
 using TokenTypeUnderlying = std::underlying_type_t<mflex::TokenType>;
 
+struct TestConfig {
+    bool plot_ast_graphs      = false;
+    bool generate_validations = false;
+};
+
 enum class TestResult {
     UNSPECIFIED_FAILURE,
     LEXING_FAILURE,
@@ -37,8 +42,7 @@ validation_paths(const std::filesystem::path& path) {
              validation_directory / ast_filename };
 }
 
-TestResult
-run_test(const std::filesystem::path& path, bool generate_validations = false) {
+TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     mattflow::SourceView source_view;
     if (!mattflow::SourceView::from_filepath(path, source_view)) {
         std::cout << "Could not read test case at path:\n" << path << std::endl;
@@ -52,7 +56,7 @@ run_test(const std::filesystem::path& path, bool generate_validations = false) {
     mflex::Tokens tokens;
     mflex::parse(source_view, tokens);
 
-    if (generate_validations) {
+    if (config.generate_validations) {
         std::cout << "    ...generating token validation file:\n        "
                   << token_filepath << "..." << std::endl;
 
@@ -120,7 +124,7 @@ run_test(const std::filesystem::path& path, bool generate_validations = false) {
     return TestResult::SUCCESS;
 }
 
-void run_tests(bool generate_validations = false) {
+void run_tests(TestConfig config = {}) {
     std::cout << "/-----------------------------\\\n"
               << "|  MATTFLOW REGRESSION TESTS  |\n"
               << "\\-----------------------------/\n"
@@ -135,7 +139,7 @@ void run_tests(bool generate_validations = false) {
         if (!test_case.is_regular_file()) continue;
 
         std::cout << "\n-------- " << test_case.path() << " --------" << std::endl;
-        switch (run_test(test_case.path(), generate_validations)) {
+        switch (run_test(test_case.path(), config)) {
             case TestResult::SUCCESS:
                 std::cout << "\nResult : SUCCESS" << std::endl;
                 successes += 1;
