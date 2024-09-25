@@ -105,10 +105,7 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
             }
         }
 
-        if (token.type == TokenType::SENTINEL) {
-            debug_printf("Unidentified Lexical Object");
-            assert(false);
-        }
+        mfassert(token.type != TokenType::SENTINEL, "Unidentified Lexical Object");
 
         // Adjust remaining source view, trimming any whitespace subsequent to last-
         // matched token.

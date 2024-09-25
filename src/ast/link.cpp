@@ -52,7 +52,11 @@ void mfast::link_operations_on_stack(
             // Unary operator.
 
             // Any unary operator should be right-associative.
-            assert(op_associativity == mfast::Associativity::RIGHT);
+            mfassert(
+                op_associativity == mfast::Associativity::RIGHT,
+                "Encountered left-associative unary operator: %s",
+                std::visit(mfast::GetReprVisitor{}, *op)
+            );
 
             // If we don't have an operator to stitch to, then stitch to last
             // non-operating vertex. If we do, then stitch to that operator.
@@ -145,8 +149,18 @@ void mfast::link_operations_on_stack(
                     while (next_op_precedence == op_precedence) {
                         // Operators of same precedence as the first we have considered
                         // here MUST also be binary operators of the same associativity.
-                        assert(next_op_order == mfast::Order::BINARY);
-                        assert(next_op_associativity == op_associativity);
+                        mfassert(
+                            next_op_order == mfast::Order::BINARY,
+                            "Encountered a same-precedence operator with different "
+                            "order: %s",
+                            std::visit(mfast::GetReprVisitor{}, *op)
+                        );
+                        mfassert(
+                            next_op_associativity == op_associativity,
+                            "Encountered a same-precedence operator with different "
+                            "associativity: %s",
+                            std::visit(mfast::GetReprVisitor{}, *op)
+                        );
 
                         // If we have just considered the last operator on the stack,
                         // then we are done and need to stitch everything.

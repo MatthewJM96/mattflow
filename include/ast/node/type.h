@@ -19,7 +19,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: bool"; }
+            std::string debug_repr() const override { return "type: bool"; }
         };
 
         /**
@@ -36,7 +36,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: char"; }
+            std::string debug_repr() const override { return "type: char"; }
         };
 
         /**
@@ -53,7 +53,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: int"; }
+            std::string debug_repr() const override { return "type: int"; }
         };
 
         /**
@@ -70,7 +70,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: int8"; }
+            std::string debug_repr() const override { return "type: int8"; }
         };
 
         /**
@@ -87,7 +87,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: int16"; }
+            std::string debug_repr() const override { return "type: int16"; }
         };
 
         /**
@@ -104,7 +104,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: int32"; }
+            std::string debug_repr() const override { return "type: int32"; }
         };
 
         /**
@@ -121,7 +121,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: int64"; }
+            std::string debug_repr() const override { return "type: int64"; }
         };
 
         /**
@@ -138,7 +138,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: uint"; }
+            std::string debug_repr() const override { return "type: uint"; }
         };
 
         /**
@@ -155,7 +155,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: uint8"; }
+            std::string debug_repr() const override { return "type: uint8"; }
         };
 
         /**
@@ -172,7 +172,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: uint16"; }
+            std::string debug_repr() const override { return "type: uint16"; }
         };
 
         /**
@@ -189,7 +189,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: uint32"; }
+            std::string debug_repr() const override { return "type: uint32"; }
         };
 
         /**
@@ -206,7 +206,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: uint64"; }
+            std::string debug_repr() const override { return "type: uint64"; }
         };
 
         /**
@@ -223,7 +223,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: float32"; }
+            std::string debug_repr() const override { return "type: float32"; }
         };
 
         /**
@@ -240,7 +240,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "type: float64"; }
+            std::string debug_repr() const override { return "type: float64"; }
         };
     }  // namespace ast
 }  // namespace mattflow

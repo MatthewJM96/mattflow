@@ -16,7 +16,7 @@ namespace mattflow {
 
             mflex::Tokens::const_iterator first_token, last_token;
 
-            virtual std::string debug_repr() = 0;
+            virtual std::string debug_repr() const = 0;
         };
     }  // namespace ast
 }  // namespace mattflow

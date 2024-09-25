@@ -23,7 +23,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "block"; }
+            std::string debug_repr() const override { return "block"; }
         };
     }  // namespace ast
 }  // namespace mattflow

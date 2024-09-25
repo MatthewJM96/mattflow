@@ -1,6 +1,8 @@
 #ifndef __mattflow_decorators_h
 #define __mattflow_decorators_h
 
+#include "debug.h"
+
 // Memory Management
 #define CALLER_DELETE
 #define CALLEE_DELETE
@@ -11,9 +13,10 @@
 #define VALINOUT
 
 #if defined(DEBUG)
-#  define debug_printf(...) printf(__VA_ARGS__)
+#  define mfassert(condition, ...)                                                     \
+    if (!(condition)) mattflow::Debug::get().print_or_throw(__VA_ARGS__)
 #else
-#  define debug_printf(...)
+#  define mfassert(...)
 #  if !defined(NDEBUG)
 #    define NDEBUG
 #  endif  // !defined(NDEBUG)

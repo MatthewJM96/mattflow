@@ -36,8 +36,9 @@ mftype::IdentifierTypeTable::associate_type(
     {
         it->second = cast_token_to_intrinsic(token.type);
     } else {
-        debug_printf("Attempted to associate a non-type as the type of an identifier");
-        assert(false);
+        mfassert(
+            false, "Attempted to associate a non-type as the type of an identifier"
+        );
     }
 
     return { true, it };

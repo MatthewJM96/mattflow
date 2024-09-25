@@ -12,22 +12,25 @@ namespace mattflow {
             Number();
             Number(std::string_view repr);
 
-            bool is_bad() { return m_is_bad; }
+            bool is_bad() const { return m_is_bad; }
 
-            bool is_floating_point() { return m_is_floating_point; }
+            bool is_floating_point() const { return m_is_floating_point; }
 
             template <typename Type>
                 requires (std::floating_point<Type> || std::integral<Type>)
-            Type as() {
+            Type as() const {
                 if constexpr (std::floating_point<Type>) {
-                    assert(m_is_floating_point);
-                } else {
-                    assert(!m_is_floating_point);
-                }
+                    mfassert(m_is_floating_point, "Expected to be floating point.");
 
-                return *reinterpret_cast<Type*>(reinterpret_cast<void*>(&m_int_value));
+                    return static_cast<Type>(m_float_value);
+                } else {
+                    mfassert(
+                        !m_is_floating_point, "Expected to not be floating point."
+                    );
+
+                    return static_cast<Type>(m_int_value);
+                }
             }
-        protected:
         protected:
             void parse_floating_point_repr(std::string_view repr);
             void parse_scientific_notation_repr(std::string_view repr);

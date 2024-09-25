@@ -49,7 +49,12 @@ static void add_operating_node(
 #if DEBUG
     // If precedence is the same, associativity must be too.
     if (node_info.PRECEDENCE == parser_state.precedence.back()) {
-        assert(node_info.ASSOCIATIVITY == parser_state.associativity.back());
+        mfassert(
+            node_info.ASSOCIATIVITY == parser_state.associativity.back(),
+            "Trying to add same-precedence different-associativity operator as "
+            "previous: %s",
+            node_info.debug_repr()
+        );
     }
 #endif  // DEBUG
 
@@ -89,6 +94,8 @@ void mfast::parse(
     VALOUT mftype::IdentifierTypeTable& type_table
 ) {
     (void)type_table;
+
+    mfassert(false, "What a shitter.");
 
     // Ensure buffers are clear for building fresh AST.
     ast.clear();
@@ -156,8 +163,14 @@ void mfast::parse(
                     parser_state.operating_vertices.pop_back();
                     parser_state.last_seen.pop_back();
 
-                    assert(parser_state.non_operating_vertices.size() > 0);
-                    assert(parser_state.operating_vertices.size() > 0);
+                    mfassert(
+                        parser_state.non_operating_vertices.size() > 0,
+                        "Tried to pop last scope on close of a parentheses pair."
+                    );
+                    mfassert(
+                        parser_state.operating_vertices.size() > 0,
+                        "Tried to pop last scope on close of a parentheses pair."
+                    );
 
                     // Push root node onto the stack below.
                     parser_state.non_operating_vertices.back().emplace_back(paren_root);
@@ -440,5 +453,5 @@ void mfast::parse(
 
     // If we get here and cursor is not pointing to top-level block, then something has
     // gone wrong in parsing.
-    // assert(parser_state.vertices.size() == 0);
+    // mfassert(parser_state.vertices.size() == 0, "Have unprocessed vertices!");
 }

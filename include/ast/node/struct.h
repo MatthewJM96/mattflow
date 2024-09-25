@@ -25,7 +25,7 @@ namespace mattflow {
 
             mftype::Type* type;
 
-            std::string debug_repr() override { return "struct"; }
+            std::string debug_repr() const override { return "struct"; }
         };
 
         /**
@@ -47,7 +47,7 @@ namespace mattflow {
             mflit::IdentifierIdx name;
             mftype::Type*        type;
 
-            std::string debug_repr() override { return "struct field"; }
+            std::string debug_repr() const override { return "struct field"; }
         };
     }  // namespace ast
 }  // namespace mattflow

@@ -25,7 +25,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "if"; }
+            std::string debug_repr() const override { return "if"; }
         };
 
         /**
@@ -44,7 +44,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "for"; }
+            std::string debug_repr() const override { return "for"; }
         };
 
         /**
@@ -67,7 +67,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "range"; }
+            std::string debug_repr() const override { return "range"; }
         };
 
         /**
@@ -88,7 +88,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "while"; }
+            std::string debug_repr() const override { return "while"; }
         };
     }  // namespace ast
 }  // namespace mattflow

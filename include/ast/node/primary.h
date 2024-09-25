@@ -20,7 +20,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            std::string debug_repr() override { return "null"; }
+            std::string debug_repr() const override { return "null"; }
         };
 
         /**
@@ -40,7 +40,7 @@ namespace mattflow {
 
             bool value;
 
-            std::string debug_repr() override {
+            std::string debug_repr() const override {
                 return "bool: " + std::string(value ? "true" : "false");
             }
         };
@@ -62,7 +62,7 @@ namespace mattflow {
 
             mflit::Number value;
 
-            std::string debug_repr() override {
+            std::string debug_repr() const override {
                 return "num: "
                        + std::to_string(
                            value.is_floating_point() ? value.template as<float>() :
@@ -88,7 +88,7 @@ namespace mattflow {
 
             mflit::StringIdx value;
 
-            std::string debug_repr() override {
+            std::string debug_repr() const override {
                 static auto& str_table = mflit::StringTable::get();
                 return "str: " + std::string(str_table.get(value));
             }
@@ -113,7 +113,7 @@ namespace mattflow {
 
             mflit::IdentifierIdx name;
 
-            std::string debug_repr() override {
+            std::string debug_repr() const override {
                 static auto& ident_table = mflit::IdentifierTable::get();
                 return "ident: " + std::string(ident_table.get(name));
             }

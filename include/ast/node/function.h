@@ -31,7 +31,7 @@ namespace mattflow {
             mftype::Type*                     type;
             std::vector<mflit::IdentifierIdx> argument_names;
 
-            std::string debug_repr() override { return "func"; }
+            std::string debug_repr() const override { return "func"; }
         };
     }  // namespace ast
 }  // namespace mattflow

@@ -5,6 +5,7 @@
 
 #include "ast/debug.h"
 #include "ast/parse.h"
+#include "debug.h"
 
 using recurse_directory   = std::filesystem::recursive_directory_iterator;
 using TokenTypeUnderlying = std::underlying_type_t<mflex::TokenType>;
@@ -72,7 +73,13 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     std::cout << "\nLexing source code..." << std::endl;
 
     mflex::Tokens tokens;
-    mflex::parse(source_view, tokens);
+    try {
+        mflex::parse(source_view, tokens);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << std::endl;
+
+        return TestResult::LEXING_FAILURE;
+    }
 
     if (config.generate_validations) {
         std::cout << "    ...generating token validation file:\n        "
@@ -115,7 +122,13 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     mfast::AST                  ast;
     mfast::NodeBuffers          node_buffers;
     mftype::IdentifierTypeTable type_table;
-    mfast::parse(tokens, ast, node_buffers, type_table);
+    try {
+        mfast::parse(tokens, ast, node_buffers, type_table);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << std::endl;
+
+        return TestResult::SYNTAX_PARSING_FAILURE;
+    }
 
     if (config.generate_validations) {
         std::cout << "    ...generating AST validation file:\n        "
@@ -219,5 +232,8 @@ void run_tests(TestConfig config = {}) {
 }
 
 int main() {
+    // Set throw so assertion failures can be captured during testing.
+    mattflow::Debug::set_throw();
+
     run_tests({ .plot_ast_graphs = true });
 }

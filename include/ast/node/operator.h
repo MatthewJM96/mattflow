@@ -64,7 +64,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::UNARY;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
-            std::string debug_repr() override { return "op !"; }
+            std::string debug_repr() const override { return "op !"; }
         };
 
         /**
@@ -86,7 +86,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::UNARY;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
-            std::string debug_repr() override { return "op -"; }
+            std::string debug_repr() const override { return "op -"; }
         };
 
         /**
@@ -109,7 +109,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::POWER;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
-            std::string debug_repr() override { return "op ^"; }
+            std::string debug_repr() const override { return "op ^"; }
         };
 
         /**
@@ -132,7 +132,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::FACTOR;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
 
-            std::string debug_repr() override { return "op *"; }
+            std::string debug_repr() const override { return "op *"; }
         };
 
         /**
@@ -155,7 +155,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::FACTOR;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
 
-            std::string debug_repr() override { return "op /"; }
+            std::string debug_repr() const override { return "op /"; }
         };
 
         /**
@@ -178,7 +178,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::TERM;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
 
-            std::string debug_repr() override { return "op +"; }
+            std::string debug_repr() const override { return "op +"; }
         };
 
         /**
@@ -201,7 +201,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::TERM;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
 
-            std::string debug_repr() override { return "op -"; }
+            std::string debug_repr() const override { return "op -"; }
         };
 
         /**
@@ -224,7 +224,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
 
-            std::string debug_repr() override { return "op >"; }
+            std::string debug_repr() const override { return "op >"; }
         };
 
         /**
@@ -247,7 +247,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
 
-            std::string debug_repr() override { return "op >="; }
+            std::string debug_repr() const override { return "op >="; }
         };
 
         /**
@@ -270,7 +270,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
 
-            std::string debug_repr() override { return "op <"; }
+            std::string debug_repr() const override { return "op <"; }
         };
 
         /**
@@ -293,7 +293,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
 
-            std::string debug_repr() override { return "op <="; }
+            std::string debug_repr() const override { return "op <="; }
         };
 
         /**
@@ -316,7 +316,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::EQUALITY;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
 
-            std::string debug_repr() override { return "op =="; }
+            std::string debug_repr() const override { return "op =="; }
         };
 
         /**
@@ -339,7 +339,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::EQUALITY;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
 
-            std::string debug_repr() override { return "op !="; }
+            std::string debug_repr() const override { return "op !="; }
         };
 
         /**
@@ -362,7 +362,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::LOGICAL;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
 
-            std::string debug_repr() override { return "op or"; }
+            std::string debug_repr() const override { return "op or"; }
         };
 
         /**
@@ -385,7 +385,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::LOGICAL;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
 
-            std::string debug_repr() override { return "op and"; }
+            std::string debug_repr() const override { return "op and"; }
         };
 
         /**
@@ -407,7 +407,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::VALUE_ASSIGNMENT;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
-            std::string debug_repr() override { return "op ="; }
+            std::string debug_repr() const override { return "op ="; }
         };
 
         /**
@@ -429,7 +429,7 @@ namespace mattflow {
             const Precedence    PRECEDENCE    = Precedence::TYPE_ASSIGNMENT;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
 
-            std::string debug_repr() override { return "op :"; }
+            std::string debug_repr() const override { return "op :"; }
         };
     }  // namespace ast
 }  // namespace mattflow

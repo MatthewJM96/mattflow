@@ -67,6 +67,17 @@ namespace mattflow {
                 return node_info[vertex_node_map[vertex]];
             }
         };
+
+        struct GetReprVisitor {
+            template <typename NodeType>
+            std::string operator()(const NodeType& node_info) {
+                if constexpr (std::is_base_of_v<Node, NodeType>) {
+                    return node_info.debug_repr();
+                } else {
+                    return "";
+                }
+            }
+        };
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;
