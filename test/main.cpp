@@ -54,20 +54,21 @@ run_test(const std::filesystem::path& path, bool generate_validations = false) {
 
     if (generate_validations) {
         std::cout << "    ...generating token validation file:\n        "
-                  << token_filepath << std::endl;
+                  << token_filepath << "..." << std::endl;
 
         std::ofstream token_os(token_filepath);
         for (const auto& token : tokens) {
             token_os << static_cast<TokenTypeUnderlying>(token.type) << std::endl;
         }
+
+        std::cout << "generated." << std::endl;
     } else {
         std::cout << "    ...validating tokens generated against:\n        "
-                  << token_filepath << std::endl;
+                  << token_filepath << "..." << std::endl;
 
         std::stringstream token_ss;
         for (const auto& token : tokens) {
-            token_ss << static_cast<TokenTypeUnderlying>(token.type) << "..."
-                     << std::endl;
+            token_ss << static_cast<TokenTypeUnderlying>(token.type) << std::endl;
         }
 
         std::ifstream     token_is(token_filepath);
@@ -91,10 +92,12 @@ run_test(const std::filesystem::path& path, bool generate_validations = false) {
 
     if (generate_validations) {
         std::cout << "    ...generating AST validation file:\n        " << ast_filepath
-                  << std::endl;
+                  << "..." << std::endl;
 
         std::ofstream ast_os(ast_filepath);
         boost::write_graphviz(ast_os, ast, mfast::NodeInfoWriter(&node_buffers));
+
+        std::cout << "generated." << std::endl;
     } else {
         std::cout << "    ...validating AST generated against:\n        "
                   << ast_filepath << "..." << std::endl;
@@ -114,13 +117,14 @@ run_test(const std::filesystem::path& path, bool generate_validations = false) {
         std::cout << "validated." << std::endl;
     }
 
-    std::cout << std::endl;
-
     return TestResult::SUCCESS;
 }
 
 void run_tests(bool generate_validations = false) {
-    std::cout << "Running tests...\n" << std::endl;
+    std::cout << "/-----------------------------\\\n"
+              << "|  MATTFLOW REGRESSION TESTS  |\n"
+              << "\\-----------------------------/\n"
+              << std::endl;
 
     size_t successes               = 0;
     size_t lexing_failures         = 0;
@@ -133,20 +137,20 @@ void run_tests(bool generate_validations = false) {
         std::cout << "\n-------- " << test_case.path() << " --------" << std::endl;
         switch (run_test(test_case.path(), generate_validations)) {
             case TestResult::SUCCESS:
-                std::cout << "Result   : SUCCESS" << std::endl;
+                std::cout << "\nResult : SUCCESS" << std::endl;
                 successes += 1;
                 break;
             case TestResult::LEXING_FAILURE:
-                std::cout << "Result   : LEXING_FAILURE" << std::endl;
+                std::cout << "\nResult : LEXING_FAILURE" << std::endl;
                 lexing_failures += 1;
                 break;
             case TestResult::SYNTAX_PARSING_FAILURE:
-                std::cout << "Result   : SYNTAX_PARSING_FAILURE" << std::endl;
+                std::cout << "\nResult : SYNTAX_PARSING_FAILURE" << std::endl;
                 syntax_parsing_failures += 1;
                 break;
             case TestResult::UNSPECIFIED_FAILURE:
             default:
-                std::cout << "Result   : UNSPECIFIED_FAILURE" << std::endl;
+                std::cout << "\nResult : UNSPECIFIED_FAILURE" << std::endl;
                 unspecified_failures += 1;
                 break;
         }
@@ -155,14 +159,14 @@ void run_tests(bool generate_validations = false) {
         std::cout << std::endl;
     }
 
+    std::cout << "\n\nTests complete!" << std::endl;
+
     std::cout << "\n----------- SUMMARY -----------\n" << std::endl;
     std::cout << "  Unspecified Failures    : " << unspecified_failures << std::endl;
     std::cout << "  Lexing Failures         : " << lexing_failures << std::endl;
     std::cout << "  Syntax Parsing Failures : " << syntax_parsing_failures << std::endl;
     std::cout << "  Successes               : " << successes << std::endl;
     std::cout << "\n-------------------------------" << std::endl;
-
-    std::cout << "\nTests complete." << std::endl;
 }
 
 int main() {
