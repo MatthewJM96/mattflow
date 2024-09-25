@@ -219,5 +219,5 @@ void run_tests(TestConfig config = {}) {
 }
 
 int main() {
-    run_tests();
+    run_tests({ .plot_ast_graphs = true });
 }
