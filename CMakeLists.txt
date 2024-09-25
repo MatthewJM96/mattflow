@@ -92,6 +92,7 @@ add_library(mattflow
     "${PROJECT_SOURCE_DIR}/src/literal/number.cpp"
     "${PROJECT_SOURCE_DIR}/src/literal/string.cpp"
     "${PROJECT_SOURCE_DIR}/src/type/primitive.cpp"
+    "${PROJECT_SOURCE_DIR}/src/source.cpp"
     "${PROJECT_SOURCE_DIR}/src/type.cpp"
 )
 

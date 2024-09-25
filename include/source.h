@@ -13,6 +13,8 @@ namespace mattflow {
         FileID           file_id;
         uint64_t         start_line, end_line;
         uint64_t         start_column, end_column;
+
+        static bool from_filepath(const std::filesystem::path& path, SourceView& view);
     };
 }  // namespace mattflow
 namespace mf = mattflow;
