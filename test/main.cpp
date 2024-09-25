@@ -124,6 +124,14 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         std::ofstream ast_os(ast_validation_filepath);
         boost::write_graphviz(ast_os, ast, mfast::NodeInfoWriter(&node_buffers));
 
+        if (config.plot_ast_graphs) {
+            auto destination = ast_result_filepath;
+            destination.replace_extension("png");
+            std::system(("dot -Tpng -o " + destination.string() + " "
+                         + ast_validation_filepath.string())
+                            .c_str());
+        }
+
         std::cout << "generated." << std::endl;
     } else {
         std::cout << "    ...validating AST generated against:\n        "
@@ -132,9 +140,13 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         std::stringstream ast_ss;
         boost::write_graphviz(ast_ss, ast, mfast::NodeInfoWriter(&node_buffers));
 
-        if (config.write_results) {
+        if (config.write_results | config.plot_ast_graphs) {
             std::ofstream token_os(ast_result_filepath);
             token_os << ast_ss.str();
+        }
+
+        if (config.plot_ast_graphs) {
+            std::system(("dot -Tpng -O " + ast_result_filepath.string()).c_str());
         }
 
         std::ifstream     ast_is(ast_validation_filepath);
@@ -157,6 +169,11 @@ void run_tests(TestConfig config = {}) {
               << "|  MATTFLOW REGRESSION TESTS  |\n"
               << "\\-----------------------------/\n"
               << std::endl;
+
+    if (config.plot_ast_graphs && std::system("dot --version") != 0) {
+        std::cout << "WARNING : plot_ast_graphs set true but graphviz is not installed."
+                  << std::endl;
+    }
 
     size_t successes               = 0;
     size_t lexing_failures         = 0;
