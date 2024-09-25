@@ -76,7 +76,7 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     try {
         mflex::parse(source_view, tokens);
     } catch (const std::exception& e) {
-        std::cout << e.what() << std::endl;
+        std::cout << "    ...failed.\n\nException: " << e.what() << std::endl;
 
         return TestResult::LEXING_FAILURE;
     }
@@ -125,7 +125,7 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     try {
         mfast::parse(tokens, ast, node_buffers, type_table);
     } catch (const std::exception& e) {
-        std::cout << e.what() << std::endl;
+        std::cout << "    ...failed.\n\nException: " << e.what() << std::endl;
 
         return TestResult::SYNTAX_PARSING_FAILURE;
     }

@@ -95,8 +95,6 @@ void mfast::parse(
 ) {
     (void)type_table;
 
-    mfassert(false, "What a shitter.");
-
     // Ensure buffers are clear for building fresh AST.
     ast.clear();
     nodes.node_info.clear();
