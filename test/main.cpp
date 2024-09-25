@@ -10,6 +10,7 @@ using recurse_directory   = std::filesystem::recursive_directory_iterator;
 using TokenTypeUnderlying = std::underlying_type_t<mflex::TokenType>;
 
 struct TestConfig {
+    bool write_results        = false;
     bool plot_ast_graphs      = false;
     bool generate_validations = false;
 };
@@ -22,11 +23,11 @@ enum class TestResult {
 };
 
 static std::tuple<std::filesystem::path, std::filesystem::path>
-validation_paths(const std::filesystem::path& path) {
+make_paths(const std::filesystem::path& path, std::filesystem::path&& new_base) {
     const auto token_filename = path.filename().replace_extension(".token");
     const auto ast_filename   = path.filename().replace_extension(".dot");
 
-    auto validation_directory = std::filesystem::path("validation");
+    auto validation_directory = new_base;
 
     bool is_root_part = true;
     for (const auto& part : path.parent_path()) {
@@ -42,6 +43,21 @@ validation_paths(const std::filesystem::path& path) {
              validation_directory / ast_filename };
 }
 
+static std::tuple<std::filesystem::path, std::filesystem::path>
+make_validation_paths(const std::filesystem::path& path) {
+    return make_paths(path, "validation");
+}
+
+static std::tuple<std::filesystem::path, std::filesystem::path>
+make_result_paths(const std::filesystem::path& path) {
+    auto result_paths = make_paths(path, "results");
+
+    // Ensure the results directory exists.
+    std::filesystem::create_directories(std::get<0>(result_paths).parent_path());
+
+    return result_paths;
+}
+
 TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     mattflow::SourceView source_view;
     if (!mattflow::SourceView::from_filepath(path, source_view)) {
@@ -49,7 +65,9 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         exit(1);
     }
 
-    const auto [token_filepath, ast_filepath] = validation_paths(path);
+    const auto [token_validation_filepath, ast_validation_filepath]
+        = make_validation_paths(path);
+    const auto [token_result_filepath, ast_result_filepath] = make_result_paths(path);
 
     std::cout << "\nLexing source code..." << std::endl;
 
@@ -58,9 +76,9 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
 
     if (config.generate_validations) {
         std::cout << "    ...generating token validation file:\n        "
-                  << token_filepath << "..." << std::endl;
+                  << token_validation_filepath << "..." << std::endl;
 
-        std::ofstream token_os(token_filepath);
+        std::ofstream token_os(token_validation_filepath);
         for (const auto& token : tokens) {
             token_os << static_cast<TokenTypeUnderlying>(token.type) << std::endl;
         }
@@ -68,14 +86,19 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         std::cout << "generated." << std::endl;
     } else {
         std::cout << "    ...validating tokens generated against:\n        "
-                  << token_filepath << "..." << std::endl;
+                  << token_validation_filepath << "..." << std::endl;
 
         std::stringstream token_ss;
         for (const auto& token : tokens) {
             token_ss << static_cast<TokenTypeUnderlying>(token.type) << std::endl;
         }
 
-        std::ifstream     token_is(token_filepath);
+        if (config.write_results) {
+            std::ofstream token_os(token_result_filepath);
+            token_os << token_ss.str();
+        }
+
+        std::ifstream     token_is(token_validation_filepath);
         std::stringstream buffer;
         buffer << token_is.rdbuf();
 
@@ -94,22 +117,27 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     mftype::IdentifierTypeTable type_table;
     mfast::parse(tokens, ast, node_buffers, type_table);
 
-    if (generate_validations) {
-        std::cout << "    ...generating AST validation file:\n        " << ast_filepath
-                  << "..." << std::endl;
+    if (config.generate_validations) {
+        std::cout << "    ...generating AST validation file:\n        "
+                  << ast_validation_filepath << "..." << std::endl;
 
-        std::ofstream ast_os(ast_filepath);
+        std::ofstream ast_os(ast_validation_filepath);
         boost::write_graphviz(ast_os, ast, mfast::NodeInfoWriter(&node_buffers));
 
         std::cout << "generated." << std::endl;
     } else {
         std::cout << "    ...validating AST generated against:\n        "
-                  << ast_filepath << "..." << std::endl;
+                  << ast_validation_filepath << "..." << std::endl;
 
         std::stringstream ast_ss;
         boost::write_graphviz(ast_ss, ast, mfast::NodeInfoWriter(&node_buffers));
 
-        std::ifstream     ast_is(ast_filepath);
+        if (config.write_results) {
+            std::ofstream token_os(ast_result_filepath);
+            token_os << ast_ss.str();
+        }
+
+        std::ifstream     ast_is(ast_validation_filepath);
         std::stringstream buffer;
         buffer << ast_is.rdbuf();
 

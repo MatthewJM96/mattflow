@@ -4,6 +4,9 @@
 # Build artifacts
 build/
 
+# Test artifacts
+test/results
+
 # Debug artifacts
 *.png
 *.dot
