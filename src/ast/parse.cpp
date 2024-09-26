@@ -49,6 +49,19 @@ void mfast::parse(
             case mflex::TokenType::PRINT:
             case mflex::TokenType::STRUCT:
             case mflex::TokenType::LEFT_BRACKET:
+                //     // TODO(Matthew): ambiguity as could be number range or list.
+                //     //                  need a way to decide which we are seeing
+                //     here.
+                //     //                  are we happy with this approach?
+                //     if ((it + 2)->type == mflex::TokenType::RANGE) {
+                //         // Add range vertex, push precedence parser_expects::PRIMARY.
+                //         add_number_range_node(it, ast, nodes, parser_state);
+                //     } else {
+                //         // Add list vertex, push precedence
+                //         parser_expects::EXPRESSION. add_list_node(it, ast, nodes,
+                //         parser_state);
+                //     }
+                //     continue;
             case mflex::TokenType::RIGHT_BRACKET:
             case mflex::TokenType::COMMA:
             case mflex::TokenType::RANGE:
@@ -301,20 +314,6 @@ void mfast::parse(
                     it, ast, nodes, parser_state, it->identifier_idx
                 );
                 continue;
-                // case mflex::TokenType::LEFT_BRACKET:
-                //     // TODO(Matthew): ambiguity as could be number range or list.
-                //     //                  need a way to decide which we are seeing
-                //     here.
-                //     //                  are we happy with this approach?
-                //     if ((it + 2)->type == mflex::TokenType::RANGE) {
-                //         // Add range vertex, push precedence parser_expects::PRIMARY.
-                //         add_number_range_node(it, ast, nodes, parser_state);
-                //     } else {
-                //         // Add list vertex, push precedence
-                //         parser_expects::EXPRESSION. add_list_node(it, ast, nodes,
-                //         parser_state);
-                //     }
-                //     continue;
         }
     }
 
