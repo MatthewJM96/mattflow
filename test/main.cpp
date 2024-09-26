@@ -112,7 +112,10 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         std::string result   = token_ss.str();
         std::string expected = buffer.str();
 
-        if (result != expected) return TestResult::LEXING_FAILURE;
+        if (result != expected) {
+            std::cout << "failed." << std::endl;
+            return TestResult::LEXING_FAILURE;
+        }
 
         std::cout << "validated." << std::endl;
     }
@@ -169,7 +172,10 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         std::string result   = ast_ss.str();
         std::string expected = buffer.str();
 
-        if (result != expected) return TestResult::SYNTAX_PARSING_FAILURE;
+        if (result != expected) {
+            std::cout << "failed." << std::endl;
+            return TestResult::SYNTAX_PARSING_FAILURE;
+        }
 
         std::cout << "validated." << std::endl;
     }
