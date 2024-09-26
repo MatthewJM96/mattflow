@@ -2,83 +2,11 @@
 
 #include "ast/link.h"
 #include "ast/node.h"
+#include "ast/single_token.h"
 #include "ast/state.h"
 #include "literal/identifier.h"
 
 #include "ast/parse.h"
-
-static void add_non_operating_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALIN mfast::NodeInfo&& node_info,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-    // Link operations on stack if we have an end of expression.
-    mfast::maybe_link_operations_on_stack(ast, nodes, parser_state);
-
-    // Add vertex to AST for node, and push it onto the stack.
-    auto vertex = boost::add_vertex(ast);
-    parser_state.non_operating_vertices.back().emplace_back(vertex);
-
-    // Add node info about bool node and associate with vertex in AST.
-    nodes.vertex_node_map[vertex] = nodes.node_info.size();
-    nodes.node_info.emplace_back(std::forward<mfast::NodeInfo>(node_info));
-
-    parser_state.last_seen.back() = mfast::NodeCategory::NONOP;
-
-    // Move forward a token.
-    curr_token += 1;
-}
-
-template <typename Node>
-static void add_operating_node(
-    VALINOUT mflex::Tokens::const_iterator& curr_token,
-    VALIN Node&&                            node_info,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
-) {
-#if DEBUG
-    // If precedence is the same, associativity must be too.
-    if (node_info.PRECEDENCE == parser_state.precedence.back()) {
-        mfassert(
-            node_info.ASSOCIATIVITY == parser_state.associativity.back(),
-            "Trying to add same-precedence different-associativity operator as "
-            "previous: %s",
-            node_info.debug_repr()
-        );
-    }
-#endif  // DEBUG
-
-    // If operator has lower precedence than the highest we've so far encountered, we
-    // need to deal with the expression as formed so far (up to any preceding operation
-    // with the same precedence as this to-be-added operation) before continuing on. In
-    // either case the current block/paren expr precedence must be overwritten with
-    // this operator's precedence.
-    if (node_info.PRECEDENCE < parser_state.precedence.back()) {
-        mfast::link_operations_on_stack(node_info.PRECEDENCE, ast, nodes, parser_state);
-    }
-    parser_state.precedence.back()    = node_info.PRECEDENCE;
-    parser_state.associativity.back() = node_info.ASSOCIATIVITY;
-
-    // Add vertex to AST for node, and push it onto the stack.
-    auto vertex = boost::add_vertex(ast);
-    parser_state.operating_vertices.back().emplace_back(vertex);
-
-    // Add node info about bool node and associate with vertex in AST.
-    nodes.vertex_node_map[vertex] = nodes.node_info.size();
-    nodes.node_info.emplace_back(std::forward<Node>(node_info));
-
-    if (node_info.ORDER == mfast::Order::UNARY) {
-        parser_state.last_seen.back() = mfast::NodeCategory::UNOP;
-    } else {
-        parser_state.last_seen.back() = mfast::NodeCategory::BINOP;
-    }
-
-    // Move forward a token.
-    curr_token += 1;
-}
 
 void mfast::parse(
     VALIN const mflex::Tokens& tokens,
@@ -180,75 +108,63 @@ void mfast::parse(
                 continue;
             case mflex::TokenType::ASSIGN_TYPE:
                 // Add ASSIGN_TYPE vertex.
-                add_operating_node(
-                    it,
-                    mfast::AssignTypeOperatorNode{ it, it },
-                    ast,
-                    nodes,
-                    parser_state
+                add_single_token_op<mfast::AssignTypeOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::ASSIGN_VALUE:
                 // Add ASSIGN_VALUE vertex.
-                add_operating_node(
-                    it,
-                    mfast::AssignValueOperatorNode{ it, it },
-                    ast,
-                    nodes,
-                    parser_state
+                add_single_token_op<mfast::AssignValueOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::AND:
                 // Add AND vertex.
-                add_operating_node(
-                    it, mfast::AndOperatorNode{ it, it }, ast, nodes, parser_state
+                add_single_token_op<mfast::AndOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::OR:
                 // Add OR vertex.
-                add_operating_node(
-                    it, mfast::OrOperatorNode{ it, it }, ast, nodes, parser_state
+                add_single_token_op<mfast::OrOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::EQUALS:
                 // Add EQUALS vertex.
-                add_operating_node(
-                    it, mfast::EqualOperatorNode{ it, it }, ast, nodes, parser_state
+                add_single_token_op<mfast::EqualOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::NOT_EQUALS:
                 // Add NOT EQUALS vertex.
-                add_operating_node(
-                    it, mfast::NotEqualOperatorNode{ it, it }, ast, nodes, parser_state
+                add_single_token_op<mfast::NotEqualOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::LESS_THAN:
                 // Add LESS THAN vertex.
-                add_operating_node(
-                    it, mfast::LesserOperatorNode{ it, it }, ast, nodes, parser_state
+                add_single_token_op<mfast::LesserOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::LESS_THAN_OR_EQUAL_TO:
                 // Add LESS THAN OR EQUAL TO vertex.
-                add_operating_node(
-                    it,
-                    mfast::LesserOrEqualOperatorNode{ it, it },
-                    ast,
-                    nodes,
-                    parser_state
+                add_single_token_op<mfast::LesserOrEqualOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::GREATER_THAN:
                 // Add GREATER THAN vertex.
-                add_operating_node(
-                    it, mfast::GreaterOperatorNode{ it, it }, ast, nodes, parser_state
+                add_single_token_op<mfast::GreaterOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::GREATER_THAN_OR_EQUAL_TO:
                 // Add GREATER THAN OR EQUAL TO vertex.
-                add_operating_node(
+                add_single_token_op<mfast::GreaterOrEqualOperatorNode>(
                     it,
-                    mfast::GreaterOrEqualOperatorNode{ it, it },
+
                     ast,
                     nodes,
                     parser_state
@@ -256,17 +172,17 @@ void mfast::parse(
                 continue;
             case mflex::TokenType::PLUS:
                 // Add ADDITION vertex.
-                add_operating_node(
-                    it, mfast::AdditionOperatorNode{ it, it }, ast, nodes, parser_state
+                add_single_token_op<mfast::AdditionOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::MINUS:
                 // TODO(Matthew): for now this token can be both repr of unary and
                 //                binary operations (subtraction and negation).
                 // Add SUBTRACTION vertex.
-                add_operating_node(
+                add_single_token_op<mfast::SubtractionOperatorNode>(
                     it,
-                    mfast::SubtractionOperatorNode{ it, it },
+
                     ast,
                     nodes,
                     parser_state
@@ -274,161 +190,115 @@ void mfast::parse(
                 continue;
             case mflex::TokenType::SLASH:
                 // Add DIVIDE vertex.
-                add_operating_node(
-                    it, mfast::DivisionOperatorNode{ it, it }, ast, nodes, parser_state
+                add_single_token_op<mfast::DivisionOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::STAR:
                 // Add MULTIPLY vertex.
-                add_operating_node(
-                    it,
-                    mfast::MultiplicationOperatorNode{ it, it },
-                    ast,
-                    nodes,
-                    parser_state
+                add_single_token_op<mfast::MultiplicationOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::POWER:
                 // Add POWER vertex.
-                add_operating_node(
-                    it, mfast::PowerOperatorNode{ it, it }, ast, nodes, parser_state
+                add_single_token_op<mfast::PowerOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::NOT:
                 // Add NOT vertex.
-                add_operating_node(
-                    it, mfast::NotOperatorNode{ it, it }, ast, nodes, parser_state
+                add_single_token_op<mfast::NotOperatorNode>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::NIL:
                 // Add null vertex.
-                add_non_operating_node(
-                    it, mfast::NullNode{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::NullNode>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::CHAR:
                 // Add CHAR vertex.
-                add_non_operating_node(
-                    it, mfast::CharNode{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::CharNode>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::BOOL:
                 // Add BOOL vertex.
-                add_non_operating_node(
-                    it, mfast::BoolNode{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::BoolNode>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::INT:
                 // Add INT vertex.
-                add_non_operating_node(
-                    it, mfast::IntNode{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::IntNode>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::INT8:
                 // Add INT8 vertex.
-                add_non_operating_node(
-                    it, mfast::Int8Node{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::Int8Node>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::INT16:
                 // Add INT16 vertex.
-                add_non_operating_node(
-                    it, mfast::Int16Node{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::Int16Node>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::INT32:
                 // Add INT32 vertex.
-                add_non_operating_node(
-                    it, mfast::Int32Node{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::Int32Node>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::INT64:
                 // Add INT64 vertex.
-                add_non_operating_node(
-                    it, mfast::Int64Node{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::Int64Node>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::UINT:
                 // Add UINT vertex.
-                add_non_operating_node(
-                    it, mfast::UIntNode{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::UIntNode>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::UINT8:
                 // Add UINT8 vertex.
-                add_non_operating_node(
-                    it, mfast::UInt8Node{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::UInt8Node>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::UINT16:
                 // Add UINT16 vertex.
-                add_non_operating_node(
-                    it, mfast::UInt16Node{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::UInt16Node>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::UINT32:
                 // Add UINT32 vertex.
-                add_non_operating_node(
-                    it, mfast::UInt32Node{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::UInt32Node>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::UINT64:
                 // Add UINT64 vertex.
-                add_non_operating_node(
-                    it, mfast::UInt64Node{ it, it }, ast, nodes, parser_state
-                );
+                add_single_token_nonop<mfast::UInt64Node>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::FLOAT32:
                 // Add FP32 vertex.
-                add_non_operating_node(
-                    it, mfast::Float32Node{ it, it }, ast, nodes, parser_state
+                add_single_token_nonop<mfast::Float32Node>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::FLOAT64:
                 // Add FP64 vertex.
-                add_non_operating_node(
-                    it, mfast::Float64Node{ it, it }, ast, nodes, parser_state
+                add_single_token_nonop<mfast::Float64Node>(
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::TRUE:
             case mflex::TokenType::FALSE:
                 // Add Boolean value vertex.
-                add_non_operating_node(
-                    it,
-                    mfast::BoolValNode{ it, it, it->type == mflex::TokenType::TRUE },
-                    ast,
-                    nodes,
-                    parser_state
+                add_single_token_nonop<mfast::BoolValNode>(
+                    it, ast, nodes, parser_state, it->type == mflex::TokenType::TRUE
                 );
                 continue;
             case mflex::TokenType::NUMBER:
                 // Add number vertex.
-                add_non_operating_node(
-                    it,
-                    mfast::NumberValNode{ it, it, it->number },
-                    ast,
-                    nodes,
-                    parser_state
+                add_single_token_nonop<mfast::NumberValNode>(
+                    it, ast, nodes, parser_state, it->number
                 );
                 continue;
             case mflex::TokenType::STRING:
                 // Add string vertex.
-                add_non_operating_node(
-                    it,
-                    mfast::StringValNode{ it, it, it->string_idx },
-                    ast,
-                    nodes,
-                    parser_state
+                add_single_token_nonop<mfast::StringValNode>(
+                    it, ast, nodes, parser_state, it->string_idx
                 );
                 continue;
             case mflex::TokenType::IDENTIFIER:
                 // Add identifier vertex.
-                add_non_operating_node(
-                    it,
-                    mfast::IdentifierNode{ it, it, it->identifier_idx },
-                    ast,
-                    nodes,
-                    parser_state
+                add_single_token_nonop<mfast::IdentifierNode>(
+                    it, ast, nodes, parser_state, it->identifier_idx
                 );
                 continue;
                 // case mflex::TokenType::LEFT_BRACKET:

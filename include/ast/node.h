@@ -32,6 +32,9 @@ namespace mattflow {
             FUNCTION_BODY
         };
 
+        template <typename CandidateNodeType>
+        concept NodeType = std::is_base_of_v<Node, CandidateNodeType>;
+
         /* clang-format off */
 
         using NodeInfo = std::variant<
