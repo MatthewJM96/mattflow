@@ -7,23 +7,17 @@
 
 namespace mattflow {
     namespace ast {
-        const size_t STITCH_TO_NEXT_NON_OP = std::numeric_limits<size_t>::max();
-
         /**
-         * @brief Holds state for a parse call. The vertices buffer is built up
-         * per-node while the precedence and associativity are built up per layer
-         * whether block expression, parantheses expression, etc.
+         * @brief Entry point to begin parsing a token stream. Produces an AST,
+         * populating the provided node buffers and the type table.
+         *
+         * @param tokens The token stream to parse.
+         * @param ast The resulting AST after parsing.
+         * @param nodes The node buffers which are populated with information about each
+         * node added to the AST.
+         * @param type_table The type table in which any non-primitive types are
+         * recorded, with the information so far gathered about those types.
          */
-        struct ParserState {
-            std::vector<Precedence>             precedence;
-            std::vector<Associativity>          associativity;
-            std::vector<std::vector<ASTVertex>> operating_vertices;
-            std::vector<std::vector<ASTVertex>> non_operating_vertices;
-            std::vector<ASTVertex>              enclosing_vertices;
-            std::vector<EnclosingCategory>      enclosed_by;
-            std::vector<NodeCategory>           last_seen;
-        };
-
         void parse(
             VALIN const mflex::Tokens& tokens,
             VALOUT AST&                ast,

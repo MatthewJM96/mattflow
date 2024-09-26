@@ -25,6 +25,25 @@ namespace mattflow {
 
             std::string debug_repr() const override { return "block"; }
         };
+
+        /**
+         * @brief Node reflecting a parentheses expression.
+         *
+         * @inedge TODO
+         * @outedges TODO
+         * @outedge TODO
+         */
+        struct ParenExprNode : public Node {
+            ParenExprNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            std::string debug_repr() const override { return "paren"; }
+        };
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;

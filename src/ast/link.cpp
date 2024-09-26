@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ast/operator.h"
+#include "ast/state.h"
 
 #include "ast/link.h"
 

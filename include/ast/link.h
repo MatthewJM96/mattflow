@@ -2,6 +2,7 @@
 #define __mattflow_ast_link_h
 
 #include "ast/parse.h"
+#include "ast/state.h"
 
 namespace mattflow {
     namespace ast {

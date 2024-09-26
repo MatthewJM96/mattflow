@@ -2,6 +2,7 @@
 
 #include "ast/link.h"
 #include "ast/node.h"
+#include "ast/state.h"
 #include "literal/identifier.h"
 
 #include "ast/parse.h"
@@ -104,20 +105,17 @@ void mfast::parse(
     ast.clear();
     nodes.node_info.clear();
     nodes.vertex_node_map = boost::get(vertex_data, ast);
-    nodes.node_info.emplace_back(BlockExprNode{ tokens.begin(), tokens.begin() });
 
     // Prepare stack for precedence, associativity, and last attachable vertex with the
     // top-level block node for module.
     ParserState parser_state;
-    parser_state.precedence.emplace_back(Precedence::NONE);
-    parser_state.associativity.emplace_back(Associativity::SENTINEL);
-    parser_state.operating_vertices.push_back({});
-    parser_state.non_operating_vertices.push_back({});
-    parser_state.enclosing_vertices.push_back({});
-    parser_state.enclosing_vertices.emplace_back(boost::add_vertex(ast));
-    parser_state.last_seen.emplace_back(NodeCategory::NONE);
-    parser_state.enclosed_by.emplace_back(EnclosingCategory::ROOT);
-    nodes.vertex_node_map[parser_state.enclosing_vertices.back()] = 0;
+    push_enclosure(
+        BlockExprNode{ tokens.begin(), tokens.end() },
+        EnclosingCategory::ROOT,
+        ast,
+        nodes,
+        parser_state
+    );
 
     // Iterate tokens, parsing as appropriate.
     auto it = tokens.begin();
@@ -146,48 +144,23 @@ void mfast::parse(
             case mflex::TokenType::SENTINEL:
                 break;
             case mflex::TokenType::LEFT_PAREN:
-                // Push a new stack of vertices for ops and non-ops.
-                parser_state.non_operating_vertices.push_back({});
-                parser_state.operating_vertices.push_back({});
-                parser_state.last_seen.push_back(mfast::NodeCategory::NONE);
-                parser_state.enclosed_by.push_back(mfast::EnclosingCategory::PARENTHESES
+                // Push a new enclosure for paren expr.
+                push_enclosure(
+                    ParenExprNode{ it, it },
+                    EnclosingCategory::PARENTHESES,
+                    ast,
+                    nodes,
+                    parser_state
                 );
 
                 // Move forward a token.
                 it += 1;
                 continue;
             case mflex::TokenType::RIGHT_PAREN:
-                // Link any remaining operators in the paren expression.
-                link_operations_on_stack(Precedence::NONE, ast, nodes, parser_state);
-
-                mfassert(
-                    parser_state.enclosed_by.back()
-                        == mfast::EnclosingCategory::PARENTHESES,
-                    "Expected to be closing a parentheses but lowest enclosure still "
-                    "open is of a different kind."
+                // Pop enclosure of paren expr.
+                pop_enclosure(
+                    mfast::EnclosingCategory::PARENTHESES, ast, nodes, parser_state
                 );
-
-                {
-                    // Get root node of the paren expression and then pop the stack.
-                    size_t paren_root
-                        = parser_state.non_operating_vertices.back().back();
-                    parser_state.non_operating_vertices.pop_back();
-                    parser_state.operating_vertices.pop_back();
-                    parser_state.last_seen.pop_back();
-                    parser_state.enclosed_by.pop_back();
-
-                    mfassert(
-                        parser_state.non_operating_vertices.size() > 0,
-                        "Tried to pop last scope on close of a parentheses pair."
-                    );
-                    mfassert(
-                        parser_state.operating_vertices.size() > 0,
-                        "Tried to pop last scope on close of a parentheses pair."
-                    );
-
-                    // Push root node onto the stack below.
-                    parser_state.non_operating_vertices.back().emplace_back(paren_root);
-                }
 
                 // Move forward a token.
                 it += 1;
@@ -462,9 +435,6 @@ void mfast::parse(
         }
     }
 
-    link_operations_on_stack(Precedence::NONE, ast, nodes, parser_state);
-
-    // If we get here and cursor is not pointing to top-level block, then something has
-    // gone wrong in parsing.
-    // mfassert(parser_state.vertices.size() == 0, "Have unprocessed vertices!");
+    // Pop root enclosure.
+    pop_enclosure(EnclosingCategory::ROOT, ast, nodes, parser_state);
 }
