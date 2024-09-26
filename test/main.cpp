@@ -242,4 +242,7 @@ int main() {
     mattflow::Debug::set_throw();
 
     run_tests({ .plot_ast_graphs = true });
+    // run_tests({ .generate_validations = true });
+
+    // run_test("samples/expr/block_expr.mf");
 }

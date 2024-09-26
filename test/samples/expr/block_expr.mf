@@ -1,0 +1,5 @@
+x : int64 = 5
+{
+    y : float32 = 1.0
+    z : char = "c"
+}
