@@ -14,21 +14,8 @@ static void add_non_operating_node(
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
 ) {
-    // If we have two non-operating nodes in a row, we have a break of expression.
-    // TODO(Matthew): bare in mind that we have control-flow to include yet, and might
-    //                complicate this.
-    if (parser_state.last_seen.back() == mfast::NodeCategory::NONOP) {
-        mfassert(
-            parser_state.enclosed_by.back() != mfast::EnclosingCategory::PARENTHESES,
-            "Cannot have multiple expressions inside a single parentheses."
-        );
-
-        mfast::link_operations_on_stack(
-            mfast::Precedence::NONE, ast, nodes, parser_state
-        );
-
-        // TODO(Matthew): we kinda have to do more here as what if we have a blockexpr?
-    }
+    // Link operations on stack if we have an end of expression.
+    mfast::maybe_link_operations_on_stack(ast, nodes, parser_state);
 
     // Add vertex to AST for node, and push it onto the stack.
     auto vertex = boost::add_vertex(ast);
@@ -144,6 +131,9 @@ void mfast::parse(
             case mflex::TokenType::SENTINEL:
                 break;
             case mflex::TokenType::LEFT_PAREN:
+                // Link operations on stack if we have an end of expression.
+                mfast::maybe_link_operations_on_stack(ast, nodes, parser_state);
+
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     ParenExprNode{ it, it },

@@ -5,6 +5,28 @@
 
 #include "ast/link.h"
 
+void mfast::maybe_link_operations_on_stack(
+    VALOUT mfast::AST& ast,
+    VALOUT mfast::NodeBuffers& nodes,
+    VALOUT mfast::ParserState& parser_state
+) {
+    // If we have two non-operating nodes in a row, we have a break of expression.
+    // TODO(Matthew): bare in mind that we have control-flow to include yet, and might
+    //                complicate this.
+    if (parser_state.last_seen.back() == mfast::NodeCategory::NONOP) {
+        mfassert(
+            parser_state.enclosed_by.back() != mfast::EnclosingCategory::PARENTHESES,
+            "Cannot have multiple expressions inside a single parentheses."
+        );
+
+        mfast::link_operations_on_stack(
+            mfast::Precedence::NONE, ast, nodes, parser_state
+        );
+
+        // TODO(Matthew): we kinda have to do more here as what if we have a blockexpr?
+    }
+}
+
 void mfast::link_operations_on_stack(
     VALIN mfast::Precedence target_precedence,
     VALOUT mfast::AST& ast,
