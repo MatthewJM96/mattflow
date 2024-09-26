@@ -46,7 +46,12 @@ make_paths(const std::filesystem::path& path, std::filesystem::path&& new_base) 
 
 static std::tuple<std::filesystem::path, std::filesystem::path>
 make_validation_paths(const std::filesystem::path& path) {
-    return make_paths(path, "validation");
+    auto result_paths = make_paths(path, "validation");
+
+    // Ensure the results directory exists.
+    std::filesystem::create_directories(std::get<0>(result_paths).parent_path());
+
+    return result_paths;
 }
 
 static std::tuple<std::filesystem::path, std::filesystem::path>

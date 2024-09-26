@@ -22,15 +22,27 @@ namespace mattflow {
             NONOP
         };
 
-        enum class EnclosingCategory {
-            ROOT,
-            BLOCK,
-            PARENTHESES,
-            LIST_OR_RANGE,
-            STRUCT,
-            FUNCTION_PARAMS,
-            FUNCTION_BODY
+        enum class EnclosingCategory : uint16_t {
+            ROOT            = 0x001,
+            BLOCK           = 0x002,
+            PARENTHESES     = 0x004,
+            LIST_OR_RANGE   = 0x008,
+            STRUCT          = 0x010,
+            FUNCTION_PARAMS = 0x020,
+            FUNCTION_BODY   = 0x040
         };
+
+        inline EnclosingCategory operator|(EnclosingCategory a, EnclosingCategory b) {
+            return static_cast<EnclosingCategory>(
+                static_cast<uint16_t>(a) | static_cast<uint16_t>(b)
+            );
+        }
+
+        inline EnclosingCategory operator&(EnclosingCategory a, EnclosingCategory b) {
+            return static_cast<EnclosingCategory>(
+                static_cast<uint16_t>(a) & static_cast<uint16_t>(b)
+            );
+        }
 
         template <typename CandidateNodeType>
         concept NodeType = std::is_base_of_v<Node, CandidateNodeType>;

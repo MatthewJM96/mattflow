@@ -47,7 +47,8 @@ void mfast::pop_enclosure(
     link_operations_on_stack(Precedence::NONE, ast, nodes, parser_state);
 
     mfassert(
-        parser_state.enclosed_by.back() == expected_enclosing_category,
+        (parser_state.enclosed_by.back() & expected_enclosing_category)
+            == parser_state.enclosed_by.back(),
         "Latest closure is different to expected during pop."
     );
 

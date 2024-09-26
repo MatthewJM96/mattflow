@@ -14,8 +14,6 @@ void mfast::parse(
     VALOUT NodeBuffers&        nodes,
     VALOUT mftype::IdentifierTypeTable& type_table
 ) {
-    (void)type_table;
-
     // Ensure buffers are clear for building fresh AST.
     ast.clear();
     nodes.node_info.clear();
@@ -47,7 +45,6 @@ void mfast::parse(
             case mflex::TokenType::DO:
             case mflex::TokenType::MATCH:
             case mflex::TokenType::PRINT:
-            case mflex::TokenType::STRUCT:
             case mflex::TokenType::LEFT_BRACKET:
                 //     // TODO(Matthew): ambiguity as could be number range or list.
                 //     //                  need a way to decide which we are seeing
@@ -69,6 +66,40 @@ void mfast::parse(
             case mflex::TokenType::ARROW:
             case mflex::TokenType::SENTINEL:
                 break;
+            case mflex::TokenType::STRUCT:
+                mfassert(
+                    (it + 1)->type == mflex::TokenType::LEFT_BRACE,
+                    "Saw struct keyword, expected it to be followed by '{'."
+                );
+
+                // TODO(Matthew): we don't do anything to prevent operations acting on
+                //                types. Maybe we want to allow this, but if so we still
+                //                want to avoid things like:
+                //                  struct { ... } * 2
+                //                maybe we check later.
+
+                // Link operations on stack if we have an end of expression.
+                mfast::maybe_link_operations_on_stack(ast, nodes, parser_state);
+
+                // TODO(Matthew): we haven't done anything to explicitly add logic about
+                //                StructFieldNode vertices. Maybe we'll add these later.
+
+                // TODO(Matthew): right now we set type to nullptr as struct type
+                //                definitions are anonymous, only nameable by assigning
+                //                to an identifier.
+
+                // Push a new enclosure for block expr.
+                push_enclosure(
+                    StructNode{ it, it, nullptr },
+                    EnclosingCategory::STRUCT,
+                    ast,
+                    nodes,
+                    parser_state
+                );
+
+                // Move forward two tokens (one extra for '{').
+                it += 2;
+                continue;
             case mflex::TokenType::LEFT_BRACE:
                 // Link operations on stack if we have an end of expression.
                 mfast::maybe_link_operations_on_stack(ast, nodes, parser_state);
@@ -88,7 +119,10 @@ void mfast::parse(
             case mflex::TokenType::RIGHT_BRACE:
                 // Pop enclosure of block expr.
                 pop_enclosure(
-                    mfast::EnclosingCategory::BLOCK, ast, nodes, parser_state
+                    mfast::EnclosingCategory::BLOCK | mfast::EnclosingCategory::STRUCT,
+                    ast,
+                    nodes,
+                    parser_state
                 );
 
                 // Move forward a token.

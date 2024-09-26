@@ -1,0 +1,29 @@
+digraph G {
+0[label="block"];
+1[label="ident: z"];
+2[label="op ="];
+3[label="block"];
+4[label="ident: x"];
+5[label="op :"];
+6[label="type: int16"];
+7[label="op ="];
+8[label="num: 4.000000"];
+9[label="ident: y"];
+10[label="op :"];
+11[label="type: int16"];
+12[label="op ="];
+13[label="num: 4.000000"];
+0->2 ;
+2->1 ;
+2->3 ;
+3->7 ;
+3->12 ;
+5->4 ;
+5->6 ;
+7->5 ;
+7->8 ;
+10->9 ;
+10->11 ;
+12->10 ;
+12->13 ;
+}

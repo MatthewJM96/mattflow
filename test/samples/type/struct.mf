@@ -1,0 +1,4 @@
+struct {
+    x : int16 = 4
+    y : int16 = 4
+}
