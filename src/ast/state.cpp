@@ -58,6 +58,8 @@ void mfast::pop_enclosure(
         "vertices on stack."
     );
 
+    // TODO(Matthew): update the token iterator for end of enclosure.
+
     // Get remaining vertices of the enclosure and link to enclosing vertex.
     for (auto remaining_vertex : parser_state.non_operating_vertices.back())
         boost::add_edge(parser_state.enclosing_vertices.back(), remaining_vertex, ast);
