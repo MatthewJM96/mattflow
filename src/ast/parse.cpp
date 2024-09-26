@@ -120,8 +120,6 @@ void mfast::parse(
             case mflex::TokenType::MATCH:
             case mflex::TokenType::PRINT:
             case mflex::TokenType::STRUCT:
-            case mflex::TokenType::LEFT_BRACE:
-            case mflex::TokenType::RIGHT_BRACE:
             case mflex::TokenType::LEFT_BRACKET:
             case mflex::TokenType::RIGHT_BRACKET:
             case mflex::TokenType::COMMA:
@@ -130,6 +128,31 @@ void mfast::parse(
             case mflex::TokenType::ARROW:
             case mflex::TokenType::SENTINEL:
                 break;
+            case mflex::TokenType::LEFT_BRACE:
+                // Link operations on stack if we have an end of expression.
+                mfast::maybe_link_operations_on_stack(ast, nodes, parser_state);
+
+                // Push a new enclosure for block expr.
+                push_enclosure(
+                    BlockExprNode{ it, it },
+                    EnclosingCategory::BLOCK,
+                    ast,
+                    nodes,
+                    parser_state
+                );
+
+                // Move forward a token.
+                it += 1;
+                continue;
+            case mflex::TokenType::RIGHT_BRACE:
+                // Pop enclosure of block expr.
+                pop_enclosure(
+                    mfast::EnclosingCategory::BLOCK, ast, nodes, parser_state
+                );
+
+                // Move forward a token.
+                it += 1;
+                continue;
             case mflex::TokenType::LEFT_PAREN:
                 // Link operations on stack if we have an end of expression.
                 mfast::maybe_link_operations_on_stack(ast, nodes, parser_state);
