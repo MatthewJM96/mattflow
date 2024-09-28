@@ -207,7 +207,7 @@ size_t run_tests(TestConfig config = {}) {
     for (const auto& test_case : recurse_directory("samples")) {
         if (!test_case.is_regular_file()) continue;
 
-        std::cout << *test_case.path().begin() << std::endl;
+        auto base_dir = *std::next(test_case.path().begin());
 
         std::cout << "\n-------- " << test_case.path() << " --------" << std::endl;
         switch (run_test(test_case.path(), config)) {
@@ -216,9 +216,7 @@ size_t run_tests(TestConfig config = {}) {
                 successes += 1;
                 break;
             case TestResult::LEXING_FAILURE:
-                if (*test_case.path().begin() == "failure"
-                    || *test_case.path().begin() == "lexing_failure")
-                {
+                if (base_dir == "failure" || base_dir == "lexing_failure") {
                     std::cout << "\nResult : SUCCESS" << std::endl;
                     successes += 1;
                 } else {
@@ -227,9 +225,7 @@ size_t run_tests(TestConfig config = {}) {
                 }
                 break;
             case TestResult::SYNTAX_PARSING_FAILURE:
-                if (*test_case.path().begin() == "failure"
-                    || *test_case.path().begin() == "syntax_parsing_failure")
-                {
+                if (base_dir == "failure" || base_dir == "syntax_parsing_failure") {
                     std::cout << "\nResult : SUCCESS" << std::endl;
                     successes += 1;
                 } else {
@@ -238,7 +234,7 @@ size_t run_tests(TestConfig config = {}) {
                 }
                 break;
             case TestResult::UNSPECIFIED_FAILURE:
-                if (*test_case.path().begin() == "failure") {
+                if (base_dir == "failure") {
                     std::cout << "\nResult : SUCCESS" << std::endl;
                     successes += 1;
                     break;
