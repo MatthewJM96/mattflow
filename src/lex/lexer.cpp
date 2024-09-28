@@ -79,7 +79,7 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
                 } else if (token.type == TokenType::STRING) {
                     // Put string into string buffer and mark index.
                     token.string_idx = string_table.try_insert(
-                        std::move(results[0].str().substr(1, token.length - 2))
+                        results[0].str().substr(1, token.length - 2)
                     );
                 } else if (token.type == TokenType::NUMBER) {
                     // Put string into string buffer and mark index.
