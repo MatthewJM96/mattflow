@@ -158,6 +158,13 @@ target_precompile_headers(mattflow_tests
         include/stdafx.h
 )
 
+if (RUNNER)
+    target_compile_definitions(mattflow_tests
+        PUBLIC
+            RUNNER=1
+    )
+endif()
+
 ########################################################################################
 
 ##########################################################

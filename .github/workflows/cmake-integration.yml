@@ -61,6 +61,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DRUNNER=1
         -S ${{ github.workspace }}
 
     - name: Cache conan dependencies
@@ -86,6 +87,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DRUNNER=1
         -S ${{ github.workspace }}
 
     - name: Build
@@ -142,6 +144,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=cl
         -DCMAKE_C_COMPILER=cl
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DRUNNER=1
         -S ${{ github.workspace }}
 
     - name: Cache conan dependencies
@@ -172,6 +175,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=cl
         -DCMAKE_C_COMPILER=cl
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DRUNNER=1
         -S ${{ github.workspace }}
 
     - name: Build
@@ -229,6 +233,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=clang++
         -DCMAKE_C_COMPILER=clang
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DRUNNER=1
         -S ${{ github.workspace }}
 
     - name: Cache conan dependencies
@@ -254,6 +259,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=clang++
         -DCMAKE_C_COMPILER=clang
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DRUNNER=1
         -S ${{ github.workspace }}
 
     - name: Build

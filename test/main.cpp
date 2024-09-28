@@ -268,10 +268,14 @@ int main() {
     // Set throw so assertion failures can be captured during testing.
     mattflow::Debug::set_throw();
 
+#if defined(RUNNER)
+    return run_tests();
+#else
     return run_tests({ .plot_ast_graphs = true });
 
     // return run_tests({ .generate_validations = true });
 
     // run_test("samples/expr/block_expr.mf");
     // return 0;
+#endif
 }
