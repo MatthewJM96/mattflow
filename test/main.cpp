@@ -228,7 +228,8 @@ void run_tests(TestConfig config = {}) {
                 break;
         }
         std::cout << "\n--------------------";
-        for (const auto& _ : test_case.path().string()) std::cout << "-";
+        for ([[maybe_unused]] const auto& _ : test_case.path().string())
+            std::cout << "-";
         std::cout << std::endl;
     }
 
