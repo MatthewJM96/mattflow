@@ -43,6 +43,10 @@ namespace mattflow {
                 Node(_first_token, _last_token) {
                 // Empty.
             }
+
+            virtual ~OperatorNode() {
+                // Empty.
+            }
         };
 
         /**
@@ -57,6 +61,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~NotOperatorNode() {
                 // Empty.
             }
 
@@ -79,6 +87,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~NegationOperatorNode() {
                 // Empty.
             }
 
@@ -105,6 +117,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~PowerOperatorNode() {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::POWER;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
@@ -125,6 +141,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~MultiplicationOperatorNode() {
                 // Empty.
             }
 
@@ -151,6 +171,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~DivisionOperatorNode() {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::FACTOR;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
@@ -171,6 +195,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~AdditionOperatorNode() {
                 // Empty.
             }
 
@@ -197,6 +225,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~SubtractionOperatorNode() {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::TERM;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
@@ -217,6 +249,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~GreaterOperatorNode() {
                 // Empty.
             }
 
@@ -243,6 +279,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~GreaterOrEqualOperatorNode() {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
@@ -263,6 +303,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~LesserOperatorNode() {
                 // Empty.
             }
 
@@ -289,6 +333,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~LesserOrEqualOperatorNode() {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::COMPARISON;
             const Associativity ASSOCIATIVITY = Associativity::NONE;
@@ -309,6 +357,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~EqualOperatorNode() {
                 // Empty.
             }
 
@@ -335,6 +387,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~NotEqualOperatorNode() {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::EQUALITY;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
@@ -355,6 +411,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~OrOperatorNode() {
                 // Empty.
             }
 
@@ -381,6 +441,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~AndOperatorNode() {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::LOGICAL;
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
@@ -403,6 +467,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~AssignValueOperatorNode() {
+                // Empty.
+            }
+
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::VALUE_ASSIGNMENT;
             const Associativity ASSOCIATIVITY = Associativity::RIGHT;
@@ -422,6 +490,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~AssignTypeOperatorNode() {
                 // Empty.
             }
 

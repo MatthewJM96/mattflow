@@ -25,6 +25,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~IfNode() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "if"; }
         };
 
@@ -41,6 +45,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~ForNode() {
                 // Empty.
             }
 
@@ -67,6 +75,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~RangeNode() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "range"; }
         };
 
@@ -85,6 +97,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~WhileNode() {
                 // Empty.
             }
 

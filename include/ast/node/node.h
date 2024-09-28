@@ -14,6 +14,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~Node() {
+                // Empty.
+            }
+
             mflex::Tokens::const_iterator first_token, last_token;
 
             virtual std::string debug_repr() const = 0;

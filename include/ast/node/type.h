@@ -19,6 +19,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~BoolNode() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "type: bool"; }
         };
 
@@ -33,6 +37,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~CharNode() {
                 // Empty.
             }
 
@@ -53,6 +61,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~IntNode() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "type: int"; }
         };
 
@@ -67,6 +79,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~Int8Node() {
                 // Empty.
             }
 
@@ -87,6 +103,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~Int16Node() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "type: int16"; }
         };
 
@@ -101,6 +121,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~Int32Node() {
                 // Empty.
             }
 
@@ -121,6 +145,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~Int64Node() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "type: int64"; }
         };
 
@@ -135,6 +163,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~UIntNode() {
                 // Empty.
             }
 
@@ -155,6 +187,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~UInt8Node() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "type: uint8"; }
         };
 
@@ -169,6 +205,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~UInt16Node() {
                 // Empty.
             }
 
@@ -189,6 +229,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~UInt32Node() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "type: uint32"; }
         };
 
@@ -203,6 +247,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~UInt64Node() {
                 // Empty.
             }
 
@@ -223,6 +271,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~Float32Node() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "type: float32"; }
         };
 
@@ -237,6 +289,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~Float64Node() {
                 // Empty.
             }
 

@@ -23,6 +23,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~StructNode() {
+                // Empty.
+            }
+
             mftype::Type* type;
 
             std::string debug_repr() const override { return "struct"; }
@@ -41,6 +45,10 @@ namespace mattflow {
                 mftype::Type*                 _type
             ) :
                 Node(_first_token, _last_token), name(_name), type(_type) {
+                // Empty.
+            }
+
+            virtual ~StructFieldNode() {
                 // Empty.
             }
 

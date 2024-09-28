@@ -23,6 +23,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~BlockExprNode() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "block"; }
         };
 
@@ -39,6 +43,10 @@ namespace mattflow {
                 mflex::Tokens::const_iterator _last_token
             ) :
                 Node(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~ParenExprNode() {
                 // Empty.
             }
 

@@ -20,6 +20,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~NullNode() {
+                // Empty.
+            }
+
             std::string debug_repr() const override { return "null"; }
         };
 
@@ -35,6 +39,10 @@ namespace mattflow {
                 bool                          _value
             ) :
                 Node(_first_token, _last_token), value(_value) {
+                // Empty.
+            }
+
+            virtual ~BoolValNode() {
                 // Empty.
             }
 
@@ -57,6 +65,10 @@ namespace mattflow {
                 mflit::Number                 _value
             ) :
                 Node(_first_token, _last_token), value(_value) {
+                // Empty.
+            }
+
+            virtual ~NumberValNode() {
                 // Empty.
             }
 
@@ -86,6 +98,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~StringValNode() {
+                // Empty.
+            }
+
             mflit::StringIdx value;
 
             std::string debug_repr() const override {
@@ -108,6 +124,10 @@ namespace mattflow {
                 mflit::IdentifierIdx          _name
             ) :
                 Node(_first_token, _last_token), name(_name) {
+                // Empty.
+            }
+
+            virtual ~IdentifierNode() {
                 // Empty.
             }
 

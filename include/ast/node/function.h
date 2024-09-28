@@ -28,6 +28,10 @@ namespace mattflow {
                 // Empty.
             }
 
+            virtual ~FunctionNode() {
+                // Empty.
+            }
+
             mftype::Type*                     type;
             std::vector<mflit::IdentifierIdx> argument_names;
 
