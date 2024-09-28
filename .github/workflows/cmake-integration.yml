@@ -21,14 +21,12 @@ jobs:
 
       matrix:
         build_type: [Release, Debug]
-        c_compiler: [gcc-14, clang-18, clang-19]
+        c_compiler: [gcc-14, clang-18]
         include:
           - c_compiler: gcc-14
             cpp_compiler: g++-14
           - c_compiler: clang-18
             cpp_compiler: clang++-18
-          - c_compiler: clang-19
-            cpp_compiler: clang++-19
 
     steps:
     - uses: actions/checkout@v3
@@ -40,15 +38,14 @@ jobs:
         sudo apt install g++-14 gcc-14 ;
         wget https://apt.llvm.org/llvm.sh ;
         chmod u+x llvm.sh ;
-        sudo ./llvm.sh 18 19
+        sudo ./llvm.sh 18
 
     - name: Install conan
       run: >
         python3 -m venv ${{ github.workspace }}/.venv ;
         source ${{ github.workspace }}/.venv/bin/activate ;
         pip install conan==2.7.1 ;
-        conan profile detect ;
-        sed -i -e 's/"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"]/"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"]/g' ~/.conan2/settings.yml
+        conan profile detect
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
