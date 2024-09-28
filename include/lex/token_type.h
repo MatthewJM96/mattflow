@@ -1,6 +1,12 @@
 #ifndef __mattflow_lex_token_type_h
 #define __mattflow_lex_token_type_h
 
+#if defined(MATTFLOW_OS_MAC)
+// MacOS mach/boolean.h sets TRUE and FALSE macros.
+#  undef TRUE
+#  undef FALSE
+#endif  // defined(MATTFLOW_OS_MAC)
+
 namespace mattflow {
     namespace lex {
         enum class TokenType : int16_t {
