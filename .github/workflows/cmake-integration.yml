@@ -16,8 +16,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     strategy:
-      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
-      fail-fast: false
+      fail-fast: true
 
       matrix:
         build_type: [Release, Debug]
@@ -90,15 +89,12 @@ jobs:
         -S ${{ github.workspace }}
 
     - name: Build
-      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
         ctest --build-config ${{ matrix.build_type }}
@@ -111,7 +107,7 @@ jobs:
     runs-on: windows-2022
 
     strategy:
-      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      # TODO: Set to true once Windows building works well.
       fail-fast: false
 
       matrix:
@@ -179,7 +175,6 @@ jobs:
         -S ${{ github.workspace }}
 
     - name: Build
-      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
@@ -187,8 +182,6 @@ jobs:
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
@@ -202,8 +195,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
-      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
-      fail-fast: false
+      fail-fast: true
 
       matrix:
         os: [macos-13, macos-14]
@@ -256,8 +248,6 @@ jobs:
         conan remove --system-reqs '*'
   
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
@@ -267,15 +257,12 @@ jobs:
         -S ${{ github.workspace }}
 
     - name: Build
-      # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
         ctest --build-config ${{ matrix.build_type }}
