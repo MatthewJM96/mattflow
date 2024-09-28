@@ -21,12 +21,14 @@ jobs:
 
       matrix:
         build_type: [Release, Debug]
-        c_compiler: [gcc-14, clang-18]
+        c_compiler: [gcc-14, clang-18, clang-19]
         include:
           - c_compiler: gcc-14
             cpp_compiler: g++-14
           - c_compiler: clang-18
             cpp_compiler: clang++-18
+          - c_compiler: clang-19
+            cpp_compiler: clang++-19
 
     steps:
     - uses: actions/checkout@v3
@@ -38,14 +40,15 @@ jobs:
         sudo apt install g++-14 gcc-14 ;
         wget https://apt.llvm.org/llvm.sh ;
         chmod u+x llvm.sh ;
-        sudo ./llvm.sh 18
+        sudo ./llvm.sh 18 19
 
     - name: Install conan
       run: >
         python3 -m venv ${{ github.workspace }}/.venv ;
         source ${{ github.workspace }}/.venv/bin/activate ;
         pip install conan==2.7.1 ;
-        conan profile detect
+        conan profile detect ;
+        sed -i -e 's/"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"]/"8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"]/g ~/.conan2/settings.yml
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
@@ -184,13 +187,14 @@ jobs:
 #################
 
   build-macos:
-    runs-on: macos-13
+    runs-on: ${{ matrix.os }}
 
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
 
       matrix:
+        os: [macos-13, macos-14]
         build_type: [Release, Debug]
         c_compiler: [clang]
 
@@ -202,7 +206,9 @@ jobs:
         python3 -m venv ${{ github.workspace }}/.venv ;
         source ${{ github.workspace }}/.venv/bin/activate ;
         pip install conan==2.7.1 ;
-        conan profile detect
+        conan profile detect ;
+        sed -i -e 's/"13.0", "13.1", "13.2", "13.3", "13.4", "13.5", "13.6",/"13.0", "13.1", "13.2", "13.3", "13.4", "13.5", "13.6", "13.7",/g' ~/.conan2/settings.yml ;
+        sed -i -e 's/"14.0", "14.1", "14.2", "14.3", "14.4", "14.5"]/"14.0", "14.1", "14.2", "14.3", "14.4", "14.5", "14.6", "14.7"]/g' ~/.conan2/settings.yml
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
