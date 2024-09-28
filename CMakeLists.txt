@@ -194,3 +194,17 @@ target_include_directories(mattflow_tests
 target_link_libraries(mattflow_tests
     ${mattflow_tests_Libraries}
 )
+
+########################################################################################
+
+##################################
+#     mattflow tests Testing     #
+##################################
+
+enable_testing()
+
+add_test(
+    NAME mattflow_tests
+    COMMAND $<TARGET_FILE:mattflow_tests>
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/test"
+)

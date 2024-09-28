@@ -188,7 +188,7 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     return TestResult::SUCCESS;
 }
 
-void run_tests(TestConfig config = {}) {
+size_t run_tests(TestConfig config = {}) {
     std::cout << "/-----------------------------\\\n"
               << "|  MATTFLOW REGRESSION TESTS  |\n"
               << "\\-----------------------------/\n"
@@ -214,14 +214,33 @@ void run_tests(TestConfig config = {}) {
                 successes += 1;
                 break;
             case TestResult::LEXING_FAILURE:
-                std::cout << "\nResult : LEXING_FAILURE" << std::endl;
-                lexing_failures += 1;
+                if (*test_case.path().begin() == "failure"
+                    || *test_case.path().begin() == "lexing_failure")
+                {
+                    std::cout << "\nResult : SUCCESS" << std::endl;
+                    successes += 1;
+                } else {
+                    std::cout << "\nResult : LEXING_FAILURE" << std::endl;
+                    lexing_failures += 1;
+                }
                 break;
             case TestResult::SYNTAX_PARSING_FAILURE:
-                std::cout << "\nResult : SYNTAX_PARSING_FAILURE" << std::endl;
-                syntax_parsing_failures += 1;
+                if (*test_case.path().begin() == "failure"
+                    || *test_case.path().begin() == "syntax_parsing_failure")
+                {
+                    std::cout << "\nResult : SUCCESS" << std::endl;
+                    successes += 1;
+                } else {
+                    std::cout << "\nResult : SYNTAX_PARSING_FAILURE" << std::endl;
+                    syntax_parsing_failures += 1;
+                }
                 break;
             case TestResult::UNSPECIFIED_FAILURE:
+                if (*test_case.path().begin() == "failure") {
+                    std::cout << "\nResult : SUCCESS" << std::endl;
+                    successes += 1;
+                    break;
+                }
             default:
                 std::cout << "\nResult : UNSPECIFIED_FAILURE" << std::endl;
                 unspecified_failures += 1;
@@ -241,14 +260,18 @@ void run_tests(TestConfig config = {}) {
     std::cout << "  Syntax Parsing Failures : " << syntax_parsing_failures << std::endl;
     std::cout << "  Successes               : " << successes << std::endl;
     std::cout << "\n-------------------------------" << std::endl;
+
+    return unspecified_failures + lexing_failures + syntax_parsing_failures;
 }
 
 int main() {
     // Set throw so assertion failures can be captured during testing.
     mattflow::Debug::set_throw();
 
-    run_tests({ .plot_ast_graphs = true });
-    // run_tests({ .generate_validations = true });
+    return run_tests({ .plot_ast_graphs = true });
+
+    // return run_tests({ .generate_validations = true });
 
     // run_test("samples/expr/block_expr.mf");
+    // return 0;
 }
