@@ -99,7 +99,7 @@ jobs:
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
-        ctest --build-config ${{ matrix.build_type }}
+        ctest --build-config ${{ matrix.build_type }} --output-on-failure
 
 ###################
 #     Windows     #
@@ -189,7 +189,7 @@ jobs:
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
-        ctest --build-config ${{ matrix.build_type }}
+        ctest --build-config ${{ matrix.build_type }} --output-on-failure
 
 #################
 #     MacOS     #
@@ -271,4 +271,4 @@ jobs:
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
-        ctest --build-config ${{ matrix.build_type }}
+        ctest --build-config ${{ matrix.build_type }} --output-on-failure
