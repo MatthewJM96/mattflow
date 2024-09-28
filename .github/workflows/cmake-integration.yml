@@ -13,7 +13,7 @@ jobs:
 #################
 
   build-linux:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
@@ -21,25 +21,24 @@ jobs:
 
       matrix:
         build_type: [Release, Debug]
-        c_compiler: [gcc-13, clang-17]
+        c_compiler: [gcc-14, clang-19]
         include:
-          - c_compiler: gcc-13
-            cpp_compiler: g++-13
-          - c_compiler: clang-17
-            cpp_compiler: clang++-17
+          - c_compiler: gcc-14
+            cpp_compiler: g++-14
+          - c_compiler: clang-19
+            cpp_compiler: clang++-19
 
     steps:
     - uses: actions/checkout@v3
 
     - name: Install system dependencies
       run: >
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa -y ;
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y ;
+        sudo add-apt-repository universe ;
         sudo apt update ;
-        sudo apt install g++-13 gcc-13 ;
+        sudo apt install g++-14 gcc-14 ;
         wget https://apt.llvm.org/llvm.sh ;
         chmod u+x llvm.sh ;
-        sudo ./llvm.sh 17
+        sudo ./llvm.sh 19
 
     - name: Install conan
       run: >
