@@ -14,6 +14,8 @@ void mfast::parse(
     VALOUT NodeBuffers&        nodes,
     VALOUT mftype::IdentifierTypeTable& type_table
 ) {
+    (void)type_table;
+
     // Ensure buffers are clear for building fresh AST.
     ast.clear();
     nodes.node_info.clear();

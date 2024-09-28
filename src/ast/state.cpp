@@ -38,7 +38,7 @@ void mfast::push_enclosure(
 }
 
 void mfast::pop_enclosure(
-    mfast::EnclosingCategory expected_enclosing_category,
+    [[maybe_unused]] mfast::EnclosingCategory expected_enclosing_category,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state

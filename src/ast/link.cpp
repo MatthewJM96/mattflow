@@ -33,6 +33,7 @@ void mfast::link_operations_on_stack(
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
 ) {
+    const size_t NONE_VERT             = std::numeric_limits<size_t>::max();
     const size_t STITCH_TO_NEXT_NON_OP = std::numeric_limits<size_t>::max();
 
     mfast::Order         op_order;
@@ -46,9 +47,9 @@ void mfast::link_operations_on_stack(
     if (op_verts.size() == 0) return;
 
     // Current operator to link up.
-    size_t           prev_op_vert;
-    size_t           op_vert;
-    mfast::NodeInfo* op;
+    size_t           prev_op_vert = NONE_VERT;
+    size_t           op_vert      = NONE_VERT;
+    mfast::NodeInfo* op           = nullptr;
 
     size_t stitch_to = STITCH_TO_NEXT_NON_OP;
 
@@ -65,7 +66,7 @@ void mfast::link_operations_on_stack(
 
         // We are done stitching if the operator we are about to consider has the
         // target precedence.
-        if (op_precedence <= target_precedence) {
+        if (op_precedence <= target_precedence && prev_op_vert != NONE_VERT) {
             // Make sure to add the stitch target for next link phase.
             nonop_verts.emplace_back(prev_op_vert);
             return;
@@ -145,9 +146,9 @@ void mfast::link_operations_on_stack(
                 // same precedence and then stitch them in starting with the last of
                 // them working to the current operator we are dealing with.
 
-                mfast::Order         next_op_order;
-                mfast::Precedence    next_op_precedence;
-                mfast::Associativity next_op_associativity;
+                [[maybe_unused]] mfast::Order         next_op_order;
+                mfast::Precedence                     next_op_precedence;
+                [[maybe_unused]] mfast::Associativity next_op_associativity;
 
                 size_t           next_op_idx;
                 size_t           next_op_vert;
