@@ -55,6 +55,15 @@ jobs:
         echo "home=$HOME" >> "$GITHUB_OUTPUT" ;
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
+    - name: Build Conan-managed depdendencies
+      run: >
+        source ${{ github.workspace }}/.venv/bin/activate ;
+        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -S ${{ github.workspace }}
+
     - name: Cache conan dependencies
       id: cache-conan
       uses: actions/cache@v3
@@ -72,8 +81,6 @@ jobs:
         conan remove --system-reqs '*'
 
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
@@ -131,6 +138,16 @@ jobs:
         echo "home=$HOME" >> $env:GITHUB_OUTPUT ;
         echo "build-output-dir=${{ github.workspace }}\build" >> $env:GITHUB_OUTPUT
 
+    - name: Build Conan-managed depdendencies
+      run: >
+        cd ${{ github.workspace }} ;
+        .\.venv\Scripts\activate ;
+        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=cl
+        -DCMAKE_C_COMPILER=cl
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -S ${{ github.workspace }}
+
     - name: Cache conan dependencies
       id: cache-conan
       uses: actions/cache@v3
@@ -152,8 +169,6 @@ jobs:
         | Remove-Item -Recurse -Force
 
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
@@ -214,6 +229,15 @@ jobs:
       run: >
         echo "home=$HOME" >> "$GITHUB_OUTPUT" ;
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+  
+    - name: Build Conan-managed depdendencies
+      run: >
+        source ${{ github.workspace }}/.venv/bin/activate ;
+        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=clang++
+        -DCMAKE_C_COMPILER=clang
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -S ${{ github.workspace }}
 
     - name: Cache conan dependencies
       id: cache-conan
