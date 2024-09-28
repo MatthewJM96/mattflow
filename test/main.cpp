@@ -207,7 +207,7 @@ size_t run_tests(TestConfig config = {}) {
     for (const auto& test_case : recurse_directory("samples")) {
         if (!test_case.is_regular_file()) continue;
 
-        std::cout << test_case.path().begin() << std::endl;
+        std::cout << *test_case.path().begin() << std::endl;
 
         std::cout << "\n-------- " << test_case.path() << " --------" << std::endl;
         switch (run_test(test_case.path(), config)) {
