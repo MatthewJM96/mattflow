@@ -2,7 +2,7 @@ digraph G {
 0[label="block"];
 1[label="ident: z"];
 2[label="op ="];
-3[label="block"];
+3[label="struct"];
 4[label="ident: x"];
 5[label="op :"];
 6[label="type: int16"];

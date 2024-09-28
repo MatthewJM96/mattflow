@@ -1,6 +1,6 @@
 digraph G {
 0[label="block"];
-1[label="block"];
+1[label="struct"];
 2[label="ident: x"];
 3[label="op :"];
 4[label="type: int16"];
