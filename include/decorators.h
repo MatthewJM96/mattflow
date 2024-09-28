@@ -12,7 +12,7 @@
 #define VALIN
 #define VALINOUT
 
-#if defined(DEBUG)
+#if defined(DEBUG) || defined(RUNNER)
 #  define mfassert(condition, ...)                                                     \
     if (!(condition)) mattflow::Debug::get().print_or_throw(__VA_ARGS__)
 #else
