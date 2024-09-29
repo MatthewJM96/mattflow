@@ -47,9 +47,6 @@ void mfast::parse(
             case mflex::TokenType::DO:
             case mflex::TokenType::MATCH:
             case mflex::TokenType::PRINT:
-            case mflex::TokenType::COMMA:
-            case mflex::TokenType::RANGE:
-            case mflex::TokenType::DOT:
             case mflex::TokenType::ARROW:
             case mflex::TokenType::SENTINEL:
                 break;
@@ -172,6 +169,14 @@ void mfast::parse(
                     it, ast, nodes, parser_state
                 );
                 continue;
+            case mflex::TokenType::COMMA:
+                // Add COMMA vertex.
+                add_single_token_op<CommaOperatorNode>(it, ast, nodes, parser_state);
+                continue;
+            case mflex::TokenType::RANGE:
+                // Add RANGE vertex.
+                add_single_token_op<RangeOperatorNode>(it, ast, nodes, parser_state);
+                continue;
             case mflex::TokenType::AND:
                 // Add AND vertex.
                 add_single_token_op<AndOperatorNode>(it, ast, nodes, parser_state);
@@ -245,6 +250,10 @@ void mfast::parse(
             case mflex::TokenType::NOT:
                 // Add NOT vertex.
                 add_single_token_op<NotOperatorNode>(it, ast, nodes, parser_state);
+                continue;
+            case mflex::TokenType::DOT:
+                // Add DOT vertex.
+                add_single_token_op<DotOperatorNode>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::NIL:
                 // Add null vertex.

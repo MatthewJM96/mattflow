@@ -55,6 +55,7 @@ namespace mattflow {
             StructNode, StructFieldNode,                        // Struct
             FunctionNode,                                       // Function
             AssignValueOperatorNode, AssignTypeOperatorNode,    // Assignment
+            RangeOperatorNode, CommaOperatorNode,               // Range and Comma
             OrOperatorNode, AndOperatorNode,                    // Logic
             NotEqualOperatorNode, EqualOperatorNode,            // Equality
             LesserOperatorNode, LesserOrEqualOperatorNode,
@@ -63,6 +64,7 @@ namespace mattflow {
             DivisionOperatorNode, MultiplicationOperatorNode,   // Factor
             PowerOperatorNode,                                  // Power
             NotOperatorNode, NegationOperatorNode,              // Unary
+            DotOperatorNode,                                    // Dot
             BoolValNode, NumberValNode, StringValNode,
             IdentifierNode, NullNode,                           // Primary
             BoolNode, CharNode, IntNode, Int8Node, Int16Node,

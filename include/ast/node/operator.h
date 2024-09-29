@@ -15,14 +15,17 @@ namespace mattflow {
         enum class Precedence : int16_t {
             NONE             = 0,
             VALUE_ASSIGNMENT = 100,
-            LOGICAL          = 200,
-            EQUALITY         = 300,
-            COMPARISON       = 400,
-            TERM             = 500,
-            FACTOR           = 600,
-            POWER            = 700,
-            UNARY            = 800,
-            TYPE_ASSIGNMENT  = 900
+            RANGE            = 200,
+            COMMA            = 200,
+            LOGICAL          = 300,
+            EQUALITY         = 400,
+            COMPARISON       = 500,
+            TERM             = 600,
+            FACTOR           = 700,
+            POWER            = 800,
+            UNARY            = 900,
+            TYPE_ASSIGNMENT  = 1000,
+            DOT              = 1100
         };
 
         enum class Associativity {
@@ -47,6 +50,32 @@ namespace mattflow {
             virtual ~OperatorNode() {
                 // Empty.
             }
+        };
+
+        /**
+         * @brief Node reflecting a Dot operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         */
+        struct DotOperatorNode : public OperatorNode {
+            DotOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~DotOperatorNode() {
+                // Empty.
+            }
+
+            const Order         ORDER         = Order::BINARY;
+            const Precedence    PRECEDENCE    = Precedence::DOT;
+            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() const override { return "op dot"; }
         };
 
         /**
@@ -450,6 +479,60 @@ namespace mattflow {
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op and"; }
+        };
+
+        /**
+         * @brief Node reflecting an Range operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct RangeOperatorNode : public OperatorNode {
+            RangeOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~RangeOperatorNode() {
+                // Empty.
+            }
+
+            const Order         ORDER         = Order::BINARY;
+            const Precedence    PRECEDENCE    = Precedence::RANGE;
+            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() const override { return "op range"; }
+        };
+
+        /**
+         * @brief Node reflecting an Comma operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct CommaOperatorNode : public OperatorNode {
+            CommaOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~CommaOperatorNode() {
+                // Empty.
+            }
+
+            const Order         ORDER         = Order::BINARY;
+            const Precedence    PRECEDENCE    = Precedence::COMMA;
+            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() const override { return "op comma"; }
         };
 
         /**
