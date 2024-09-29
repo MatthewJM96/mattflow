@@ -86,10 +86,11 @@ jobs:
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
     - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
-        ctest --build-config ${{ matrix.build_type }} --output-on-failure
+        ctest --build ${{ steps.strings.outputs.build-output-dir }}
+        --build-config ${{ matrix.build_type }} 
+        --output-on-failure
 
 ###################
 #     Windows     #
@@ -164,11 +165,12 @@ jobs:
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
     - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
-        ctest --build-config ${{ matrix.build_type }} --output-on-failure
+        ctest --build ${{ steps.strings.outputs.build-output-dir }}
+        --build-config ${{ matrix.build_type }} 
+        --output-on-failure
 
 #################
 #     MacOS     #
@@ -237,7 +239,8 @@ jobs:
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
     - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
-        ctest --build-config ${{ matrix.build_type }} --output-on-failure
+        ctest --build ${{ steps.strings.outputs.build-output-dir }}
+        --build-config ${{ matrix.build_type }} 
+        --output-on-failure
