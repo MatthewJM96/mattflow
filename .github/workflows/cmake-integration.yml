@@ -76,7 +76,8 @@ jobs:
     - name: Build
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
-        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel 4
+        --config ${{ matrix.build_type }}
 
     - name: Test
       run: >
@@ -155,7 +156,8 @@ jobs:
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
-        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel 4
+        --config ${{ matrix.build_type }}
 
     - name: Test
       run: >
@@ -222,7 +224,8 @@ jobs:
     - name: Build
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
-        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel 4
+        --config ${{ matrix.build_type }}
 
     - name: Test
       run: >
