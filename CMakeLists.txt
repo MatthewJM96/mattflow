@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
 
+# Application version.
+
+file(READ "${CMAKE_SOURCE_DIR}/VERSION" MF_VERSION)
+message(STATUS "mattflow version : ${MF_VERSION}")
+
 ########################################################################################
 
 # #######################
@@ -25,10 +30,10 @@ set(CMAKE_PROJECT_TOP_LEVEL_INCLUDES
 ########################################################################################
 
 ############################
-#     mattflow Options     #
+#     mattflow Project     #
 ############################
 
-project(mattflow)
+project(mattflow VERSION "${MF_VERSION}")
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
