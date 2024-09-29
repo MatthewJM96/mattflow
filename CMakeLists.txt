@@ -39,6 +39,8 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+option(MATTFLOW_ENABLE_GPERF_PROFILER "Whether to compile with GPerf profiler." OFF)
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -128,6 +130,12 @@ set(mattflow_Include_Dirs
 #     tbb
 # )
 
+if(MATTFLOW_ENABLE_GPERF_PROFILER)
+set(mattflow_Libraries
+    profiler
+)
+endif()
+
 ########################################################################################
 
 ####################################################
@@ -145,9 +153,9 @@ target_include_directories(mattflow
     ${mattflow_Include_Dirs}
 )
 
-# target_link_libraries(mattflow
-#     ${mattflow_Libraries}
-# )
+target_link_libraries(mattflow
+    ${mattflow_Libraries}
+)
 
 target_compile_definitions(mattflow
     PUBLIC
@@ -205,6 +213,13 @@ set(mattflow_cli_Include_Dirs
 set(mattflow_cli_Libraries
     mattflow
 )
+
+if(MATTFLOW_ENABLE_GPERF_PROFILER)
+set(mattflow_cli_Libraries
+    ${mattflow_cli_Libraries}
+    profiler
+)
+endif()
 
 ########################################################################################
 
@@ -268,6 +283,13 @@ set(mattflow_tests_Include_Dirs
 set(mattflow_tests_Libraries
     mattflow
 )
+
+if(MATTFLOW_ENABLE_GPERF_PROFILER)
+set(mattflow_tests_Libraries
+    ${mattflow_tests_Libraries}
+    profiler
+)
+endif()
 
 ########################################################################################
 

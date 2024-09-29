@@ -14,6 +14,7 @@ struct TestConfig {
     bool write_results        = false;
     bool plot_ast_graphs      = false;
     bool generate_validations = false;
+    bool run_profile          = false;
 };
 
 enum class TestResult {
@@ -208,6 +209,8 @@ int run_tests(TestConfig config = {}) {
         if (!test_case.is_regular_file()) continue;
 
         auto base_dir = *std::next(test_case.path().begin());
+
+        if (!config.run_profile && base_dir == "profile") continue;
 
         std::cout << "\n-------- " << test_case.path() << " --------" << std::endl;
         switch (run_test(test_case.path(), config)) {
