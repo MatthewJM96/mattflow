@@ -162,8 +162,8 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         boost::write_graphviz(ast_ss, ast, mfast::NodeInfoWriter(&node_buffers));
 
         if (config.write_results | config.plot_ast_graphs) {
-            std::ofstream token_os(ast_result_filepath);
-            token_os << ast_ss.str();
+            std::ofstream ast_os(ast_result_filepath);
+            ast_os << ast_ss.str();
         }
 
         if (config.plot_ast_graphs) {
