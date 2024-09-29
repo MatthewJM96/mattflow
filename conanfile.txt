@@ -1,6 +1,7 @@
 [requires]
 boost/1.86.0
 concurrentqueue/1.0.4
+argparse/3.1
 
 [generators]
 CMakeDeps

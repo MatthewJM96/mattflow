@@ -66,13 +66,14 @@ elseif (MSVC)
 endif()
 
 ########################################################################################
+#
+# mattflow Compiler Library
+#
+########################################################################################
 
 #########################################
 #     mattflow Dependency Discovery     #
 #########################################
-
-# Now all dependencies are built, we "discover them", i.e. set up some useful variables
-# containing include directories and libraries we will add to our target.
 
 find_package(concurrentqueue REQUIRED)
 find_package(Boost REQUIRED)
@@ -129,9 +130,9 @@ set(mattflow_Include_Dirs
 
 ########################################################################################
 
-###################################################
+####################################################
 #     mattflow Include and Library Directories     #
-###################################################
+####################################################
 
 target_include_directories(mattflow
     PUBLIC
@@ -148,6 +149,88 @@ target_include_directories(mattflow
 #     ${mattflow_Libraries}
 # )
 
+target_compile_definitions(mattflow
+    PUBLIC
+        MATTFLOW_VERSION="${MF_VERSION}"
+)
+
+########################################################################################
+#
+# mattflow CLI Library
+#
+########################################################################################
+
+#########################################
+#     mattflow Dependency Discovery     #
+#########################################
+
+find_package(argparse REQUIRED)
+
+####################################
+#     mattflow cli Source Tree     #
+####################################
+
+add_executable(mattflow_cli
+    "${PROJECT_SOURCE_DIR}/cli/main.cpp"
+)
+
+target_precompile_headers(mattflow_cli
+    PUBLIC
+        include/stdafx.h
+)
+
+target_compile_definitions(mattflow_cli
+    PUBLIC
+        MATTFLOW_VERSION="${MF_VERSION}"
+)
+
+if (RUNNER)
+    target_compile_definitions(mattflow_cli
+        PUBLIC
+            RUNNER=1
+    )
+endif()
+
+########################################################################################
+
+########################################################
+#     mattflow cli Include and Library Directories     #
+########################################################
+
+# Globally used includes and libraries.
+
+set(mattflow_cli_Include_Dirs
+    ${argparse_INCLUDE_DIRS}
+)
+set(mattflow_cli_Libraries
+    mattflow
+)
+
+########################################################################################
+
+########################################################
+#     mattflow cli Include and Library Directories     #
+########################################################
+
+target_include_directories(mattflow_cli
+    PUBLIC
+    "${PROJECT_SOURCE_DIR}/include"
+)
+
+target_include_directories(mattflow_cli
+    SYSTEM
+    PUBLIC
+    ${mattflow_cli_Include_Dirs}
+)
+
+target_link_libraries(mattflow_cli
+    ${mattflow_cli_Libraries}
+)
+
+########################################################################################
+#
+# mattflow tests Library
+#
 ########################################################################################
 
 ######################################
@@ -205,6 +288,11 @@ target_include_directories(mattflow_tests
 
 target_link_libraries(mattflow_tests
     ${mattflow_tests_Libraries}
+)
+
+target_compile_definitions(mattflow_tests
+    PUBLIC
+        MATTFLOW_VERSION="${MF_VERSION}"
 )
 
 ########################################################################################

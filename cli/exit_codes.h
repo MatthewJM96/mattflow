@@ -1,0 +1,3 @@
+#define NO_FILES_PROVIDED    1
+#define FILE_UNREADABLE      2
+#define GRAPHVIZ_UNAVAILABLE 3

@@ -133,6 +133,7 @@
             },
             "targets": [
                 "mattflow",
+                "mattflow_cli",
                 "mattflow_tests"
             ],
             "jobs": 10
@@ -149,6 +150,7 @@
             },
             "targets": [
                 "mattflow",
+                "mattflow_cli",
                 "mattflow_tests"
             ]
         },
@@ -164,6 +166,7 @@
             },
             "targets": [
                 "mattflow",
+                "mattflow_cli",
                 "mattflow_tests"
             ]
         },
@@ -179,6 +182,7 @@
             },
             "targets": [
                 "mattflow",
+                "mattflow_cli",
                 "mattflow_tests"
             ]
         },
@@ -194,6 +198,7 @@
             },
             "targets": [
                 "mattflow",
+                "mattflow_cli",
                 "mattflow_tests"
             ],
             "configuration": "Debug",
@@ -211,6 +216,7 @@
             },
             "targets": [
                 "mattflow",
+                "mattflow_cli",
                 "mattflow_tests"
             ],
             "configuration": "Release",
