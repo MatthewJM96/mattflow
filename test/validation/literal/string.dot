@@ -1,0 +1,5 @@
+digraph G {
+0[label="block"];
+1[label="str: hello, world!"];
+0->1 ;
+}
