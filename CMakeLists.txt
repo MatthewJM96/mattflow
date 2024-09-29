@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.25)
 
 # Application version.
 
@@ -308,3 +308,21 @@ add_test(
     COMMAND $<TARGET_FILE:mattflow_tests>
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/test"
 )
+
+########################################################################################
+#
+# mattflow CPack
+#
+########################################################################################
+
+install(TARGETS mattflow_cli RUNTIME DESTINATION bin)
+
+set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+set(CPACK_PACKAGE_VENDOR "Matthew Marshall <matthew.marshall090396@gmail.com>")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Mattflow compiler.")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+
+include(CPack)

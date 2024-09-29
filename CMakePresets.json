@@ -1,8 +1,8 @@
 {
-    "version": 3,
+    "version": 6,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 22,
+        "minor": 25,
         "patch": 0
     },
     "configurePresets": [
@@ -221,6 +221,64 @@
             ],
             "configuration": "Release",
             "jobs": 10
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "GCC-x64-Debug",
+            "displayName": "GCC x64 Debug",
+            "description": "Packaging for GCC x64 debug build.",
+            "configurePreset": "GCC-x64-Debug",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "generators": [
+                "TGZ"
+            ]
+        },
+        {
+            "name": "GCC-x64-Release",
+            "displayName": "GCC x64 Release",
+            "description": "Packaging for GCC x64 release build.",
+            "configurePreset": "GCC-x64-Release",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "generators": [
+                "TGZ"
+            ]
+        },
+        {
+            "name": "Clang-x64-Debug",
+            "displayName": "Clang x64 Debug",
+            "description": "Packaging for Clang x64 debug build.",
+            "configurePreset": "Clang-x64-Debug",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "generators": [
+                "TGZ"
+            ]
+        },
+        {
+            "name": "Clang-x64-Release",
+            "displayName": "Clang x64 Release",
+            "description": "Packaging for Clang x64 release build.",
+            "configurePreset": "Clang-x64-Release",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "generators": [
+                "TGZ"
+            ]
         }
     ]
 }
