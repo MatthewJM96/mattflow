@@ -239,6 +239,7 @@ size_t run_tests(TestConfig config = {}) {
                     successes += 1;
                     break;
                 }
+                [[fallthrough]];
             default:
                 std::cout << "\nResult : UNSPECIFIED_FAILURE" << std::endl;
                 unspecified_failures += 1;
