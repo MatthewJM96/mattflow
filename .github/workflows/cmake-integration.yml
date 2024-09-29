@@ -81,7 +81,7 @@ jobs:
     - name: Test
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
-        ctest --build ${{ steps.strings.outputs.build-output-dir }}
+        ctest --test-dir ${{ steps.strings.outputs.build-output-dir }}
         --build-config ${{ matrix.build_type }} 
         --output-on-failure
 
@@ -161,7 +161,7 @@ jobs:
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
-        ctest --build ${{ steps.strings.outputs.build-output-dir }}
+        ctest --test-dir ${{ steps.strings.outputs.build-output-dir }}
         --build-config ${{ matrix.build_type }} 
         --output-on-failure
 
@@ -227,6 +227,6 @@ jobs:
     - name: Test
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
-        ctest --build ${{ steps.strings.outputs.build-output-dir }}
+        ctest --test-dir ${{ steps.strings.outputs.build-output-dir }}
         --build-config ${{ matrix.build_type }} 
         --output-on-failure
