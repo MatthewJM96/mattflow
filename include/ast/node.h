@@ -22,24 +22,24 @@ namespace mattflow {
             NONOP
         };
 
-        enum class EnclosingCategory : uint16_t {
+        enum class EnclosingProps : uint16_t {
             ROOT            = 0x001,
-            BLOCK           = 0x002,
-            PARENTHESES     = 0x004,
+            SINGLE_EXPR     = 0x002,
+            MULTI_EXPR      = 0x004,
             LIST_OR_RANGE   = 0x008,
             STRUCT          = 0x010,
             FUNCTION_PARAMS = 0x020,
             FUNCTION_BODY   = 0x040
         };
 
-        inline EnclosingCategory operator|(EnclosingCategory a, EnclosingCategory b) {
-            return static_cast<EnclosingCategory>(
+        inline EnclosingProps operator|(EnclosingProps a, EnclosingProps b) {
+            return static_cast<EnclosingProps>(
                 static_cast<uint16_t>(a) | static_cast<uint16_t>(b)
             );
         }
 
-        inline EnclosingCategory operator&(EnclosingCategory a, EnclosingCategory b) {
-            return static_cast<EnclosingCategory>(
+        inline EnclosingProps operator&(EnclosingProps a, EnclosingProps b) {
+            return static_cast<EnclosingProps>(
                 static_cast<uint16_t>(a) & static_cast<uint16_t>(b)
             );
         }

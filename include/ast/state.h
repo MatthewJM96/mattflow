@@ -17,7 +17,7 @@ namespace mattflow {
             std::vector<std::vector<ASTVertex>> operating_vertices;
             std::vector<std::vector<ASTVertex>> non_operating_vertices;
             std::vector<ASTVertex>              enclosing_vertices;
-            std::vector<EnclosingCategory>      enclosed_by;
+            std::vector<EnclosingProps>         enclosed_by;
             std::vector<NodeCategory>           last_seen;
         };
 
@@ -33,9 +33,9 @@ namespace mattflow {
          * pushed.
          */
         void push_enclosure(
-            VALIN mfast::NodeInfo&&  enclosing_node_info,
-            mfast::EnclosingCategory enclosing_category,
-            VALOUT mfast::AST&  ast,
+            VALIN NodeInfo&&    enclosing_node_info,
+            EnclosingProps      enclosing_category,
+            VALOUT AST&         ast,
             VALOUT NodeBuffers& nodes,
             VALOUT ParserState& parser_state
         );
@@ -51,8 +51,8 @@ namespace mattflow {
          * @param parser_state The ParserState from which the stack entries are popped.
          */
         void pop_enclosure(
-            mfast::EnclosingCategory expected_enclosing_category,
-            VALOUT mfast::AST&  ast,
+            EnclosingProps      expected_enclosing_category,
+            VALOUT AST&         ast,
             VALOUT NodeBuffers& nodes,
             VALOUT ParserState& parser_state
         );

@@ -14,11 +14,6 @@ void mfast::maybe_link_operations_on_stack(
     // TODO(Matthew): bare in mind that we have control-flow to include yet, and might
     //                complicate this.
     if (parser_state.last_seen.back() == mfast::NodeCategory::NONOP) {
-        mfassert(
-            parser_state.enclosed_by.back() != mfast::EnclosingCategory::PARENTHESES,
-            "Cannot have multiple expressions inside a single parentheses."
-        );
-
         mfast::link_operations_on_stack(
             mfast::Precedence::NONE, ast, nodes, parser_state
         );

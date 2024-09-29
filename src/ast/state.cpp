@@ -4,8 +4,8 @@
 #include "ast/state.h"
 
 void mfast::push_enclosure(
-    VALIN mfast::NodeInfo&&  enclosing_node_info,
-    mfast::EnclosingCategory enclosing_category,
+    VALIN mfast::NodeInfo&& enclosing_node_info,
+    mfast::EnclosingProps   enclosing_category,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
@@ -23,7 +23,7 @@ void mfast::push_enclosure(
     nodes.node_info.emplace_back(std::forward<mfast::NodeInfo>(enclosing_node_info));
 
     // Push enclosing vertex onto the stack below.
-    if (enclosing_category != EnclosingCategory::ROOT)
+    if ((enclosing_category & EnclosingProps::ROOT) != EnclosingProps::ROOT)
         parser_state.non_operating_vertices.back().emplace_back(enclosing_vertex);
 
     // Push new stacks for operating and non-operating vertices.
@@ -38,26 +38,43 @@ void mfast::push_enclosure(
 }
 
 void mfast::pop_enclosure(
-    [[maybe_unused]] mfast::EnclosingCategory expected_enclosing_category,
-    VALOUT mfast::AST& ast,
-    VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
+    [[maybe_unused]] EnclosingProps expected_enclosing_props,
+    VALOUT AST&                     ast,
+    VALOUT NodeBuffers&             nodes,
+    VALOUT ParserState&             parser_state
 ) {
     // Link any remaining operators in the enclosure.
     link_operations_on_stack(Precedence::NONE, ast, nodes, parser_state);
 
     mfassert(
-        (parser_state.enclosed_by.back() & expected_enclosing_category)
-            == parser_state.enclosed_by.back(),
-        "Latest closure is different to expected during pop."
+        (parser_state.enclosed_by.back() & expected_enclosing_props)
+            == expected_enclosing_props,
+        "Trying to pop an enclosure that doesn't have expected properties."
     );
 
     mfassert(
-        parser_state.operating_vertices.back().size() == 0
-            && parser_state.non_operating_vertices.back().size() >= 1,
-        "Trying to pop an enclosure in which there is either a lack or excess of "
-        "vertices on stack."
+        parser_state.operating_vertices.back().size() == 0,
+        "Trying to pop an enclosure in which we couldn't link all operators."
     );
+
+#if defined(DEBUG)
+    if ((expected_enclosing_props & EnclosingProps::SINGLE_EXPR)
+        == EnclosingProps::SINGLE_EXPR)
+    {
+        mfassert(
+            parser_state.non_operating_vertices.back().size() == 1,
+            "Trying to pop an enclosure expecting one expression, and go %ld "
+            "expressions instead",
+            parser_state.non_operating_vertices.back().size()
+        );
+    } else if ((expected_enclosing_props & EnclosingProps::MULTI_EXPR) == EnclosingProps::MULTI_EXPR)
+    {
+        mfassert(
+            parser_state.non_operating_vertices.back().size() >= 1,
+            "Trying to pop an enclosure expecting one or more expressions, got none."
+        );
+    }
+#endif  // defined(DEBUG)
 
     // TODO(Matthew): update the token iterator for end of enclosure.
 
