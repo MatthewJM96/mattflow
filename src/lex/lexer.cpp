@@ -54,8 +54,13 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
             // Try to match current regex pattern.
             //   NOTE: reinterpret_cast needed to satisfy MSVC.
             bool found_match = std::regex_search(
-                reinterpret_cast<const char*>(remaining_source_view.source.begin()),
-                reinterpret_cast<const char*>(remaining_source_view.source.end()),
+#if defined(MATTFLOW_COMPILER_MSVC)
+                *remaining_source_view.source.begin(),
+                *remaining_source_view.source.end(),
+#else   // defined(MATTFLOW_COMPILER_MSVC)
+                remaining_source_view.source.begin(),
+                remaining_source_view.source.end(),
+#endif  // defined(MATTFLOW_COMPILER_MSVC)
                 results,
                 std::regex("^(?:" + token_pattern + ")")
             );
