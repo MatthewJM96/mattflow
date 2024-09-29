@@ -148,9 +148,9 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         if (config.plot_ast_graphs) {
             auto destination = ast_result_filepath;
             destination.replace_extension("png");
-            std::system(("dot -Tpng -o " + destination.string() + " "
-                         + ast_validation_filepath.string())
-                            .c_str());
+            (void)std::system(("dot -Tpng -o " + destination.string() + " "
+                               + ast_validation_filepath.string())
+                                  .c_str());
         }
 
         std::cout << "generated." << std::endl;
@@ -167,7 +167,7 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         }
 
         if (config.plot_ast_graphs) {
-            std::system(("dot -Tpng -O " + ast_result_filepath.string()).c_str());
+            (void)std::system(("dot -Tpng -O " + ast_result_filepath.string()).c_str());
         }
 
         std::ifstream     ast_is(ast_validation_filepath);

@@ -22,7 +22,7 @@ static char* read_file_to_string(const std::filesystem::path& path) {
     char* buffer = new char[length + 1];
 
     // Read data into buffer.
-    fread(buffer, 1, length, file);
+    (void)fread(buffer, 1, length, file);
     buffer[length] = '\0';
 
     // Close file.
