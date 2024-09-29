@@ -1,6 +1,6 @@
 [requires]
-boost/1.85.0
-concurrentqueue/1.0.3
+boost/1.86.0
+concurrentqueue/1.0.4
 
 [generators]
 CMakeDeps
