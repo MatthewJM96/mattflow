@@ -28,7 +28,7 @@ jobs:
             cpp_compiler: clang++-18
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4.2.0
 
     - name: Install system dependencies
       run: >
@@ -66,7 +66,7 @@ jobs:
 
     - name: Cache conan dependencies
       id: cache-conan
-      uses: actions/cache@v3
+      uses: actions/cache@v4.0.2
       env:
         cache-name: cache-conan
       with:
@@ -116,7 +116,7 @@ jobs:
         build_type: [Release, Debug]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4.2.0
 
     - name: setup-msbuild
       uses: microsoft/setup-msbuild@v1.3.1
@@ -149,7 +149,7 @@ jobs:
 
     - name: Cache conan dependencies
       id: cache-conan
-      uses: actions/cache@v3
+      uses: actions/cache@v4.0.2
       env:
         cache-name: cache-conan
       with:
@@ -207,7 +207,7 @@ jobs:
         c_compiler: [clang]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4.2.0
 
     - name: Install conan
       run: >
@@ -238,7 +238,7 @@ jobs:
 
     - name: Cache conan dependencies
       id: cache-conan
-      uses: actions/cache@v3
+      uses: actions/cache@v4.0.2
       env:
         cache-name: cache-conan
       with:
