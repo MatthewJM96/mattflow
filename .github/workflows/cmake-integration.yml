@@ -63,13 +63,6 @@ jobs:
         path: ${{ steps.strings.outputs.home }}/.conan2
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}
 
-    - if: ${{ steps.cache-conan.outputs.cache-hit == 'true' }}
-      name: Remove conan system-reqs cache
-      continue-on-error: true
-      run: >
-        source ${{ github.workspace }}/.venv/bin/activate ;
-        conan remove --system-reqs '*'
-
     - name: Configure CMake
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
@@ -215,13 +208,6 @@ jobs:
       with:
         path: ${{ steps.strings.outputs.home }}/.conan2
         key: ${{ matrix.os }}-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}
-
-    - if: ${{ steps.cache-conan.outputs.cache-hit == 'true' }}
-      name: Remove conan system-reqs cache
-      continue-on-error: true
-      run: >
-        source ${{ github.workspace }}/.venv/bin/activate ;
-        conan remove --system-reqs '*'
   
     - name: Configure CMake
       run: >
