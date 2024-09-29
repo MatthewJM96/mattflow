@@ -54,16 +54,6 @@ jobs:
         echo "home=$HOME" >> "$GITHUB_OUTPUT" ;
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-    - name: Build Conan-managed depdendencies
-      run: >
-        source ${{ github.workspace }}/.venv/bin/activate ;
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -DRUNNER=1
-        -S ${{ github.workspace }}
-
     - name: Cache conan dependencies
       id: cache-conan
       uses: actions/cache@v4.0.2
@@ -135,17 +125,6 @@ jobs:
       run: >
         echo "home=$HOME" >> $env:GITHUB_OUTPUT ;
         echo "build-output-dir=${{ github.workspace }}\build" >> $env:GITHUB_OUTPUT
-
-    - name: Build Conan-managed depdendencies
-      run: >
-        cd ${{ github.workspace }} ;
-        .\.venv\Scripts\activate ;
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=cl
-        -DCMAKE_C_COMPILER=cl
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -DRUNNER=1
-        -S ${{ github.workspace }}
 
     - name: Cache conan dependencies
       id: cache-conan
@@ -225,16 +204,6 @@ jobs:
       run: >
         echo "home=$HOME" >> "$GITHUB_OUTPUT" ;
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-  
-    - name: Build Conan-managed depdendencies
-      run: >
-        source ${{ github.workspace }}/.venv/bin/activate ;
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=clang++
-        -DCMAKE_C_COMPILER=clang
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -DRUNNER=1
-        -S ${{ github.workspace }}
 
     - name: Cache conan dependencies
       id: cache-conan
