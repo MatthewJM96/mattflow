@@ -243,7 +243,7 @@ jobs:
         cache-name: cache-conan
       with:
         path: ${{ steps.strings.outputs.home }}/.conan2
-        key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}
+        key: ${{ matrix.os }}-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}
 
     - if: ${{ steps.cache-conan.outputs.cache-hit == 'true' }}
       name: Remove conan system-reqs cache
