@@ -188,7 +188,7 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     return TestResult::SUCCESS;
 }
 
-size_t run_tests(TestConfig config = {}) {
+int run_tests(TestConfig config = {}) {
     std::cout << "/-----------------------------\\\n"
               << "|  MATTFLOW REGRESSION TESTS  |\n"
               << "\\-----------------------------/\n"
@@ -199,10 +199,10 @@ size_t run_tests(TestConfig config = {}) {
                   << std::endl;
     }
 
-    size_t successes               = 0;
-    size_t lexing_failures         = 0;
-    size_t syntax_parsing_failures = 0;
-    size_t unspecified_failures    = 0;
+    int successes               = 0;
+    int lexing_failures         = 0;
+    int syntax_parsing_failures = 0;
+    int unspecified_failures    = 0;
 
     for (const auto& test_case : recurse_directory("samples")) {
         if (!test_case.is_regular_file()) continue;
