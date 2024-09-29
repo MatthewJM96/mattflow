@@ -27,11 +27,155 @@ static void trim_whitespace(VALINOUT mf::SourceView& source_view) {
     source_view.source = source_view.source.substr(offset);
 }
 
-void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
+static bool match_exact(
+    VALOUT mflex::Tokens& tokens,
+    VALOUT mflex::Token& token,
+    mflex::TokenType     token_type,
+    VALIN const mattflow::SourceView& remaining_source_view,
+    const std::string&                pattern
+) {
+    // Try to match current pattern exactly.
+    //   NOTE: reinterpret_cast needed to satisfy MSVC.
+    bool found_match = remaining_source_view.source.starts_with(pattern);
+
+    // Construct token if we matched.
+    if (found_match) {
+        token.type    = token_type;
+        token.file_id = remaining_source_view.file_id;
+
+        token.length       = pattern.length();
+        token.start_line   = remaining_source_view.start_line;
+        token.start_column = remaining_source_view.start_column;
+
+        // Find end line and column of token.
+        token.end_line   = token.start_line;
+        token.end_column = token.start_column;
+        for (auto c : remaining_source_view.source.substr(0, token.length)) {
+            if (c == '\n') {
+                ++token.end_line;
+                token.end_column = 0;
+            } else {
+                ++token.end_column;
+            }
+        }
+
+        tokens.emplace_back(token);
+    }
+
+    return found_match;
+}
+
+static bool match_keyword(
+    VALOUT mflex::Tokens& tokens,
+    VALOUT mflex::Token& token,
+    mflex::TokenType     token_type,
+    VALIN const mattflow::SourceView& remaining_source_view,
+    const std::string&                pattern
+) {
+    // Try to match current pattern exactly.
+    //   NOTE: reinterpret_cast needed to satisfy MSVC.
+    bool found_match = remaining_source_view.source.starts_with(pattern);
+
+    // Make sure the keyword is followed by one of the valid stopwords.
+    char next_char      = *(remaining_source_view.source.data() + pattern.length());
+    bool found_stopword = false;
+    for (char stopword : mflex::KEYWORD_STOPWORDS) {
+        if (next_char == stopword) {
+            found_stopword = true;
+            break;
+        }
+    }
+
+    found_match = found_match && found_stopword;
+
+    // Construct token if we matched.
+    if (found_match) {
+        token.type    = token_type;
+        token.file_id = remaining_source_view.file_id;
+
+        token.length       = pattern.length();
+        token.start_line   = remaining_source_view.start_line;
+        token.start_column = remaining_source_view.start_column;
+
+        // Find end line and column of token.
+        token.end_line   = token.start_line;
+        token.end_column = token.start_column;
+        for (auto c : remaining_source_view.source.substr(0, token.length)) {
+            if (c == '\n') {
+                ++token.end_line;
+                token.end_column = 0;
+            } else {
+                ++token.end_column;
+            }
+        }
+
+        tokens.emplace_back(token);
+    }
+
+    return found_match;
+}
+
+static bool match_regex(
+    VALOUT mflex::Tokens& tokens,
+    VALOUT mflex::Token& token,
+    mflex::TokenType     token_type,
+    VALIN const mattflow::SourceView& remaining_source_view,
+    const re2::RE2&                   pattern
+) {
     // Get handle on global identifier and string tables.
     mflit::IdentifierTable& identifier_table = mflit::IdentifierTable::get();
     mflit::StringTable&     string_table     = mflit::StringTable::get();
 
+    // Try to match current regex pattern.
+    //   NOTE: reinterpret_cast needed to satisfy MSVC.
+    std::string match;
+    bool found_match = RE2::PartialMatch(remaining_source_view.source, pattern, &match);
+
+    // Construct token if we matched.
+    if (found_match) {
+        token.type    = token_type;
+        token.file_id = remaining_source_view.file_id;
+
+        token.length       = match.length();
+        token.start_line   = remaining_source_view.start_line;
+        token.start_column = remaining_source_view.start_column;
+
+        // If token is one of the non-fixed form token types, store the token
+        // realisation where we need it.
+        if (token.type == mflex::TokenType::IDENTIFIER) {
+            // Create identifier entry in global identifier table using view on
+            // token substring.
+            token.identifier_idx = identifier_table.try_insert(
+                remaining_source_view.source.substr(0, token.length)
+            );
+        } else if (token.type == mflex::TokenType::STRING) {
+            // Put string into string buffer and mark index.
+            token.string_idx
+                = string_table.try_insert(match.substr(1, token.length - 2));
+        } else if (token.type == mflex::TokenType::NUMBER) {
+            // Put string into string buffer and mark index.
+            token.number = mflit::Number(std::move(match));
+        }
+
+        // Find end line and column of token.
+        token.end_line   = token.start_line;
+        token.end_column = token.start_column;
+        for (auto c : remaining_source_view.source.substr(0, token.length)) {
+            if (c == '\n') {
+                ++token.end_line;
+                token.end_column = 0;
+            } else {
+                ++token.end_column;
+            }
+        }
+
+        tokens.emplace_back(token);
+    }
+
+    return found_match;
+}
+
+void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
     // Set up tracker of remaining source.
     SourceView remaining_source_view = source_view;
 
@@ -48,68 +192,24 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
         token.type = TokenType::SENTINEL;
 
         // For each regex pattern, try to match to the remaining source.
-        for (auto [token_type, token_pattern] : TOKEN_REGEX_PATTERNS) {
-            std::cmatch results;
+        for (auto& matcher : TOKEN_MATCHERS) {
+            bool found_match = false;
 
-            // Try to match current regex pattern.
-            //   NOTE: reinterpret_cast needed to satisfy MSVC.
-            bool found_match = std::regex_search(
-#if defined(MATTFLOW_COMPILER_MSVC)
-                remaining_source_view.source.data(),
-                remaining_source_view.source.data()
-                    + remaining_source_view.source.length(),
-#else   // defined(MATTFLOW_COMPILER_MSVC)
-                remaining_source_view.source.begin(),
-                remaining_source_view.source.end(),
-#endif  // defined(MATTFLOW_COMPILER_MSVC)
-                results,
-                std::regex("^(?:" + token_pattern + ")")
-            );
-
-            // Construct token if we matched.
-            if (found_match) {
-                token.type    = token_type;
-                token.file_id = source_view.file_id;
-
-                token.length       = results[0].length();
-                token.start_line   = remaining_source_view.start_line;
-                token.start_column = remaining_source_view.start_column;
-
-                // If token is one of the non-fixed form token types, store the token
-                // realisation where we need it.
-                if (token.type == TokenType::IDENTIFIER) {
-                    // Create identifier entry in global identifier table using view on
-                    // token substring.
-                    token.identifier_idx = identifier_table.try_insert(
-                        remaining_source_view.source.substr(0, token.length)
-                    );
-                } else if (token.type == TokenType::STRING) {
-                    // Put string into string buffer and mark index.
-                    token.string_idx = string_table.try_insert(
-                        results[0].str().substr(1, token.length - 2)
-                    );
-                } else if (token.type == TokenType::NUMBER) {
-                    // Put string into string buffer and mark index.
-                    token.number = mflit::Number(std::move(results[0].str()));
-                }
-
-                // Find end line and column of token.
-                token.end_line   = token.start_line;
-                token.end_column = token.start_column;
-                for (auto c : remaining_source_view.source.substr(0, token.length)) {
-                    if (c == '\n') {
-                        ++token.end_line;
-                        token.end_column = 0;
-                    } else {
-                        ++token.end_column;
-                    }
-                }
-
-                tokens.emplace_back(token);
-
-                // Don't consider any other possible token matches.
-                break;
+            if (matcher.matching_strategy == TokenMatchingStrategy::EXACT) {
+                found_match = match_exact(
+                    tokens, token, matcher.type, remaining_source_view, matcher.str
+                );
+            } else if (matcher.matching_strategy == TokenMatchingStrategy::KEYWORD) {
+                found_match = match_keyword(
+                    tokens, token, matcher.type, remaining_source_view, matcher.str
+                );
+            } else if (matcher.matching_strategy == TokenMatchingStrategy::REGEX) {
+                found_match = match_regex(
+                    tokens, token, matcher.type, remaining_source_view, *matcher.pattern
+                );
             }
+
+            if (found_match) break;
         }
 
         mfassert(token.type != TokenType::SENTINEL, "Unidentified Lexical Object");

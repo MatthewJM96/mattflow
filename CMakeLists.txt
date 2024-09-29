@@ -79,6 +79,8 @@ endif()
 
 find_package(concurrentqueue REQUIRED)
 find_package(Boost REQUIRED)
+find_package(absl REQUIRED)
+find_package(re2 REQUIRED)
 
 ########################################################################################
 
@@ -123,15 +125,18 @@ target_precompile_headers(mattflow
 # Globally used includes and libraries.
 
 set(mattflow_Include_Dirs
-    ${Boost_INCLUDE_DIRS}
     ${concurrentqueue_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
+    ${absl_INCLUDE_DIRS}
+    ${re2_INCLUDE_DIRS}
 )
-# set(mattflow_Libraries
-#     tbb
-# )
+set(mattflow_Libraries
+    re2::re2
+)
 
 if(MATTFLOW_ENABLE_GPERF_PROFILER)
 set(mattflow_Libraries
+    ${mattflow_Libraries}
     profiler
 )
 endif()

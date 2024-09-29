@@ -33,6 +33,9 @@
 #include <regex>
 #include <string>
 
+// Re2 Regex
+#include <re2/re2.h>
+
 // Generics
 #include <algorithm>
 #include <functional>
