@@ -12,7 +12,9 @@ namespace mattflow {
         enum class TokenMatchingStrategy {
             EXACT,
             KEYWORD,
-            REGEX
+            IDENTIFIER,
+            STRING,
+            NUMBER
         };
 
         enum class TokenType : int16_t {
@@ -99,51 +101,7 @@ namespace mattflow {
         struct TokenMatcher {
             TokenType             type;
             TokenMatchingStrategy matching_strategy;
-
-            union {
-                std::string str;
-                re2::RE2*   pattern;
-            };
-
-            TokenMatcher() :
-                type(TokenType::SENTINEL),
-                matching_strategy(TokenMatchingStrategy::EXACT),
-                str("") {
-                // Empty.
-            }
-
-            TokenMatcher(const TokenMatcher& rhs) {
-                type              = rhs.type;
-                matching_strategy = rhs.matching_strategy;
-
-                if (matching_strategy == TokenMatchingStrategy::REGEX) {
-                    pattern = rhs.pattern;
-                } else {
-                    str = rhs.str;
-                }
-            }
-
-            TokenMatcher(
-                TokenType             _type,
-                TokenMatchingStrategy _matching_strategy,
-                std::string&&         _str
-            ) :
-                type(_type), matching_strategy(_matching_strategy), str(_str) {
-                // Empty.
-            }
-
-            TokenMatcher(
-                TokenType             _type,
-                TokenMatchingStrategy _matching_strategy,
-                re2::RE2*             _pattern
-            ) :
-                type(_type), matching_strategy(_matching_strategy), pattern(_pattern) {
-                // Empty.
-            }
-
-            ~TokenMatcher(){
-                // Empty.
-            };
+            std::string           pattern;
         };
 
         const std::vector<char> KEYWORD_STOPWORDS
@@ -151,70 +109,70 @@ namespace mattflow {
                 '-', '!',  '=', '<', '>', ':', '+', '/', '*', '^' };
 
         static std::vector<TokenMatcher> TOKEN_MATCHERS = {
-            {              TokenType::LEFT_PAREN,TokenMatchingStrategy::EXACT,"("                                                                                 },
-            {             TokenType::RIGHT_PAREN,   TokenMatchingStrategy::EXACT,                   ")"},
-            {              TokenType::LEFT_BRACE,   TokenMatchingStrategy::EXACT,                   "{"},
-            {             TokenType::RIGHT_BRACE,   TokenMatchingStrategy::EXACT,                   "}"},
-            {            TokenType::LEFT_BRACKET,   TokenMatchingStrategy::EXACT,                   "["},
-            {           TokenType::RIGHT_BRACKET,   TokenMatchingStrategy::EXACT,                   "]"},
-            {                   TokenType::COMMA,   TokenMatchingStrategy::EXACT,                   ","},
-            {                   TokenType::RANGE,   TokenMatchingStrategy::EXACT,                  ".."},
-            {                     TokenType::DOT,   TokenMatchingStrategy::EXACT,                   "."},
-            {                   TokenType::ARROW,   TokenMatchingStrategy::EXACT,                  "->"},
-            {              TokenType::NOT_EQUALS,   TokenMatchingStrategy::EXACT,                  "!="},
-            {                     TokenType::NOT,   TokenMatchingStrategy::EXACT,                   "!"},
-            {                  TokenType::EQUALS,   TokenMatchingStrategy::EXACT,                  "=="},
-            {               TokenType::LESS_THAN,   TokenMatchingStrategy::EXACT,                   "<"},
-            {   TokenType::LESS_THAN_OR_EQUAL_TO,   TokenMatchingStrategy::EXACT,                  "<="},
-            {            TokenType::GREATER_THAN,   TokenMatchingStrategy::EXACT,                   ">"},
-            {TokenType::GREATER_THAN_OR_EQUAL_TO,   TokenMatchingStrategy::EXACT,                  ">="},
-            {             TokenType::ASSIGN_TYPE,   TokenMatchingStrategy::EXACT,                   ":"},
-            {            TokenType::ASSIGN_VALUE,   TokenMatchingStrategy::EXACT,                   "="},
-            {                   TokenType::MINUS,   TokenMatchingStrategy::EXACT,                   "-"},
-            {                    TokenType::PLUS,   TokenMatchingStrategy::EXACT,                   "+"},
-            {                   TokenType::SLASH,   TokenMatchingStrategy::EXACT,                   "/"},
-            {                    TokenType::STAR,   TokenMatchingStrategy::EXACT,                   "*"},
-            {                   TokenType::POWER,   TokenMatchingStrategy::EXACT,                   "^"},
-            {                      TokenType::OR, TokenMatchingStrategy::KEYWORD,                  "or"},
-            {                     TokenType::AND, TokenMatchingStrategy::KEYWORD,                 "and"},
-            {                      TokenType::IF, TokenMatchingStrategy::KEYWORD,                  "if"},
-            {                    TokenType::THEN, TokenMatchingStrategy::KEYWORD,                "then"},
-            {                    TokenType::ELIF, TokenMatchingStrategy::KEYWORD,                "elif"},
-            {                    TokenType::ELSE, TokenMatchingStrategy::KEYWORD,                "else"},
-            {                     TokenType::FOR, TokenMatchingStrategy::KEYWORD,                 "for"},
-            {                      TokenType::IN, TokenMatchingStrategy::KEYWORD,                  "in"},
-            {                   TokenType::WHERE, TokenMatchingStrategy::KEYWORD,               "where"},
-            {                   TokenType::WHILE, TokenMatchingStrategy::KEYWORD,               "while"},
-            {                      TokenType::DO, TokenMatchingStrategy::KEYWORD,                  "do"},
-            {                   TokenType::MATCH, TokenMatchingStrategy::KEYWORD,               "match"},
-            {                   TokenType::PRINT, TokenMatchingStrategy::KEYWORD,               "print"},
-            {                  TokenType::STRUCT, TokenMatchingStrategy::KEYWORD,              "struct"},
-            {                    TokenType::TRUE, TokenMatchingStrategy::KEYWORD,                "true"},
-            {                   TokenType::FALSE, TokenMatchingStrategy::KEYWORD,               "false"},
-            {                     TokenType::NIL, TokenMatchingStrategy::KEYWORD,                "null"},
-            {                    TokenType::CHAR, TokenMatchingStrategy::KEYWORD,                "char"},
-            {                    TokenType::BOOL, TokenMatchingStrategy::KEYWORD,                "bool"},
-            {                     TokenType::INT, TokenMatchingStrategy::KEYWORD,                 "int"},
-            {                    TokenType::INT8, TokenMatchingStrategy::KEYWORD,                "int8"},
-            {                   TokenType::INT16, TokenMatchingStrategy::KEYWORD,               "int16"},
-            {                   TokenType::INT32, TokenMatchingStrategy::KEYWORD,               "int32"},
-            {                   TokenType::INT64, TokenMatchingStrategy::KEYWORD,               "int64"},
-            {                    TokenType::UINT, TokenMatchingStrategy::KEYWORD,                "uint"},
-            {                   TokenType::UINT8, TokenMatchingStrategy::KEYWORD,               "uint8"},
-            {                  TokenType::UINT16, TokenMatchingStrategy::KEYWORD,              "uint16"},
-            {                  TokenType::UINT32, TokenMatchingStrategy::KEYWORD,              "uint32"},
-            {                  TokenType::UINT64, TokenMatchingStrategy::KEYWORD,              "uint64"},
-            {                 TokenType::FLOAT32, TokenMatchingStrategy::KEYWORD,             "float32"},
-            {                 TokenType::FLOAT64, TokenMatchingStrategy::KEYWORD,             "float64"},
- // {              TokenType::IDENTIFIER, TokenMatchingStrategy::REGEX,  new
-  // re2::RE2("^(?:[a-zA-Z_][a-zA-Z_0-9]*)")},     {  TokenType::STRING,
-  // TokenMatchingStrategy::REGEX,
-  //  new
-  //  re2::RE2("^(?:(?:\\\"{3}((?:[^\\\"]*)*)\\\"{3})|(?:\\\"([^\\\"\\n]*)\\\"))")
-  //  },
+            {              TokenType::LEFT_PAREN,TokenMatchingStrategy::EXACT,            "("                                                                                 },
+            {             TokenType::RIGHT_PAREN,   TokenMatchingStrategy::EXACT,                                            ")"},
+            {              TokenType::LEFT_BRACE,   TokenMatchingStrategy::EXACT,                                            "{"},
+            {             TokenType::RIGHT_BRACE,   TokenMatchingStrategy::EXACT,                                            "}"},
+            {            TokenType::LEFT_BRACKET,   TokenMatchingStrategy::EXACT,                                            "["},
+            {           TokenType::RIGHT_BRACKET,   TokenMatchingStrategy::EXACT,                                            "]"},
+            {                   TokenType::COMMA,   TokenMatchingStrategy::EXACT,                                            ","},
+            {                   TokenType::RANGE,   TokenMatchingStrategy::EXACT,                                           ".."},
+            {                     TokenType::DOT,   TokenMatchingStrategy::EXACT,                                            "."},
+            {                   TokenType::ARROW,   TokenMatchingStrategy::EXACT,                                           "->"},
+            {              TokenType::NOT_EQUALS,   TokenMatchingStrategy::EXACT,                                           "!="},
+            {                     TokenType::NOT,   TokenMatchingStrategy::EXACT,                                            "!"},
+            {                  TokenType::EQUALS,   TokenMatchingStrategy::EXACT,                                           "=="},
+            {               TokenType::LESS_THAN,   TokenMatchingStrategy::EXACT,                                            "<"},
+            {   TokenType::LESS_THAN_OR_EQUAL_TO,   TokenMatchingStrategy::EXACT,                                           "<="},
+            {            TokenType::GREATER_THAN,   TokenMatchingStrategy::EXACT,                                            ">"},
+            {TokenType::GREATER_THAN_OR_EQUAL_TO,   TokenMatchingStrategy::EXACT,                                           ">="},
+            {             TokenType::ASSIGN_TYPE,   TokenMatchingStrategy::EXACT,                                            ":"},
+            {            TokenType::ASSIGN_VALUE,   TokenMatchingStrategy::EXACT,                                            "="},
+            {                   TokenType::MINUS,   TokenMatchingStrategy::EXACT,                                            "-"},
+            {                    TokenType::PLUS,   TokenMatchingStrategy::EXACT,                                            "+"},
+            {                   TokenType::SLASH,   TokenMatchingStrategy::EXACT,                                            "/"},
+            {                    TokenType::STAR,   TokenMatchingStrategy::EXACT,                                            "*"},
+            {                   TokenType::POWER,   TokenMatchingStrategy::EXACT,                                            "^"},
+            {                      TokenType::OR, TokenMatchingStrategy::KEYWORD,                                           "or"},
+            {                     TokenType::AND, TokenMatchingStrategy::KEYWORD,                                          "and"},
+            {                      TokenType::IF, TokenMatchingStrategy::KEYWORD,                                           "if"},
+            {                    TokenType::THEN, TokenMatchingStrategy::KEYWORD,                                         "then"},
+            {                    TokenType::ELIF, TokenMatchingStrategy::KEYWORD,                                         "elif"},
+            {                    TokenType::ELSE, TokenMatchingStrategy::KEYWORD,                                         "else"},
+            {                     TokenType::FOR, TokenMatchingStrategy::KEYWORD,                                          "for"},
+            {                      TokenType::IN, TokenMatchingStrategy::KEYWORD,                                           "in"},
+            {                   TokenType::WHERE, TokenMatchingStrategy::KEYWORD,                                        "where"},
+            {                   TokenType::WHILE, TokenMatchingStrategy::KEYWORD,                                        "while"},
+            {                      TokenType::DO, TokenMatchingStrategy::KEYWORD,                                           "do"},
+            {                   TokenType::MATCH, TokenMatchingStrategy::KEYWORD,                                        "match"},
+            {                   TokenType::PRINT, TokenMatchingStrategy::KEYWORD,                                        "print"},
+            {                  TokenType::STRUCT, TokenMatchingStrategy::KEYWORD,                                       "struct"},
+            {                    TokenType::TRUE, TokenMatchingStrategy::KEYWORD,                                         "true"},
+            {                   TokenType::FALSE, TokenMatchingStrategy::KEYWORD,                                        "false"},
+            {                     TokenType::NIL, TokenMatchingStrategy::KEYWORD,                                         "null"},
+            {                    TokenType::CHAR, TokenMatchingStrategy::KEYWORD,                                         "char"},
+            {                    TokenType::BOOL, TokenMatchingStrategy::KEYWORD,                                         "bool"},
+            {                     TokenType::INT, TokenMatchingStrategy::KEYWORD,                                          "int"},
+            {                    TokenType::INT8, TokenMatchingStrategy::KEYWORD,                                         "int8"},
+            {                   TokenType::INT16, TokenMatchingStrategy::KEYWORD,                                        "int16"},
+            {                   TokenType::INT32, TokenMatchingStrategy::KEYWORD,                                        "int32"},
+            {                   TokenType::INT64, TokenMatchingStrategy::KEYWORD,                                        "int64"},
+            {                    TokenType::UINT, TokenMatchingStrategy::KEYWORD,                                         "uint"},
+            {                   TokenType::UINT8, TokenMatchingStrategy::KEYWORD,                                        "uint8"},
+            {                  TokenType::UINT16, TokenMatchingStrategy::KEYWORD,                                       "uint16"},
+            {                  TokenType::UINT32, TokenMatchingStrategy::KEYWORD,                                       "uint32"},
+            {                  TokenType::UINT64, TokenMatchingStrategy::KEYWORD,                                       "uint64"},
+            {                 TokenType::FLOAT32, TokenMatchingStrategy::KEYWORD,                                      "float32"},
+            {                 TokenType::FLOAT64, TokenMatchingStrategy::KEYWORD,                                      "float64"},
+            {              TokenType::IDENTIFIER,
+             TokenMatchingStrategy::IDENTIFIER,
+             "^(?:[a-zA-Z_][a-zA-Z_0-9]*)"                                                                                      },
+            {                  TokenType::STRING,
+             TokenMatchingStrategy::STRING,
+             "^(?:(?:\\\"{3}((?:[^\\\"]*)*)\\\"{3})|(?:\\\"([^\\\"\\n]*)\\\"))"                                                 },
             {                  TokenType::NUMBER,
-             TokenMatchingStrategy::REGEX,
-             new re2::RE2("^(?:[0-9]+(?:\\.[0-9]*)?)")                                                 },
+             TokenMatchingStrategy::NUMBER,
+             "^(?:[0-9]+(?:\\.[0-9]*)?)"                                                                                        },
         };
     }  // namespace lex
 }  // namespace mattflow

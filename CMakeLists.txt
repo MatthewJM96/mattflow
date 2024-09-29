@@ -79,8 +79,6 @@ endif()
 
 find_package(concurrentqueue REQUIRED)
 find_package(Boost REQUIRED)
-find_package(absl REQUIRED)
-find_package(re2 REQUIRED)
 
 ########################################################################################
 
@@ -130,13 +128,12 @@ set(mattflow_Include_Dirs
     ${absl_INCLUDE_DIRS}
     ${re2_INCLUDE_DIRS}
 )
-set(mattflow_Libraries
-    re2::re2
-)
+# set(mattflow_Libraries
+#     re2::re2
+# )
 
 if(MATTFLOW_ENABLE_GPERF_PROFILER)
 set(mattflow_Libraries
-    ${mattflow_Libraries}
     profiler
 )
 endif()

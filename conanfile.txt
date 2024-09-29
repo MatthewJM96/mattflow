@@ -1,8 +1,6 @@
 [requires]
 boost/1.86.0
 concurrentqueue/1.0.4
-abseil/20240116.1
-re2/20240702
 argparse/3.1
 
 [generators]
