@@ -70,7 +70,7 @@ jobs:
       env:
         cache-name: cache-conan
       with:
-        path: ${{ steps.strings.outputs.home }}/.conan
+        path: ${{ steps.strings.outputs.home }}/.conan2
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}
 
     - if: ${{ steps.cache-conan.outputs.cache-hit == 'true' }}
@@ -153,7 +153,7 @@ jobs:
       env:
         cache-name: cache-conan
       with:
-        path: ${{ steps.strings.outputs.home }}/.conan
+        path: ${{ steps.strings.outputs.home }}/.conan2
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.build_type }}--${{ hashFiles('CMakeLists.txt') }}
 
     - if: ${{ steps.cache-conan.outputs.cache-hit == 'true' }}
@@ -163,7 +163,7 @@ jobs:
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
         conan remove --system-reqs '*' ;
-        Get-ChildItem ${{ steps.strings.outputs.home }}\.conan\data\boost
+        Get-ChildItem ${{ steps.strings.outputs.home }}\.conan2\data\boost
         -File -Include conan_sources.tgz -Recurse -Force
         | Remove-Item -Recurse -Force
 
@@ -242,7 +242,7 @@ jobs:
       env:
         cache-name: cache-conan
       with:
-        path: ${{ steps.strings.outputs.home }}/.conan
+        path: ${{ steps.strings.outputs.home }}/.conan2
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}
 
     - if: ${{ steps.cache-conan.outputs.cache-hit == 'true' }}
