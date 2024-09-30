@@ -277,7 +277,7 @@ int main() {
 
     // return run_tests({ .generate_validations = true });
 
-    // run_test("samples/expr/block_expr.mf");
+    // run_test("samples/literal/string_containing_infix.mf");
     // return 0;
 #endif
 }
