@@ -19,6 +19,8 @@ void mfast::parse(
     // Ensure buffers are clear for building fresh AST.
     ast.clear();
     nodes.node_info.clear();
+    // TODO(Matthew): make sure tokens isn't silly length.
+    nodes.node_info.reserve(tokens.size());
     nodes.vertex_node_map = boost::get(vertex_data, ast);
 
     // Prepare stack for precedence, associativity, and last attachable vertex with the
