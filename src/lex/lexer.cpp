@@ -111,10 +111,10 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
                 size_t internal_offset = 0;
 
                 if (remaining_source_view.source.starts_with("\"\"\"")) {
-                    offset          = 3;
-                    internal_offset = offset;
-                    while (offset < remaining_source_view.source.length()) {
-                        if (remaining_source_view.source.substr(offset++).starts_with(
+                    offset          = 2;
+                    internal_offset = 3;
+                    while (++offset < remaining_source_view.source.length()) {
+                        if (remaining_source_view.source.substr(offset).starts_with(
                                 "\"\"\""
                             ))
                         {
@@ -123,11 +123,10 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
                         }
                     }
                 } else if (remaining_source_view.source.starts_with("\"")) {
-                    offset          = 1;
-                    internal_offset = offset;
-                    while (offset < remaining_source_view.source.length()) {
-                        if (remaining_source_view.source.substr(offset++).starts_with(
-                                "\""
+                    offset          = 0;
+                    internal_offset = 1;
+                    while (++offset < remaining_source_view.source.length()) {
+                        if (remaining_source_view.source.substr(offset).starts_with("\""
                             ))
                         {
                             found_match = true;
