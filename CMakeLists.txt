@@ -39,7 +39,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-option(MATTFLOW_ENABLE_GPERF_PROFILER "Whether to compile with GPerf profiler." OFF)
+option(MATTFLOW_ENABLE_PROFILING "Whether to compile with GPerf profiler." OFF)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -49,8 +49,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 #                tell this is spurious, and Clang is fine with the library.
 if (UNIX OR MINGW)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wold-style-cast -Wshadow -Wformat=2")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-    set(CMAKE_CXX_FLAGS_DEBUG "-g")
+
+
+    if(MATTFLOW_ENABLE_PROFILING)
+        set(CMAKE_CXX_FLAGS_RELEASE "-O2 -g")
+        set(CMAKE_CXX_FLAGS_DEBUG "-g")
+    else()
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+        set(CMAKE_CXX_FLAGS_DEBUG "-g")
+    endif()
 
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wduplicated-cond -Wuseless-cast")
@@ -132,7 +139,7 @@ set(mattflow_Include_Dirs
 #     re2::re2
 # )
 
-if(MATTFLOW_ENABLE_GPERF_PROFILER)
+if(MATTFLOW_ENABLE_PROFILING)
 set(mattflow_Libraries
     profiler
 )
@@ -216,7 +223,7 @@ set(mattflow_cli_Libraries
     mattflow
 )
 
-if(MATTFLOW_ENABLE_GPERF_PROFILER)
+if(MATTFLOW_ENABLE_PROFILING)
 set(mattflow_cli_Libraries
     ${mattflow_cli_Libraries}
     profiler
@@ -286,7 +293,7 @@ set(mattflow_tests_Libraries
     mattflow
 )
 
-if(MATTFLOW_ENABLE_GPERF_PROFILER)
+if(MATTFLOW_ENABLE_PROFILING)
 set(mattflow_tests_Libraries
     ${mattflow_tests_Libraries}
     profiler

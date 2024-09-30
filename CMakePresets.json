@@ -82,16 +82,35 @@
             }
         },
         {
-            "name": "Clang-x64-Gperf",
-            "displayName": "Clang x64 Gperf Profiler",
-            "description": "Configuration for Clang x64 with Gperf profiler build.",
+            "name": "Clang-x64-Profiling",
+            "displayName": "Clang x64 Profiling",
+            "description": "Configuration for Clang x64 for profiling.",
             "inherits": "base",
             "generator": "Unix Makefiles",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "clang",
                 "CMAKE_CXX_COMPILER": "clang++",
                 "CMAKE_BUILD_TYPE": "Release",
-                "MATTFLOW_ENABLE_GPERF_PROFILER": "On"
+                "MATTFLOW_ENABLE_PROFILING": "On"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "Clang-x64-Profiling-No-Opt",
+            "displayName": "Clang x64 Profiling (No Optimisation)",
+            "description":
+                "Configuration for Clang x64 for profiling, with no optimisations performed.",
+            "inherits": "base",
+            "generator": "Unix Makefiles",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_BUILD_TYPE": "Debug",
+                "MATTFLOW_ENABLE_PROFILING": "On"
             },
             "condition": {
                 "type": "equals",
@@ -205,10 +224,28 @@
             ]
         },
         {
-            "name": "Clang-x64-Gperf",
-            "displayName": "Clang x64 Gperf Profiler",
-            "description": "Configuration for Clang x64 with Gperf profiler build.",
-            "configurePreset": "Clang-x64-Gperf",
+            "name": "Clang-x64-Profiling",
+            "displayName": "Clang x64 Profiling",
+            "description": "Configuration for Clang x64 for profiling.",
+            "configurePreset": "Clang-x64-Profiling",
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            },
+            "targets": [
+                "mattflow",
+                "mattflow_cli",
+                "mattflow_tests"
+            ],
+            "jobs": 10
+        },
+        {
+            "name": "Clang-x64-Profiling-No-Opt",
+            "displayName": "Clang x64 Profiling (No Optimisation)",
+            "description":
+                "Configuration for Clang x64 for profiling, with no optimisations performed.",
+            "configurePreset": "Clang-x64-Profiling",
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
