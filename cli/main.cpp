@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
             }
         }
     } catch (std::logic_error&) {
-        std::cout << "No inputs files selected for compilation." << std::endl;
+        std::cout << "No input files selected for compilation." << std::endl;
 
         return NO_FILES_PROVIDED;
     }
