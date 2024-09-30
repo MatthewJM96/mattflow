@@ -63,6 +63,10 @@ void mfast::parse(
                     "Encountered a 'then' but not in an if-statement."
                 );
 
+                // TODO(Matthew): This won't be true as the expression between the 'if'
+                //                (or 'elif') and the 'then' will change the last_seen
+                //                value. How shall we validate this? Now is the last
+                //                chance.
                 mfassert(
                     parser_state.last_seen.back() == NodeCategory::IF
                         || parser_state.last_seen.back() == NodeCategory::ELIF,
