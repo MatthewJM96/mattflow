@@ -19,7 +19,11 @@ namespace mattflow {
             NONE,
             BINOP,
             UNOP,
-            NONOP
+            NONOP,
+            IF,
+            THEN,
+            ELIF,
+            ELSE
         };
 
         enum class EnclosingProps : uint16_t {
@@ -29,7 +33,8 @@ namespace mattflow {
             LIST_OR_RANGE   = 0x008,
             STRUCT          = 0x010,
             FUNCTION_PARAMS = 0x020,
-            FUNCTION_BODY   = 0x040
+            FUNCTION_BODY   = 0x040,
+            IF              = 0x080
         };
 
         inline EnclosingProps operator|(EnclosingProps a, EnclosingProps b) {
@@ -51,7 +56,7 @@ namespace mattflow {
 
         using NodeInfo = std::variant<
             BlockExprNode, ParenExprNode,                       // Expression
-            IfNode, ForNode, RangeNode, WhileNode,              // Control Flow
+            IfExprNode, ForNode, RangeNode, WhileNode,          // Control Flow
             StructNode, StructFieldNode,                        // Struct
             FunctionNode,                                       // Function
             AssignValueOperatorNode, AssignTypeOperatorNode,    // Assignment

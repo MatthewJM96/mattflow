@@ -8,16 +8,16 @@
 namespace mattflow {
     namespace ast {
         /**
-         * @brief Node reflecting an if block. Each IfNode will have pairs of out edges,
-         * one an assignment, the other an expression for each if/elif-then block, and
-         * at most one more outedge to an expression for a final else.
+         * @brief Node reflecting an if block. Each IfExprNode will have pairs of out
+         * edges, one an assignment, the other an expression for each if/elif-then
+         * block, and at most one more outedge to an expression for a final else.
          *
          * @inedge operator | paren expression | assignment | block expression
          * @outedges rvalue assignment + expression
          * @outedge expression
          */
-        struct IfNode : public Node {
-            IfNode(
+        struct IfExprNode : public Node {
+            IfExprNode(
                 mflex::Tokens::const_iterator _first_token,
                 mflex::Tokens::const_iterator _last_token
             ) :
@@ -25,7 +25,7 @@ namespace mattflow {
                 // Empty.
             }
 
-            virtual ~IfNode() {
+            virtual ~IfExprNode() {
                 // Empty.
             }
 

@@ -39,9 +39,99 @@ void mfast::parse(
     while (it != tokens.end()) {
         switch (it->type) {
             case mflex::TokenType::IF:
+                // Link operations on stack if we have an end of expression.
+                maybe_link_operations_on_stack(ast, nodes, parser_state);
+
+                // Push a new enclosure for paren expr.
+                push_enclosure(
+                    IfExprNode{ it, it },
+                    EnclosingProps::MULTI_EXPR | EnclosingProps::IF,
+                    ast,
+                    nodes,
+                    parser_state
+                );
+
+                parser_state.last_seen.back() = NodeCategory::IF;
+
+                // Move forward a token.
+                it += 1;
+                continue;
             case mflex::TokenType::THEN:
+                mfassert(
+                    (parser_state.enclosed_by.back() & EnclosingProps::IF)
+                        == EnclosingProps::IF,
+                    "Encountered a 'then' but not in an if-statement."
+                );
+
+                mfassert(
+                    parser_state.last_seen.back() == NodeCategory::IF
+                        || parser_state.last_seen.back() == NodeCategory::ELIF,
+                    "Encountered a 'then' which was not preceded by an 'if' or 'elif' "
+                    "condition."
+                );
+
+                // Link operations on stack as we have an end of expression.
+                // TODO(Matthew): detect failure case for this (aka unterminated
+                //                expression).
+                mfast::link_operations_on_stack(
+                    mfast::Precedence::NONE, ast, nodes, parser_state
+                );
+
+                parser_state.last_seen.back() = NodeCategory::THEN;
+
+                // Move forward a token.
+                it += 1;
+                continue;
             case mflex::TokenType::ELIF:
+                mfassert(
+                    (parser_state.enclosed_by.back() & EnclosingProps::IF)
+                        == EnclosingProps::IF,
+                    "Encountered a 'elif' but not in an if-statement."
+                );
+
+                mfassert(
+                    parser_state.last_seen.back() == NodeCategory::THEN,
+                    "Encountered an 'elif' which was not preceded by a 'then' "
+                    "expression."
+                );
+
+                // Link operations on stack as we have an end of expression.
+                // TODO(Matthew): detect failure case for this (aka unterminated
+                //                expression).
+                mfast::link_operations_on_stack(
+                    mfast::Precedence::NONE, ast, nodes, parser_state
+                );
+
+                parser_state.last_seen.back() = NodeCategory::ELIF;
+
+                // Move forward a token.
+                it += 1;
+                continue;
             case mflex::TokenType::ELSE:
+                mfassert(
+                    (parser_state.enclosed_by.back() & EnclosingProps::IF)
+                        == EnclosingProps::IF,
+                    "Encountered a 'else' but not in an if-statement."
+                );
+
+                mfassert(
+                    parser_state.last_seen.back() == NodeCategory::THEN,
+                    "Encountered an 'else' which was not preceded by a 'then' "
+                    "expression."
+                );
+
+                parser_state.last_seen.back() = NodeCategory::ELSE;
+
+                // Link operations on stack as we have an end of expression.
+                // TODO(Matthew): detect failure case for this (aka unterminated
+                //                expression).
+                mfast::link_operations_on_stack(
+                    mfast::Precedence::NONE, ast, nodes, parser_state
+                );
+
+                // Move forward a token.
+                it += 1;
+                continue;
             case mflex::TokenType::FOR:
             case mflex::TokenType::IN:
             case mflex::TokenType::WHERE:
@@ -343,6 +433,11 @@ void mfast::parse(
                 );
                 continue;
         }
+    }
+
+    // May have an unpopped if-expression.
+    if ((parser_state.enclosed_by.back() & EnclosingProps::IF) == EnclosingProps::IF) {
+        pop_enclosure(EnclosingProps::IF, ast, nodes, parser_state);
     }
 
     // Pop root enclosure.
