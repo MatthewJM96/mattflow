@@ -23,7 +23,9 @@ namespace mattflow {
             IF,
             THEN,
             ELIF,
-            ELSE
+            ELSE,
+            FOR,
+            DO
         };
 
         enum class EnclosingProps : uint16_t {
@@ -34,7 +36,8 @@ namespace mattflow {
             STRUCT          = 0x010,
             FUNCTION_PARAMS = 0x020,
             FUNCTION_BODY   = 0x040,
-            IF              = 0x080
+            IF              = 0x080,
+            FOR             = 0x100
         };
 
         inline EnclosingProps operator|(EnclosingProps a, EnclosingProps b) {
@@ -60,7 +63,8 @@ namespace mattflow {
             StructNode, StructFieldNode,                        // Struct
             FunctionNode,                                       // Function
             AssignValueOperatorNode, AssignTypeOperatorNode,    // Assignment
-            RangeOperatorNode, CommaOperatorNode,               // Range and Comma
+            SequenceOperatorNode, CommaOperatorNode,            // Sequence
+            RangeOperatorNode, RangeConstraintOperatorNode,     // Range
             OrOperatorNode, AndOperatorNode,                    // Logic
             NotEqualOperatorNode, EqualOperatorNode,            // Equality
             LesserOperatorNode, LesserOrEqualOperatorNode,

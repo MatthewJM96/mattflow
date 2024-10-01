@@ -29,10 +29,10 @@ namespace mattflow {
             RIGHT_BRACKET,  // ]
 
             // Separators and accessors.
-            COMMA,  // ,
-            RANGE,  // ..
-            DOT,    // .
-            ARROW,  // ->
+            COMMA,     // ,
+            SEQUENCE,  // ..
+            DOT,       // .
+            ARROW,     // ->
 
             // Boolean operators.
             NOT,                       // !
@@ -116,7 +116,7 @@ namespace mattflow {
             {            TokenType::LEFT_BRACKET,   TokenMatchingStrategy::EXACT,                                            "["},
             {           TokenType::RIGHT_BRACKET,   TokenMatchingStrategy::EXACT,                                            "]"},
             {                   TokenType::COMMA,   TokenMatchingStrategy::EXACT,                                            ","},
-            {                   TokenType::RANGE,   TokenMatchingStrategy::EXACT,                                           ".."},
+            {                TokenType::SEQUENCE,   TokenMatchingStrategy::EXACT,                                           ".."},
             {                     TokenType::DOT,   TokenMatchingStrategy::EXACT,                                            "."},
             {                   TokenType::ARROW,   TokenMatchingStrategy::EXACT,                                           "->"},
             {              TokenType::NOT_EQUALS,   TokenMatchingStrategy::EXACT,                                           "!="},

@@ -15,17 +15,19 @@ namespace mattflow {
         enum class Precedence : int16_t {
             NONE             = 0,
             VALUE_ASSIGNMENT = 100,
-            RANGE            = 200,
+            SEQUENCE         = 200,
             COMMA            = 200,
-            LOGICAL          = 300,
-            EQUALITY         = 400,
-            COMPARISON       = 500,
-            TERM             = 600,
-            FACTOR           = 700,
-            POWER            = 800,
-            UNARY            = 900,
-            TYPE_ASSIGNMENT  = 1000,
-            DOT              = 1100
+            RANGE_CONSTRAINT = 300,
+            RANGE            = 400,
+            LOGICAL          = 500,
+            EQUALITY         = 600,
+            COMPARISON       = 700,
+            TERM             = 800,
+            FACTOR           = 900,
+            POWER            = 1000,
+            UNARY            = 1100,
+            TYPE_ASSIGNMENT  = 1200,
+            DOT              = 1300
         };
 
         enum class Associativity {
@@ -506,6 +508,60 @@ namespace mattflow {
             const Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op range"; }
+        };
+
+        /**
+         * @brief Node reflecting an RangeConstraint operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct RangeConstraintOperatorNode : public OperatorNode {
+            RangeConstraintOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~RangeConstraintOperatorNode() {
+                // Empty.
+            }
+
+            const Order         ORDER         = Order::BINARY;
+            const Precedence    PRECEDENCE    = Precedence::RANGE;
+            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() const override { return "op range constraint"; }
+        };
+
+        /**
+         * @brief Node reflecting an Sequence operator.
+         *
+         * @inedge operator | paren expression | assignment | block expression
+         * @outedge rvalue expression
+         * @outedge rvalue expression
+         */
+        struct SequenceOperatorNode : public OperatorNode {
+            SequenceOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~SequenceOperatorNode() {
+                // Empty.
+            }
+
+            const Order         ORDER         = Order::BINARY;
+            const Precedence    PRECEDENCE    = Precedence::SEQUENCE;
+            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+
+            std::string debug_repr() const override { return "op sequence"; }
         };
 
         /**

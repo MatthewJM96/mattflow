@@ -21,12 +21,21 @@ void mfast::maybe_link_operations_on_stack(
             mfassert(
                 parser_state.last_seen.back() == NodeCategory::THEN
                     || parser_state.last_seen.back() == NodeCategory::ELSE,
-                "Closing an if expression whose last block is neither a then or else "
+                "Closing an if-expression whose last block is neither a then or else "
                 "expression."
             );
 
             // Pop if enclosure.
             pop_enclosure(EnclosingProps::IF, ast, nodes, parser_state);
+        } else if ((parser_state.enclosed_by.back() & EnclosingProps::FOR) == EnclosingProps::FOR)
+        {
+            mfassert(
+                parser_state.last_seen.back() == NodeCategory::DO,
+                "Closing a for-expression whose last block is not a do expression."
+            );
+
+            // Pop for enclosure.
+            pop_enclosure(EnclosingProps::FOR, ast, nodes, parser_state);
         }
 
         mfast::link_operations_on_stack(

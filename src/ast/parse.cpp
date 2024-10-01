@@ -137,10 +137,53 @@ void mfast::parse(
                 it += 1;
                 continue;
             case mflex::TokenType::FOR:
+                // Link operations on stack if we have an end of expression.
+                maybe_link_operations_on_stack(ast, nodes, parser_state);
+
+                // Push a new enclosure for paren expr.
+                push_enclosure(
+                    ForNode{ it, it },
+                    EnclosingProps::MULTI_EXPR | EnclosingProps::FOR,
+                    ast,
+                    nodes,
+                    parser_state
+                );
+
+                parser_state.last_seen.back() = NodeCategory::FOR;
+
+                // Move forward a token.
+                it += 1;
+                continue;
             case mflex::TokenType::IN:
+                // Add RANGE vertex.
+                add_single_token_op<RangeOperatorNode>(it, ast, nodes, parser_state);
+                continue;
             case mflex::TokenType::WHERE:
+                // Add RANGE CONSTRAINT vertex.
+                add_single_token_op<RangeConstraintOperatorNode>(
+                    it, ast, nodes, parser_state
+                );
+                continue;
             case mflex::TokenType::WHILE:
             case mflex::TokenType::DO:
+                mfassert(
+                    (parser_state.enclosed_by.back() & EnclosingProps::FOR)
+                        == EnclosingProps::FOR,
+                    "Encountered a 'do' but not in an for-expression."
+                );
+
+                // Link operations on stack as we have an end of expression.
+                // TODO(Matthew): detect failure case for this (aka unterminated
+                //                expression).
+                mfast::link_operations_on_stack(
+                    mfast::Precedence::NONE, ast, nodes, parser_state
+                );
+
+                parser_state.last_seen.back() = NodeCategory::DO;
+
+                // Move forward a token.
+                it += 1;
+                continue;
             case mflex::TokenType::MATCH:
             case mflex::TokenType::PRINT:
             case mflex::TokenType::ARROW:
@@ -269,9 +312,9 @@ void mfast::parse(
                 // Add COMMA vertex.
                 add_single_token_op<CommaOperatorNode>(it, ast, nodes, parser_state);
                 continue;
-            case mflex::TokenType::RANGE:
-                // Add RANGE vertex.
-                add_single_token_op<RangeOperatorNode>(it, ast, nodes, parser_state);
+            case mflex::TokenType::SEQUENCE:
+                // Add SEQUENCE vertex.
+                add_single_token_op<SequenceOperatorNode>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::AND:
                 // Add AND vertex.
@@ -439,8 +482,11 @@ void mfast::parse(
         }
     }
 
-    // May have an unpopped if-expression.
+    // May have an unpopped if or for -expression.
     if ((parser_state.enclosed_by.back() & EnclosingProps::IF) == EnclosingProps::IF) {
+        pop_enclosure(EnclosingProps::IF, ast, nodes, parser_state);
+    } else if ((parser_state.enclosed_by.back() & EnclosingProps::FOR) == EnclosingProps::FOR)
+    {
         pop_enclosure(EnclosingProps::IF, ast, nodes, parser_state);
     }
 
