@@ -60,7 +60,7 @@ void mfast::parse(
                 mfassert(
                     (parser_state.enclosed_by.back() & EnclosingProps::IF)
                         == EnclosingProps::IF,
-                    "Encountered a 'then' but not in an if-statement."
+                    "Encountered a 'then' but not in an if-expression."
                 );
 
                 // TODO(Matthew): This won't be true as the expression between the 'if'
@@ -90,7 +90,7 @@ void mfast::parse(
                 mfassert(
                     (parser_state.enclosed_by.back() & EnclosingProps::IF)
                         == EnclosingProps::IF,
-                    "Encountered a 'elif' but not in an if-statement."
+                    "Encountered a 'elif' but not in an if-expression."
                 );
 
                 mfassert(
@@ -115,7 +115,7 @@ void mfast::parse(
                 mfassert(
                     (parser_state.enclosed_by.back() & EnclosingProps::IF)
                         == EnclosingProps::IF,
-                    "Encountered a 'else' but not in an if-statement."
+                    "Encountered a 'else' but not in an if-expression."
                 );
 
                 mfassert(
