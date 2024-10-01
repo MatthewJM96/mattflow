@@ -1,0 +1,33 @@
+digraph G {
+0[label="block"];
+1[label="for"];
+2[label="ident: y"];
+3[label="op range"];
+4[label="paren"];
+5[label="num: 3.000000"];
+6[label="op comma"];
+7[label="num: 4.000000"];
+8[label="op comma"];
+9[label="num: 5.000000"];
+10[label="block"];
+11[label="ident: z"];
+12[label="op ="];
+13[label="ident: y"];
+14[label="op +"];
+15[label="num: 1.000000"];
+0->1 ;
+1->3 ;
+1->10 ;
+3->2 ;
+3->4 ;
+4->8 ;
+6->5 ;
+6->7 ;
+8->6 ;
+8->9 ;
+10->12 ;
+12->11 ;
+12->14 ;
+14->13 ;
+14->15 ;
+}
