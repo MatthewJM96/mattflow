@@ -3,7 +3,7 @@ digraph G {
 1[label="for"];
 2[label="ident: x"];
 3[label="op range"];
-4[label="paren"];
+4[label="bracket"];
 5[label="num: 1.000000"];
 6[label="op sequence"];
 7[label="num: 5.000000"];
@@ -14,7 +14,7 @@ digraph G {
 12[label="op comma"];
 13[label="ident: y"];
 14[label="op range"];
-15[label="paren"];
+15[label="bracket"];
 16[label="num: 3.000000"];
 17[label="op comma"];
 18[label="num: 4.000000"];

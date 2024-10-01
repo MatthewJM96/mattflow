@@ -23,8 +23,10 @@ void mfast::push_enclosure(
     nodes.node_info.emplace_back(std::forward<mfast::NodeInfo>(enclosing_node_info));
 
     // Push enclosing vertex onto the stack below.
-    if ((enclosing_category & EnclosingProps::ROOT) != EnclosingProps::ROOT)
+    if ((enclosing_category & EnclosingProps::ROOT) != EnclosingProps::ROOT) {
         parser_state.non_operating_vertices.back().emplace_back(enclosing_vertex);
+        parser_state.last_seen.back() = NodeCategory::NONOP;
+    }
 
     // Push new stacks for operating and non-operating vertices.
     parser_state.operating_vertices.push_back({});

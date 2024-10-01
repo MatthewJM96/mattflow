@@ -164,7 +164,6 @@ void mfast::parse(
                     it, ast, nodes, parser_state
                 );
                 continue;
-            case mflex::TokenType::WHILE:
             case mflex::TokenType::DO:
                 mfassert(
                     (parser_state.enclosed_by.back() & EnclosingProps::FOR)
@@ -184,6 +183,7 @@ void mfast::parse(
                 // Move forward a token.
                 it += 1;
                 continue;
+            case mflex::TokenType::WHILE:
             case mflex::TokenType::MATCH:
             case mflex::TokenType::PRINT:
             case mflex::TokenType::ARROW:
@@ -199,7 +199,7 @@ void mfast::parse(
 
                 // Push a new enclosure for paren expr.
                 push_enclosure(
-                    ParenExprNode{ it, it },
+                    BracketExprNode{ it, it },
                     EnclosingProps::SINGLE_EXPR,
                     ast,
                     nodes,

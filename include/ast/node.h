@@ -58,7 +58,7 @@ namespace mattflow {
         /* clang-format off */
 
         using NodeInfo = std::variant<
-            BlockExprNode, ParenExprNode,                       // Expression
+            BlockExprNode, ParenExprNode, BracketExprNode,      // Expression
             IfExprNode, ForNode, RangeNode, WhileNode,          // Control Flow
             StructNode, StructFieldNode,                        // Struct
             FunctionNode,                                       // Function
