@@ -171,6 +171,12 @@ void mfast::parse(
                     "Encountered a 'do' but not in an for-expression."
                 );
 
+                // TODO(Matthew): Here and elsewhere (including where), we need to
+                //                somehow detect when we need to pop enclosures that
+                //                are expected to be popped. As we could have ifs inside
+                //                ifs (and fors inside fors, and ifs inside fors ...) we
+                //                might need to do this iteratively...
+
                 // Link operations on stack as we have an end of expression.
                 // TODO(Matthew): detect failure case for this (aka unterminated
                 //                expression).
