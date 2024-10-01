@@ -273,9 +273,9 @@ int main() {
 #if defined(RUNNER)
     return run_tests();
 #else
-    return run_tests({ .plot_ast_graphs = true });
+    // return run_tests({ .plot_ast_graphs = true });
 
-    // return run_tests({ .generate_validations = true });
+    return run_tests({ .plot_ast_graphs = true, .generate_validations = true });
 
     // run_test("samples/literal/string_containing_infix.mf");
     // return 0;
