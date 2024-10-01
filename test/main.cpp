@@ -148,7 +148,7 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
 
         if (config.plot_ast_graphs) {
             auto destination = ast_result_filepath;
-            destination.replace_extension("png");
+            destination.replace_extension("dot.png");
             (void)std::system(("dot -Tpng -o " + destination.string() + " "
                                + ast_validation_filepath.string())
                                   .c_str());
