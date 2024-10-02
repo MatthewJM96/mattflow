@@ -172,6 +172,24 @@ void mfast::parse(
                 // Move forward a token.
                 it += 1;
                 continue;
+            case mflex::TokenType::WHILE:
+                // Link operations on stack if we have an end of expression.
+                maybe_link_operations_on_stack(ast, nodes, parser_state);
+
+                // Push a new enclosure for paren expr.
+                push_enclosure(
+                    WhileNode{ it, it },
+                    EnclosingProps::MULTI_EXPR | EnclosingProps::WHILE,
+                    ast,
+                    nodes,
+                    parser_state
+                );
+
+                parser_state.last_seen.back() = NodeCategory::WHILE;
+
+                // Move forward a token.
+                it += 1;
+                continue;
             case mflex::TokenType::IN:
                 // Add RANGE vertex.
                 add_single_token_op<RangeOperatorNode>(it, ast, nodes, parser_state);
@@ -180,7 +198,12 @@ void mfast::parse(
                 // We may have a complex expression in the preceding range-expression of
                 // the for-expression. Pop enclosures that may have resulted.
                 // TODO(Matthew): How do we validate this?
-                pop_enclosures_up_to(EnclosingProps::FOR, ast, nodes, parser_state);
+                pop_enclosures_up_to(
+                    EnclosingProps::FOR | EnclosingProps::WHILE,
+                    ast,
+                    nodes,
+                    parser_state
+                );
 
                 // Add RANGE CONSTRAINT vertex.
                 add_single_token_op<RangeConstraintOperatorNode>(
@@ -192,12 +215,18 @@ void mfast::parse(
                 // -expression of the for-expression. Pop enclosures that may have
                 // resulted.
                 // TODO(Matthew): How do we validate this?
-                pop_enclosures_up_to(EnclosingProps::FOR, ast, nodes, parser_state);
+                pop_enclosures_up_to(
+                    EnclosingProps::FOR | EnclosingProps::WHILE,
+                    ast,
+                    nodes,
+                    parser_state
+                );
 
                 mfassert(
-                    (parser_state.enclosed_by.back() & EnclosingProps::FOR)
-                        == EnclosingProps::FOR,
-                    "Encountered a 'do' but not in a for-expression."
+                    (parser_state.enclosed_by.back()
+                     & (EnclosingProps::FOR | EnclosingProps::WHILE))
+                        != EnclosingProps::NONE,
+                    "Encountered a 'do' but not in a for or while -expression."
                 );
 
                 // TODO(Matthew): Here and elsewhere (including where), we need to
@@ -218,7 +247,6 @@ void mfast::parse(
                 // Move forward a token.
                 it += 1;
                 continue;
-            case mflex::TokenType::WHILE:
             case mflex::TokenType::MATCH:
             case mflex::TokenType::PRINT:
             case mflex::TokenType::ARROW:
@@ -525,7 +553,5 @@ void mfast::parse(
     }
 
     // Pop enclosures root enclosure.
-    pop_enclosures_up_to_and_including(
-        EnclosingProps::ROOT | EnclosingProps::MULTI_EXPR, ast, nodes, parser_state
-    );
+    pop_enclosures_up_to_and_including(EnclosingProps::ROOT, ast, nodes, parser_state);
 }

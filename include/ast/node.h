@@ -25,10 +25,12 @@ namespace mattflow {
             ELIF,
             ELSE,
             FOR,
+            WHILE,
             DO
         };
 
         enum class EnclosingProps : uint16_t {
+            NONE            = 0x00000,
             ROOT            = 0x00001,
             SINGLE_EXPR     = 0x00002,
             MULTI_EXPR      = 0x00004,
@@ -38,9 +40,10 @@ namespace mattflow {
             FUNCTION_BODY   = 0x00040,
             IF              = 0x00080,
             FOR             = 0x00100,
-            PAREN_EXPR      = 0x00200,
-            BRACKET_EXPR    = 0x00400,
-            BRACE_EXPR      = 0x00800
+            WHILE           = 0x00200,
+            PAREN_EXPR      = 0x00400,
+            BRACKET_EXPR    = 0x00800,
+            BRACE_EXPR      = 0x01000
         };
 
         inline EnclosingProps operator|(EnclosingProps a, EnclosingProps b) {

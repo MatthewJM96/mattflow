@@ -56,8 +56,8 @@ void mfast::pop_enclosure(
 
     mfassert(
         (parser_state.enclosed_by.back() & expected_enclosing_props)
-            == expected_enclosing_props,
-        "Trying to pop an enclosure that doesn't have expected properties."
+            != EnclosingProps::NONE,
+        "Trying to pop an enclosure that doesn't have one of the expected properties."
     );
 
     mfassert(
@@ -109,7 +109,7 @@ void mfast::pop_enclosures_up_to(
 ) {
     while (parser_state.enclosed_by.size() > 0) {
         bool found_target = (parser_state.enclosed_by.back() & target_enclosing_props)
-                            == target_enclosing_props;
+                            != EnclosingProps::NONE;
 
         // Only pop the current enclosure if it is either not the target or we are
         // including the target in the popping.
