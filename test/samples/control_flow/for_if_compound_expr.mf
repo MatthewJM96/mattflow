@@ -1,3 +1,4 @@
-for y in if x < 3 then [3, 4, 5] else [6 .. 10] do {
+for y in
+    if x < 3 then [3, 4, 5] else [6 .. 10]
+do
     z = y + 1
-}
