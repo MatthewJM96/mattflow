@@ -1,11 +1,11 @@
-main := () -> {
+main := () :-> {
     3 + 4 * 8 - 20 / 4
 }
 
-//sum : (int, int) -> int = (a : int, b : int) -> a + b
+//sum : (int, int) : int = (a : int, b : int) :-> a + b
 
-sum := (a : int, b : int) -> a + b
+sum := (a : int, b : int) :-> a + b
 
-//increment : (int) -> int = (a : int) -> sum(a, 1)
+//increment : (int) : int = (a : int) :-> sum(a, 1)
 
-increment := (a : int) -> sum(a, 1)
+increment := (a : int) :-> sum(a, 1)

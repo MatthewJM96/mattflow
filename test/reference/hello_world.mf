@@ -1,4 +1,4 @@
-main := () -> {
+main := () :-> {
     print("Hello, world!")
 
     0

@@ -25,11 +25,11 @@ point2d := struct {
     x, y : float32
 }
 
-dist2 := (a : point2d, b : point2d) op -> {
+dist2 := (a : point2d, b : point2d) op :-> {
     a^2 + b^2
 }
 
-main := () -> {
+main := () :-> {
     a : point2d = { 1.0, 4.0 }
     b : point2d = { 3.0, 7.0 }
 

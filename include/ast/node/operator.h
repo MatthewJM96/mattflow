@@ -665,7 +665,7 @@ namespace mattflow {
 
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::TYPE_ASSIGNMENT;
-            const Associativity ASSOCIATIVITY = Associativity::NONE;
+            const Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
             std::string debug_repr() const override { return "op :"; }
         };
@@ -691,7 +691,7 @@ namespace mattflow {
 
             const Order         ORDER         = Order::BINARY;
             const Precedence    PRECEDENCE    = Precedence::ARROW;
-            const Associativity ASSOCIATIVITY = Associativity::NONE;
+            const Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
             std::string debug_repr() const override { return "op :->"; }
         };
