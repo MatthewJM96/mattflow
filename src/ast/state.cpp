@@ -45,6 +45,12 @@ void mfast::pop_enclosure(
     VALOUT NodeBuffers&             nodes,
     VALOUT ParserState&             parser_state
 ) {
+    mfassert(
+        (expected_enclosing_props & EnclosingProps::ROOT) == EnclosingProps::ROOT
+            || parser_state.enclosed_by.size() > 1,
+        "Trying to pop non-root enclosures but ended up at root."
+    );
+
     // Link any remaining operators in the enclosure.
     link_operations_on_stack(Precedence::NONE, ast, nodes, parser_state);
 
@@ -92,4 +98,83 @@ void mfast::pop_enclosure(
     parser_state.enclosing_vertices.pop_back();
     parser_state.enclosed_by.pop_back();
     parser_state.last_seen.pop_back();
+}
+
+void mfast::pop_enclosures_up_to(
+    [[maybe_unused]] EnclosingProps target_enclosing_props,
+    VALOUT AST&                     ast,
+    VALOUT NodeBuffers&             nodes,
+    VALOUT ParserState&             parser_state,
+    bool                            including /*= false*/
+) {
+    while (parser_state.enclosed_by.size() > 0) {
+        bool found_target = (parser_state.enclosed_by.back() & target_enclosing_props)
+                            == target_enclosing_props;
+
+        // Only pop the current enclosure if it is either not the target or we are
+        // including the target in the popping.
+        if (!including && found_target) break;
+
+        mfassert(
+            (target_enclosing_props & EnclosingProps::ROOT) == EnclosingProps::ROOT
+                || parser_state.enclosed_by.size() > 1,
+            "Trying to pop non-root enclosures but ended up at root."
+        );
+
+        // Link any remaining operators in the enclosure.
+        link_operations_on_stack(Precedence::NONE, ast, nodes, parser_state);
+
+        mfassert(
+            parser_state.operating_vertices.back().size() == 0,
+            "Trying to pop an enclosure in which we couldn't link all operators."
+        );
+
+#if defined(DEBUG)
+        if ((target_enclosing_props & EnclosingProps::SINGLE_EXPR)
+            == EnclosingProps::SINGLE_EXPR)
+        {
+            mfassert(
+                parser_state.non_operating_vertices.back().size() == 1,
+                "Trying to pop an enclosure expecting one expression, and go %ld "
+                "expressions instead",
+                parser_state.non_operating_vertices.back().size()
+            );
+        } else if ((target_enclosing_props & EnclosingProps::MULTI_EXPR) == EnclosingProps::MULTI_EXPR)
+        {
+            mfassert(
+                parser_state.non_operating_vertices.back().size() >= 1,
+                "Trying to pop an enclosure expecting one or more expressions, got "
+                "none."
+            );
+        }
+#endif  // defined(DEBUG)
+
+        // TODO(Matthew): update the token iterator for end of enclosure.
+
+        // Get remaining vertices of the enclosure and link to enclosing vertex.
+        for (auto remaining_vertex : parser_state.non_operating_vertices.back())
+            boost::add_edge(
+                parser_state.enclosing_vertices.back(), remaining_vertex, ast
+            );
+
+        // Pop stacks and values from parser state.
+        parser_state.precedence.pop_back();
+        parser_state.associativity.pop_back();
+        parser_state.operating_vertices.pop_back();
+        parser_state.non_operating_vertices.pop_back();
+        parser_state.enclosing_vertices.pop_back();
+        parser_state.enclosed_by.pop_back();
+        parser_state.last_seen.pop_back();
+
+        if (found_target) break;
+    }
+}
+
+void mfast::pop_enclosures_up_to_and_including(
+    [[maybe_unused]] EnclosingProps target_enclosing_props,
+    VALOUT AST&                     ast,
+    VALOUT NodeBuffers&             nodes,
+    VALOUT ParserState&             parser_state
+) {
+    pop_enclosures_up_to(target_enclosing_props, ast, nodes, parser_state, true);
 }

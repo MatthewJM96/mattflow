@@ -56,6 +56,44 @@ namespace mattflow {
             VALOUT NodeBuffers& nodes,
             VALOUT ParserState& parser_state
         );
+
+        /**
+         * @brief Pops enclosures from the ParserState stacks up to the first enclosure
+         * to be of the target category. Ensures that such pops properly link between
+         * the popped enclosures and their parents.
+         *
+         * @param expected_enclosing_category The target category of the to-be-popped-to
+         * enclosure.
+         * @param ast The AST to which the enclosures belong.
+         * @param nodes The node buffers in which the enclosure nodes will be placed.
+         * @param parser_state The ParserState from which the stack entries are popped.
+         * @param include Whether to pop the target enclosure as well.
+         */
+        void pop_enclosures_up_to(
+            EnclosingProps      target_enclosing_category,
+            VALOUT AST&         ast,
+            VALOUT NodeBuffers& nodes,
+            VALOUT ParserState& parser_state,
+            bool                include = false
+        );
+
+        /**
+         * @brief Pops enclosures from the ParserState stacks up to and including the
+         * first enclosure to be of the target category. Ensures that such pops properly
+         * link between the popped enclosures and their parents.
+         *
+         * @param expected_enclosing_category The target category of the to-be-popped-to
+         * enclosure.
+         * @param ast The AST to which the enclosures belong.
+         * @param nodes The node buffers in which the enclosure nodes will be placed.
+         * @param parser_state The ParserState from which the stack entries are popped.
+         */
+        void pop_enclosures_up_to_and_including(
+            EnclosingProps      target_enclosing_category,
+            VALOUT AST&         ast,
+            VALOUT NodeBuffers& nodes,
+            VALOUT ParserState& parser_state
+        );
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;
