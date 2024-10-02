@@ -39,6 +39,15 @@ void mfast::parse(
     while (it != tokens.end()) {
         switch (it->type) {
             case mflex::TokenType::IF:
+                mfassert(
+                    parser_state.last_seen.back() != NodeCategory::IF
+                        && parser_state.last_seen.back() != NodeCategory::THEN
+                        && parser_state.last_seen.back() != NodeCategory::ELIF
+                        && parser_state.last_seen.back() != NodeCategory::ELSE,
+                    "Cannot embed an if-expression directly in a subexpression of "
+                    "another if-expression."
+                );
+
                 // Link operations on stack if we have an end of expression.
                 maybe_link_operations_on_stack(ast, nodes, parser_state);
 
