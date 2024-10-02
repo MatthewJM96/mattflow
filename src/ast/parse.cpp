@@ -256,10 +256,6 @@ void mfast::parse(
                 // Move forward a token.
                 it += 1;
                 continue;
-            case mflex::TokenType::MATCH:
-            case mflex::TokenType::PRINT:
-            case mflex::TokenType::SENTINEL:
-                break;
             case mflex::TokenType::LEFT_BRACKET:
                 // Link operations on stack if we have an end of expression.
                 maybe_link_operations_on_stack(ast, nodes, parser_state);
@@ -573,6 +569,11 @@ void mfast::parse(
                     it, ast, nodes, parser_state, it->identifier_idx
                 );
                 continue;
+            case mflex::TokenType::MATCH:
+            case mflex::TokenType::PRINT:
+            case mflex::TokenType::SENTINEL:
+            default:
+                break;
         }
     }
 
