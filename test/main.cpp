@@ -282,7 +282,7 @@ int main() {
 
     return run_tests({ .plot_ast_graphs = true, .generate_validations = true });
 
-    // run_test("samples/literal/string_containing_infix.mf");
+    // run_test("samples/type/function_value_deduced_type.mf");
     // return 0;
 #endif
 }

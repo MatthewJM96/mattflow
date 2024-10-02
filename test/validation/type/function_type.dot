@@ -1,0 +1,15 @@
+digraph G {
+0[label="block"];
+1[label="paren"];
+2[label="type: int32"];
+3[label="op comma"];
+4[label="type: int32"];
+5[label="op :"];
+6[label="ident: int32"];
+0->5 ;
+1->3 ;
+3->2 ;
+3->4 ;
+5->1 ;
+5->6 ;
+}

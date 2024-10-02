@@ -258,7 +258,6 @@ void mfast::parse(
                 continue;
             case mflex::TokenType::MATCH:
             case mflex::TokenType::PRINT:
-            case mflex::TokenType::ARROW:
             case mflex::TokenType::SENTINEL:
                 break;
             case mflex::TokenType::LEFT_BRACKET:
@@ -392,6 +391,16 @@ void mfast::parse(
                 add_single_token_op<AssignValueOperatorNode>(
                     it, ast, nodes, parser_state
                 );
+                continue;
+            case mflex::TokenType::DEDUCED_ARROW:
+                // Add DEDUCED_ARROW vertex.
+                add_single_token_op<DeducedArrowOperatorNode>(
+                    it, ast, nodes, parser_state
+                );
+                continue;
+            case mflex::TokenType::ARROW:
+                // Add ARROW vertex.
+                add_single_token_op<ArrowOperatorNode>(it, ast, nodes, parser_state);
                 continue;
             case mflex::TokenType::COMMA:
                 // Add COMMA vertex.

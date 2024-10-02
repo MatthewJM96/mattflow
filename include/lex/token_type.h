@@ -32,7 +32,6 @@ namespace mattflow {
             COMMA,     // ,
             SEQUENCE,  // ..
             DOT,       // .
-            ARROW,     // ->
 
             // Boolean operators.
             NOT,                       // !
@@ -47,8 +46,10 @@ namespace mattflow {
 
             // Assignment.
             ASSIGN_DEDUCED_VALUE,  // :=
+            DEDUCED_ARROW,         // :->
             ASSIGN_TYPE,           // :
             ASSIGN_VALUE,          // =
+            ARROW,                 // ->
 
             // Arithmetic operators.
             MINUS,  // -
@@ -119,7 +120,6 @@ namespace mattflow {
             {                   TokenType::COMMA,   TokenMatchingStrategy::EXACT,                                            ","},
             {                TokenType::SEQUENCE,   TokenMatchingStrategy::EXACT,                                           ".."},
             {                     TokenType::DOT,   TokenMatchingStrategy::EXACT,                                            "."},
-            {                   TokenType::ARROW,   TokenMatchingStrategy::EXACT,                                           "->"},
             {              TokenType::NOT_EQUALS,   TokenMatchingStrategy::EXACT,                                           "!="},
             {                     TokenType::NOT,   TokenMatchingStrategy::EXACT,                                            "!"},
             {                  TokenType::EQUALS,   TokenMatchingStrategy::EXACT,                                           "=="},
@@ -128,8 +128,10 @@ namespace mattflow {
             {            TokenType::GREATER_THAN,   TokenMatchingStrategy::EXACT,                                            ">"},
             {TokenType::GREATER_THAN_OR_EQUAL_TO,   TokenMatchingStrategy::EXACT,                                           ">="},
             {    TokenType::ASSIGN_DEDUCED_VALUE,   TokenMatchingStrategy::EXACT,                                           ":="},
+            {           TokenType::DEDUCED_ARROW,   TokenMatchingStrategy::EXACT,                                          ":->"},
             {             TokenType::ASSIGN_TYPE,   TokenMatchingStrategy::EXACT,                                            ":"},
             {            TokenType::ASSIGN_VALUE,   TokenMatchingStrategy::EXACT,                                            "="},
+            {                   TokenType::ARROW,   TokenMatchingStrategy::EXACT,                                           "->"},
             {                   TokenType::MINUS,   TokenMatchingStrategy::EXACT,                                            "-"},
             {                    TokenType::PLUS,   TokenMatchingStrategy::EXACT,                                            "+"},
             {                   TokenType::SLASH,   TokenMatchingStrategy::EXACT,                                            "/"},

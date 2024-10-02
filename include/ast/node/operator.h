@@ -15,19 +15,20 @@ namespace mattflow {
         enum class Precedence : int16_t {
             NONE             = 0,
             VALUE_ASSIGNMENT = 100,
-            SEQUENCE         = 200,
-            COMMA            = 200,
-            RANGE_CONSTRAINT = 300,
-            RANGE            = 400,
-            LOGICAL          = 500,
-            EQUALITY         = 600,
-            COMPARISON       = 700,
-            TERM             = 800,
-            FACTOR           = 900,
-            POWER            = 1000,
-            UNARY            = 1100,
-            TYPE_ASSIGNMENT  = 1200,
-            DOT              = 1300
+            ARROW            = 200,
+            SEQUENCE         = 300,
+            COMMA            = 300,
+            RANGE_CONSTRAINT = 400,
+            RANGE            = 500,
+            LOGICAL          = 600,
+            EQUALITY         = 700,
+            COMPARISON       = 800,
+            TERM             = 900,
+            FACTOR           = 1000,
+            POWER            = 1100,
+            UNARY            = 1200,
+            TYPE_ASSIGNMENT  = 1300,
+            DOT              = 1400
         };
 
         enum class Associativity {
@@ -667,6 +668,58 @@ namespace mattflow {
             const Associativity ASSOCIATIVITY = Associativity::NONE;
 
             std::string debug_repr() const override { return "op :"; }
+        };
+
+        /**
+         * @brief Node reflecting a deduced-type arrow operator.
+         *
+         * @inedge lvalue expression
+         * @outedge rvalue expression
+         */
+        struct DeducedArrowOperatorNode : public OperatorNode {
+            DeducedArrowOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~DeducedArrowOperatorNode() {
+                // Empty.
+            }
+
+            const Order         ORDER         = Order::BINARY;
+            const Precedence    PRECEDENCE    = Precedence::ARROW;
+            const Associativity ASSOCIATIVITY = Associativity::NONE;
+
+            std::string debug_repr() const override { return "op :->"; }
+        };
+
+        /**
+         * @brief Node reflecting an arrow operator.
+         *
+         * @inedge lvalue expression
+         * @outedge rvalue expression
+         */
+        struct ArrowOperatorNode : public OperatorNode {
+            ArrowOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~ArrowOperatorNode() {
+                // Empty.
+            }
+
+            const Order         ORDER         = Order::BINARY;
+            const Precedence    PRECEDENCE    = Precedence::ARROW;
+            const Associativity ASSOCIATIVITY = Associativity::NONE;
+
+            std::string debug_repr() const override { return "op ->"; }
         };
     }  // namespace ast
 }  // namespace mattflow

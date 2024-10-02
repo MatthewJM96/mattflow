@@ -69,7 +69,8 @@ namespace mattflow {
             StructNode, StructFieldNode,                        // Struct
             FunctionNode,                                       // Function
             AssignDeducedValueOperatorNode,
-            AssignValueOperatorNode, AssignTypeOperatorNode,    // Assignment
+            AssignValueOperatorNode, AssignTypeOperatorNode,
+            DeducedArrowOperatorNode, ArrowOperatorNode,        // Assignment
             SequenceOperatorNode, CommaOperatorNode,            // Sequence
             RangeOperatorNode, RangeConstraintOperatorNode,     // Range
             OrOperatorNode, AndOperatorNode,                    // Logic
