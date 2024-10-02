@@ -4,6 +4,9 @@
 //    0
 //}
 
+// TODO(Matthew): Can we ditch ':->' syntax in time? Just use '->' and implicitly
+//                determine need for return type deduction.
+
 // Explicit function signature.
 main : () : int = () :-> {
     print("Hello, world!")
