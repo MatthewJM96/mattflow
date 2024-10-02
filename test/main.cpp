@@ -215,8 +215,13 @@ int run_tests(TestConfig config = {}) {
         std::cout << "\n-------- " << test_case.path() << " --------" << std::endl;
         switch (run_test(test_case.path(), config)) {
             case TestResult::SUCCESS:
-                std::cout << "\nResult : SUCCESS" << std::endl;
-                successes += 1;
+                if (base_dir == "failure" || base_dir == "lexing_failure") {
+                    std::cout << "\nResult : UNSPECIFIED_FAILURE" << std::endl;
+                    unspecified_failures += 1;
+                } else {
+                    std::cout << "\nResult : SUCCESS" << std::endl;
+                    successes += 1;
+                }
                 break;
             case TestResult::LEXING_FAILURE:
                 if (base_dir == "failure" || base_dir == "lexing_failure") {
