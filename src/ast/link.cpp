@@ -13,6 +13,12 @@ void mfast::maybe_link_operations_on_stack(
     // If we have two non-operating nodes in a row, we have a break of expression.
     // TODO(Matthew): handle other control flow
     if (parser_state.last_seen.back() == mfast::NodeCategory::NONOP) {
+        mfassert(
+            (parser_state.enclosed_by.back() & EnclosingProps::SINGLE_EXPR)
+                != EnclosingProps::SINGLE_EXPR,
+            "Multiple expressions in a single expression closure."
+        );
+
         // We detect the end of an if expression by the fact we have two consecutive
         // expressions not separated by a keyword.
         if ((parser_state.enclosed_by.back() & EnclosingProps::IF)
