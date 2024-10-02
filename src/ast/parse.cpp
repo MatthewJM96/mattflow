@@ -375,6 +375,12 @@ void mfast::parse(
                 // Move forward a token.
                 it += 1;
                 continue;
+            case mflex::TokenType::ASSIGN_DEDUCED_VALUE:
+                // Add ASSIGN_DEDUCED_VALUE vertex.
+                add_single_token_op<AssignDeducedValueOperatorNode>(
+                    it, ast, nodes, parser_state
+                );
+                continue;
             case mflex::TokenType::ASSIGN_TYPE:
                 // Add ASSIGN_TYPE vertex.
                 add_single_token_op<AssignTypeOperatorNode>(

@@ -46,8 +46,9 @@ namespace mattflow {
             AND,                       // and
 
             // Assignment.
-            ASSIGN_TYPE,   // :
-            ASSIGN_VALUE,  // =
+            ASSIGN_DEDUCED_VALUE,  // :=
+            ASSIGN_TYPE,           // :
+            ASSIGN_VALUE,          // =
 
             // Arithmetic operators.
             MINUS,  // -
@@ -126,6 +127,7 @@ namespace mattflow {
             {   TokenType::LESS_THAN_OR_EQUAL_TO,   TokenMatchingStrategy::EXACT,                                           "<="},
             {            TokenType::GREATER_THAN,   TokenMatchingStrategy::EXACT,                                            ">"},
             {TokenType::GREATER_THAN_OR_EQUAL_TO,   TokenMatchingStrategy::EXACT,                                           ">="},
+            {    TokenType::ASSIGN_DEDUCED_VALUE,   TokenMatchingStrategy::EXACT,                                           ":="},
             {             TokenType::ASSIGN_TYPE,   TokenMatchingStrategy::EXACT,                                            ":"},
             {            TokenType::ASSIGN_VALUE,   TokenMatchingStrategy::EXACT,                                            "="},
             {                   TokenType::MINUS,   TokenMatchingStrategy::EXACT,                                            "-"},

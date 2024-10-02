@@ -592,6 +592,32 @@ namespace mattflow {
         };
 
         /**
+         * @brief Node reflecting a deduced value assignment operator.
+         *
+         * @inedge lvalue expression
+         * @outedge rvalue expression
+         */
+        struct AssignDeducedValueOperatorNode : public OperatorNode {
+            AssignDeducedValueOperatorNode(
+                mflex::Tokens::const_iterator _first_token,
+                mflex::Tokens::const_iterator _last_token
+            ) :
+                OperatorNode(_first_token, _last_token) {
+                // Empty.
+            }
+
+            virtual ~AssignDeducedValueOperatorNode() {
+                // Empty.
+            }
+
+            const Order         ORDER         = Order::BINARY;
+            const Precedence    PRECEDENCE    = Precedence::VALUE_ASSIGNMENT;
+            const Associativity ASSOCIATIVITY = Associativity::NONE;
+
+            std::string debug_repr() const override { return "op :="; }
+        };
+
+        /**
          * @brief Node reflecting a value assignment operator.
          *
          * @inedge lvalue expression

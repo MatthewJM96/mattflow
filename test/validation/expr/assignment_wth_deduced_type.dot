@@ -1,0 +1,9 @@
+digraph G {
+0[label="block"];
+1[label="ident: x"];
+2[label="op :="];
+3[label="num: 6.000000"];
+0->2 ;
+2->1 ;
+2->3 ;
+}

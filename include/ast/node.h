@@ -68,6 +68,7 @@ namespace mattflow {
             IfExprNode, ForNode, RangeNode, WhileNode,          // Control Flow
             StructNode, StructFieldNode,                        // Struct
             FunctionNode,                                       // Function
+            AssignDeducedValueOperatorNode,
             AssignValueOperatorNode, AssignTypeOperatorNode,    // Assignment
             SequenceOperatorNode, CommaOperatorNode,            // Sequence
             RangeOperatorNode, RangeConstraintOperatorNode,     // Range
