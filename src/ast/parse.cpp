@@ -206,7 +206,7 @@ void mfast::parse(
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     BracketExprNode{ it, it },
-                    EnclosingProps::SINGLE_EXPR,
+                    EnclosingProps::SINGLE_EXPR | EnclosingProps::BRACKET_EXPR,
                     ast,
                     nodes,
                     parser_state
@@ -247,7 +247,8 @@ void mfast::parse(
                 // Push a new enclosure for block expr.
                 push_enclosure(
                     StructNode{ it, it, nullptr },
-                    EnclosingProps::STRUCT | EnclosingProps::MULTI_EXPR,
+                    EnclosingProps::STRUCT | EnclosingProps::MULTI_EXPR
+                        | EnclosingProps::BRACE_EXPR,
                     ast,
                     nodes,
                     parser_state
@@ -263,7 +264,7 @@ void mfast::parse(
                 // Push a new enclosure for block expr.
                 push_enclosure(
                     BlockExprNode{ it, it },
-                    EnclosingProps::MULTI_EXPR,
+                    EnclosingProps::MULTI_EXPR | EnclosingProps::BRACE_EXPR,
                     ast,
                     nodes,
                     parser_state
@@ -286,7 +287,7 @@ void mfast::parse(
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     ParenExprNode{ it, it },
-                    EnclosingProps::SINGLE_EXPR,
+                    EnclosingProps::SINGLE_EXPR | EnclosingProps::PAREN_EXPR,
                     ast,
                     nodes,
                     parser_state

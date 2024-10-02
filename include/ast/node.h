@@ -29,15 +29,18 @@ namespace mattflow {
         };
 
         enum class EnclosingProps : uint16_t {
-            ROOT            = 0x001,
-            SINGLE_EXPR     = 0x002,
-            MULTI_EXPR      = 0x004,
-            LIST_OR_RANGE   = 0x008,
-            STRUCT          = 0x010,
-            FUNCTION_PARAMS = 0x020,
-            FUNCTION_BODY   = 0x040,
-            IF              = 0x080,
-            FOR             = 0x100
+            ROOT            = 0x00001,
+            SINGLE_EXPR     = 0x00002,
+            MULTI_EXPR      = 0x00004,
+            LIST_OR_RANGE   = 0x00008,
+            STRUCT          = 0x00010,
+            FUNCTION_PARAMS = 0x00020,
+            FUNCTION_BODY   = 0x00040,
+            IF              = 0x00080,
+            FOR             = 0x00100,
+            PAREN_EXPR      = 0x00200,
+            BRACKET_EXPR    = 0x00400,
+            BRACE_EXPR      = 0x00800
         };
 
         inline EnclosingProps operator|(EnclosingProps a, EnclosingProps b) {
