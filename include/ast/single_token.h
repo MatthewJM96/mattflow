@@ -44,7 +44,7 @@ namespace mattflow {
             _NodeType node_info
                 = _NodeType{ curr_token, curr_token, std::forward<Args>(args)... };
 
-#if DEBUG
+#if defined(DEBUG)
             // If precedence is the same, associativity must be too.
             if (node_info.PRECEDENCE == parser_state.precedence.back()) {
                 mfassert(
