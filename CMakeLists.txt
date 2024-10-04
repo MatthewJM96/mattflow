@@ -132,8 +132,6 @@ target_precompile_headers(mattflow
 set(mattflow_Include_Dirs
     ${concurrentqueue_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    ${absl_INCLUDE_DIRS}
-    ${re2_INCLUDE_DIRS}
 )
 # set(mattflow_Libraries
 #     re2::re2
