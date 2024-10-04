@@ -71,7 +71,7 @@ void mfast::pop_enclosure(
     {
         mfassert(
             parser_state.non_operating_vertices.back().size() == 1,
-            "Trying to pop an enclosure expecting one expression, and go %ld "
+            "Trying to pop an enclosure expecting one expression, and got %ld "
             "expressions instead",
             parser_state.non_operating_vertices.back().size()
         );
