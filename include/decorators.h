@@ -3,6 +3,12 @@
 
 #include "debug.h"
 
+#if defined(RUNNER)
+#  if !defined(DEBUG)
+#    define DEBUG
+#  endif  // !defined(DEBUG)
+#endif    // defined(RUNNER)
+
 // Memory Management
 #define CALLER_DELETE
 #define CALLEE_DELETE
@@ -12,7 +18,7 @@
 #define VALIN
 #define VALINOUT
 
-#if defined(DEBUG) || defined(RUNNER)
+#if defined(DEBUG)
 #  define mfassert(condition, ...)                                                     \
     if (!(condition)) mattflow::Debug::get().print_or_throw(__VA_ARGS__)
 #else
