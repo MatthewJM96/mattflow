@@ -195,6 +195,10 @@ int run_tests(TestConfig config = {}) {
               << "\\-----------------------------/\n"
               << std::endl;
 
+#if defined(RUNNER)
+    std::cout << "Testing insider runner." << std::endl;
+#endif
+
     if (config.plot_ast_graphs && std::system("dot --version") != 0) {
         std::cout << "WARNING : plot_ast_graphs set true but graphviz is not installed."
                   << std::endl;
