@@ -149,7 +149,7 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         if (config.plot_ast_graphs) {
             auto destination = ast_result_filepath;
             destination.replace_extension("dot.png");
-            (void)std::system(("dot -Tpng -o " + destination.string() + " "
+            (void)std::system(("dot -Tpng -o" + destination.string() + " "
                                + ast_validation_filepath.string())
                                   .c_str());
         }
@@ -199,7 +199,7 @@ int run_tests(TestConfig config = {}) {
     std::cout << "Testing insider runner." << std::endl;
 #endif
 
-    if (config.plot_ast_graphs && std::system("dot --version") != 0) {
+    if (config.plot_ast_graphs && std::system("dot -V") != 0) {
         std::cout << "WARNING : plot_ast_graphs set true but graphviz is not installed."
                   << std::endl;
     }

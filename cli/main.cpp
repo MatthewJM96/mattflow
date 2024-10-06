@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
     cli.parse_args(argc, argv);
 
     if (cli["--plot-ast"] == true) {
-        if (std::system("dot --version") != 0) {
+        if (std::system("dot -V") != 0) {
             std::cout << "WARNING : --plot-ast set true but graphviz is not installed."
                       << std::endl;
             return GRAPHVIZ_UNAVAILABLE;
