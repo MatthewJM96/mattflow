@@ -10,13 +10,15 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/GCC-x64-Debug/mattflow_cli",
             "args": [
-                "--plot-ast",
                 "--dry-run",
                 "--profile",
-                "--interactive"
+                "--log-dir",
+                "log/",
+                "--interactive",
+                "--emit-command"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/test",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb"
@@ -27,13 +29,15 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/GCC-x64-Release/mattflow_cli",
             "args": [
-                "--plot-ast",
                 "--dry-run",
                 "--profile",
-                "--interactive"
+                "--log-dir",
+                "log/",
+                "--interactive",
+                "--emit-command"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/test",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb"
@@ -44,13 +48,15 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/Clang-x64-Debug/mattflow_cli",
             "args": [
-                "--plot-ast",
                 "--dry-run",
                 "--profile",
-                "--interactive"
+                "--log-dir",
+                "log/",
+                "--interactive",
+                "--emit-command"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/test",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb"
@@ -61,13 +67,15 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/Clang-x64-Release/mattflow_cli",
             "args": [
-                "--plot-ast",
                 "--dry-run",
                 "--profile",
-                "--interactive"
+                "--log-dir",
+                "log/",
+                "--interactive",
+                "--emit-command"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/test",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb"

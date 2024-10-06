@@ -19,17 +19,22 @@ CompilationTime operator+(const CompilationTime& lhs, const CompilationTime& rhs
     return { lhs.lex_dur + rhs.lex_dur, lhs.ast_dur + rhs.ast_dur };
 }
 
-static std::filesystem::path make_dot_filepath(const std::filesystem::path& path) {
-    return path.filename().replace_extension(".dot");
+static std::filesystem::path make_dot_filepath(
+    const std::filesystem::path& path, const std::filesystem::path& log_dir
+) {
+    return log_dir / path.filename().replace_extension(".dot");
 }
 
-CompilationTime
-parse_file(const std::string& file, const argparse::ArgumentParser& args) {
+CompilationTime parse_file(
+    const std::string& file, bool plot_ast, const std::filesystem::path& log_dir
+) {
     mattflow::SourceView source_view;
     if (!mattflow::SourceView::from_filepath(file, source_view)) {
-        std::cout << "Could not read file at path:\n    " << file << std::endl;
+        std::cout << "ERROR : Could not read file at path " << file << std::endl;
         exit(FILE_UNREADABLE);
     }
+
+    std::cout << "Parsing " << file << std::endl;
 
     CompilationTime duration;
 
@@ -53,8 +58,8 @@ parse_file(const std::string& file, const argparse::ArgumentParser& args) {
 
     duration.ast_dur = std::chrono::high_resolution_clock::now() - ast_start;
 
-    if (args["--plot-ast"] == true) {
-        auto dot_filepath = make_dot_filepath(file);
+    if (plot_ast == true) {
+        auto dot_filepath = make_dot_filepath(file, log_dir);
 
         std::ofstream ast_os(dot_filepath);
         boost::write_graphviz(ast_os, ast, mfast::NodeInfoWriter(&node_buffers));
@@ -68,6 +73,7 @@ parse_file(const std::string& file, const argparse::ArgumentParser& args) {
 }
 
 int main(int argc, char** argv) {
+    // Set up argument parser with our various options.
     argparse::ArgumentParser cli("mattflow", MATTFLOW_VERSION_STRING);
 
     cli.add_description("mattflow compiler, based on LLVM.");
@@ -82,6 +88,13 @@ int main(int argc, char** argv) {
         .help("If this flag is set, the user is solicited with a file to compile.")
         .flag();
 
+    cli.add_argument("--emit-command")
+        .help(
+            "If this flag is set, the command which called this program was invoked is "
+            "emitted."
+        )
+        .flag();
+
     cli.add_argument("input files").remaining();
 
     cli.add_group("Compiler options");
@@ -89,6 +102,10 @@ int main(int argc, char** argv) {
     cli.add_argument("-o", "--output")
         .help("The name of the executable resulting from compilation.")
         .default_value("a.out");
+
+    cli.add_argument("--log-dir")
+        .help("The path of the directory into which logs will be stored.")
+        .default_value("./log/");
 
     cli.add_argument("--dry-run")
         .help("If this flag is set, the compiler doesn't create an executable.")
@@ -100,9 +117,41 @@ int main(int argc, char** argv) {
         .help("If this flag is set, the AST is plotted as a PNG.")
         .flag();
 
-    cli.parse_args(argc, argv);
+    // Parse command-line.
+    try {
+        cli.parse_args(argc, argv);
+    } catch (const std::exception& e) {
+        std::cout << "ERROR : " << e.what() << std::endl;
+        std::cout << cli << std::endl;
+        return CLI_PARSE_ERROR;
+    }
 
-    if (cli["--plot-ast"] == true) {
+    // Get settings in useful form.
+    bool profile      = cli["--profile"] == true;
+    bool interactive  = cli["--interactive"] == true;
+    bool emit_command = cli["--emit-command"] == true;
+    bool plot_ast     = cli["--plot-ast"] == true;
+
+    std::filesystem::path log_dir = cli.get("--log-dir");
+
+    std::vector<std::string> input_files = {};
+    try {
+        input_files = cli.get<std::vector<std::string>>("input files");
+    } catch (const std::logic_error&) {
+        // Empty.
+    }
+
+    // Emit command-line string if requested.
+    if (emit_command) {
+        for (int i = 0; i < argc; ++i) std::cout << argv[i] << " ";
+        std::cout << std::endl << std::endl;
+    }
+
+    // Ensure the log directory exists.
+    std::filesystem::create_directories(log_dir);
+
+    // Check we have graphviz if we need it.
+    if (plot_ast) {
         if (std::system("dot -V") != 0) {
             std::cout << "WARNING : --plot-ast set true but graphviz is not installed."
                       << std::endl;
@@ -111,37 +160,41 @@ int main(int argc, char** argv) {
         std::cout << std::endl;
     }
 
-    std::vector<CompilationTime> durations;
-    auto input_files = cli.get<std::vector<std::string>>("input files");
-
-    if (input_files.size() == 0 && cli["--interactive"] == false) {
+    // We must have a route to get a file to compile one way or another.
+    if (input_files.size() == 0 && !interactive) {
         std::cout << "ERROR : no input files provided and not running compiler "
                   << "interactively.\nProvide at least one input file or set "
                   << "--interactive." << std::endl;
         return NO_FILES_PROVIDED;
     }
 
-    if (cli["--interactive"] == true) {
-        std::cout << "Name a file to compile [samples/profile/1k_infix.mf] : ";
+    // If we are getting the file interactively then do so.
+    if (interactive) {
+        std::cout << "Name a file to compile [test/samples/profile/1k_infix.mf] : ";
         std::string input;
-        std::cin >> input;
+        std::getline(std::cin, input);
+
+        if (input == "") {
+            input = "test/samples/profile/1k_infix.mf";
+        }
 
         input_files = { input };
     }
 
+    // Parse each input file in turn.
+    std::vector<CompilationTime> durations;
     for (auto& input_file : input_files) {
-        std::cout << input_file << std::endl;
+        durations.emplace_back(parse_file(input_file, plot_ast, log_dir));
 
-        durations.emplace_back(parse_file(input_file, cli));
-
-        if (cli["--profile"] == true) {
+        if (profile) {
             std::cout << "    Lexing: " << durations.back().lex_dur.count() / 1000
                       << "us\n    Syntactic Analysis: "
                       << durations.back().ast_dur.count() / 1000 << "us" << std::endl;
         }
     }
 
-    if (cli["--profile"] == true) {
+    // Emit profiling information if requested.
+    if (profile) {
         auto total_duration
             = std::accumulate(durations.begin(), durations.end(), CompilationTime{});
 
