@@ -1,0 +1,76 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "GCC x64 Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/GCC-x64-Debug/mattflow_cli",
+            "args": [
+                "--plot-ast",
+                "--dry-run",
+                "--profile",
+                "--interactive"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb"
+        },
+        {
+            "name": "GCC x64 Release",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/GCC-x64-Release/mattflow_cli",
+            "args": [
+                "--plot-ast",
+                "--dry-run",
+                "--profile",
+                "--interactive"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb"
+        },
+        {
+            "name": "Clang x64 Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Clang-x64-Debug/mattflow_cli",
+            "args": [
+                "--plot-ast",
+                "--dry-run",
+                "--profile",
+                "--interactive"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb"
+        },
+        {
+            "name": "Clang x64 Release",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Clang-x64-Release/mattflow_cli",
+            "args": [
+                "--plot-ast",
+                "--dry-run",
+                "--profile",
+                "--interactive"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb"
+        },
+    ]
+}

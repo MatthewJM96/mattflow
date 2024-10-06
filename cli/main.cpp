@@ -78,13 +78,21 @@ int main(int argc, char** argv) {
         .help("If this flag is set, the compiler emits profiler information.")
         .flag();
 
-    cli.add_argument("input files").remaining().required();
+    cli.add_argument("--interactive")
+        .help("If this flag is set, the user is solicited with a file to compile.")
+        .flag();
+
+    cli.add_argument("input files").remaining();
 
     cli.add_group("Compiler options");
 
     cli.add_argument("-o", "--output")
         .help("The name of the executable resulting from compilation.")
         .default_value("a.out");
+
+    cli.add_argument("--dry-run")
+        .help("If this flag is set, the compiler doesn't create an executable.")
+        .flag();
 
     cli.add_group("Debugging options");
 
@@ -104,25 +112,33 @@ int main(int argc, char** argv) {
     }
 
     std::vector<CompilationTime> durations;
-    try {
-        auto input_files = cli.get<std::vector<std::string>>("input files");
+    auto input_files = cli.get<std::vector<std::string>>("input files");
 
-        for (auto& input_file : input_files) {
-            std::cout << input_file << std::endl;
-
-            durations.emplace_back(parse_file(input_file, cli));
-
-            if (cli["--profile"] == true) {
-                std::cout << "    Lexing: " << durations.back().lex_dur.count() / 1000
-                          << "us\n    Syntactic Analysis: "
-                          << durations.back().ast_dur.count() / 1000 << "us"
-                          << std::endl;
-            }
-        }
-    } catch (std::logic_error&) {
-        std::cout << "No input files selected for compilation." << std::endl;
-
+    if (input_files.size() == 0 && cli["--interactive"] == false) {
+        std::cout << "ERROR : no input files provided and not running compiler "
+                  << "interactively.\nProvide at least one input file or set "
+                  << "--interactive." << std::endl;
         return NO_FILES_PROVIDED;
+    }
+
+    if (cli["--interactive"] == true) {
+        std::cout << "Name a file to compile [samples/profile/1k_infix.mf] : ";
+        std::string input;
+        std::cin >> input;
+
+        input_files = { input };
+    }
+
+    for (auto& input_file : input_files) {
+        std::cout << input_file << std::endl;
+
+        durations.emplace_back(parse_file(input_file, cli));
+
+        if (cli["--profile"] == true) {
+            std::cout << "    Lexing: " << durations.back().lex_dur.count() / 1000
+                      << "us\n    Syntactic Analysis: "
+                      << durations.back().ast_dur.count() / 1000 << "us" << std::endl;
+        }
     }
 
     if (cli["--profile"] == true) {
