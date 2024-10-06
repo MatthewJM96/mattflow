@@ -24,5 +24,5 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install conan dependency manager for other deps.
 RUN python3 -m venv $VIRTUAL_ENV && \
-    pip3 install conan==2.7.1 pre-commit==3.8.0 && \
+    pip3 install conan==2.8.0 pre-commit==3.8.0 && \
     conan profile detect

@@ -43,7 +43,7 @@ jobs:
       run: >
         python3 -m venv ${{ github.workspace }}/.venv ;
         source ${{ github.workspace }}/.venv/bin/activate ;
-        pip install conan==2.7.1 ;
+        pip install conan==2.8.0 ;
         conan profile detect
 
     - name: Set reusable strings
@@ -111,7 +111,7 @@ jobs:
         python3 -m venv ${{ github.workspace }}\.venv ;
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
-        pip install conan==2.7.1 ;
+        pip install conan==2.8.0 ;
         conan profile detect
 
     - name: Set reusable strings
@@ -189,7 +189,7 @@ jobs:
       run: >
         python3 -m venv ${{ github.workspace }}/.venv ;
         source ${{ github.workspace }}/.venv/bin/activate ;
-        pip install conan==2.7.1 ;
+        pip install conan==2.8.0 ;
         conan profile detect ;
         sed -i -e 's/"13.0", "13.1", "13.2", "13.3", "13.4", "13.5", "13.6",/"13.0", "13.1", "13.2", "13.3", "13.4", "13.5", "13.6", "13.7",/g' ~/.conan2/settings.yml ;
         sed -i -e 's/"14.0", "14.1", "14.2", "14.3", "14.4", "14.5"]/"14.0", "14.1", "14.2", "14.3", "14.4", "14.5", "14.6", "14.7"]/g' ~/.conan2/settings.yml
