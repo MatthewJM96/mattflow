@@ -1,0 +1,4 @@
+llvm-link $1.ll -o $1.bc
+llc --relocation-model=pic --filetype=obj $1.bc
+clang $1.o -fPIE -o $1.exe
+./$1.exe
