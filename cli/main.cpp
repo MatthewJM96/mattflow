@@ -4,6 +4,7 @@
 
 #include "ast/debug.h"
 #include "ast/parse.h"
+#include "backend/llvm.h"
 #include "lex/lexer.h"
 
 #include "exit_codes.h"
@@ -13,10 +14,13 @@
 struct CompilationTime {
     std::chrono::nanoseconds lex_dur;
     std::chrono::nanoseconds ast_dur;
+    std::chrono::nanoseconds backend_dur;
 };
 
 CompilationTime operator+(const CompilationTime& lhs, const CompilationTime& rhs) {
-    return { lhs.lex_dur + rhs.lex_dur, lhs.ast_dur + rhs.ast_dur };
+    return { lhs.lex_dur + rhs.lex_dur,
+             lhs.ast_dur + rhs.ast_dur,
+             lhs.backend_dur + rhs.backend_dur };
 }
 
 static std::filesystem::path make_dot_filepath(
@@ -68,6 +72,14 @@ CompilationTime parse_file(
 
         std::filesystem::remove(dot_filepath);
     }
+
+    // Backend
+
+    auto backend_start = std::chrono::high_resolution_clock::now();
+
+    mfbe::convert_module_to_llvm_ir(ast, node_buffers, type_table);
+
+    duration.backend_dur = std::chrono::high_resolution_clock::now() - backend_start;
 
     return duration;
 }
@@ -181,6 +193,9 @@ int main(int argc, char** argv) {
         input_files = { input };
     }
 
+    // Output separation, starting file parsing.
+    std::cout << std::endl;
+
     // Parse each input file in turn.
     std::vector<CompilationTime> durations;
     for (auto& input_file : input_files) {
@@ -189,7 +204,10 @@ int main(int argc, char** argv) {
         if (profile) {
             std::cout << "    Lexing: " << durations.back().lex_dur.count() / 1000
                       << "us\n    Syntactic Analysis: "
-                      << durations.back().ast_dur.count() / 1000 << "us" << std::endl;
+                      << durations.back().ast_dur.count() / 1000
+                      << "us\n    LLVM Backend: "
+                      << durations.back().backend_dur.count() / 1000 << "us"
+                      << std::endl;
         }
     }
 
@@ -201,7 +219,8 @@ int main(int argc, char** argv) {
         std::cout << "\nTotal Compile Time:\n    Lexing: "
                   << total_duration.lex_dur.count() / 1000
                   << "us\n    Syntactic Analysis: "
-                  << total_duration.ast_dur.count() / 1000 << "us" << std::endl;
+                  << total_duration.ast_dur.count() / 1000 << "us\n    LLVM Backend: "
+                  << total_duration.backend_dur.count() / 1000 << "us" << std::endl;
     }
 
     return 0;
