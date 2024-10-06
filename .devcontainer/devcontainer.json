@@ -1,0 +1,22 @@
+{
+    "name": "mattflow",
+
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
+
+    "customizations": {
+        "vscode": {
+            "settings": {},
+            "extensions": [
+                "ms-vscode.cpptools-extension-pack",
+                "twxs.cmake",
+                "ms-azuretools.vscode-docker"
+            ]
+        }
+    },
+
+    "mounts": [
+        "type=bind,source=${localEnv:HOME}/.conan2,target=/home/vscode/.conan2"
+    ]
+}
