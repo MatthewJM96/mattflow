@@ -86,6 +86,16 @@ endif()
 
 find_package(concurrentqueue REQUIRED)
 find_package(Boost REQUIRED)
+find_package(LLVM REQUIRED CONFIG)
+
+separate_arguments(LLVM_DEFINITIONS NATIVE_COMMAND "${LLVM_DEFINITIONS}")
+
+# TODO(Matthew): review the below comment.
+# This is the recommended way to figure out what to link to for LLVM, but I'm finding
+# that it doesn't work so well, at some point I should put more time into understanding
+# why that is as it isn't being recommended for no reason. That said so long as our
+# approach works, who cares...
+# llvm_map_components_to_libnames(LLVM_LIBS support core irreader)
 
 ########################################################################################
 
@@ -108,6 +118,7 @@ add_library(mattflow
     "${PROJECT_SOURCE_DIR}/src/ast/parse.cpp"
     "${PROJECT_SOURCE_DIR}/src/ast/state.cpp"
     "${PROJECT_SOURCE_DIR}/src/lex/lexer.cpp"
+    "${PROJECT_SOURCE_DIR}/src/llvm/ir.cpp"
     "${PROJECT_SOURCE_DIR}/src/literal/identifier.cpp"
     "${PROJECT_SOURCE_DIR}/src/literal/number.cpp"
     "${PROJECT_SOURCE_DIR}/src/literal/string.cpp"
@@ -132,10 +143,11 @@ target_precompile_headers(mattflow
 set(mattflow_Include_Dirs
     ${concurrentqueue_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
+    ${LLVM_INCLUDE_DIRS}
 )
-# set(mattflow_Libraries
-#     re2::re2
-# )
+set(mattflow_Libraries
+    LLVM-18
+)
 
 if(MATTFLOW_ENABLE_PROFILING)
 set(mattflow_Libraries
@@ -167,6 +179,7 @@ target_link_libraries(mattflow
 target_compile_definitions(mattflow
     PUBLIC
         MATTFLOW_VERSION="${MF_VERSION}"
+        "${LLVM_DEFINITIONS}"
 )
 
 ########################################################################################
