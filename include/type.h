@@ -38,7 +38,7 @@ namespace mattflow {
             MapEntry register_identifier(mflit::IdentifierIdx identifier);
 
             std::tuple<bool, mftype::IdentifierTypeTable::MapEntry>
-            associate_type(mflit::IdentifierIdx identifier, const mflex::Token& token);
+            associate_type(mflit::IdentifierIdx identifier, const mftype::Type& type);
         protected:
             Map m_ident_type_map;
         };

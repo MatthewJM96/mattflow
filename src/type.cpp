@@ -15,7 +15,7 @@ mftype::IdentifierTypeTable::register_identifier(mflit::IdentifierIdx identifier
 
 std::tuple<bool, mftype::IdentifierTypeTable::MapEntry>
 mftype::IdentifierTypeTable::associate_type(
-    mflit::IdentifierIdx identifier, const mflex::Token& token
+    mflit::IdentifierIdx identifier, const mftype::Type& type
 ) {
     auto it = m_ident_type_map.find(identifier);
 
@@ -23,23 +23,7 @@ mftype::IdentifierTypeTable::associate_type(
         return { false, it };
     }
 
-    /**
-     * We only expect simple types to be assocaited via their token, structs and so on
-     * should be associated through other function calls probably - maybe a dedicated
-     * multi-function API each for building up a function or struct type?
-     */
-    if (token.type == mflex::TokenType::IDENTIFIER) {
-        // TODO: Do we want this to be handled here for TypeType stuff? I think so but
-        // probably with some checks.
-        it->second = m_ident_type_map[token.identifier_idx];
-    } else if (static_cast<int16_t>(token.type) > static_cast<int16_t>(PrimitiveType::LOWER_SENTINEL) && static_cast<int16_t>(token.type) < static_cast<int16_t>(PrimitiveType::UPPER_SENTINEL))
-    {
-        it->second = cast_token_to_intrinsic(token.type);
-    } else {
-        mfassert(
-            false, "Attempted to associate a non-type as the type of an identifier"
-        );
-    }
+    it->second = type;
 
     return { true, it };
 }
