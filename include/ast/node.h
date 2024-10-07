@@ -26,7 +26,10 @@ namespace mattflow {
             ELSE,
             FOR,
             WHILE,
-            DO
+            DO,
+            PAREN_EXPR,
+            IDENTIFIER,
+            ASSIGN_TYPE
         };
 
         enum class EnclosingProps : uint16_t {
