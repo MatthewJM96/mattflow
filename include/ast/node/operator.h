@@ -74,9 +74,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::DOT;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::DOT;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op dot"; }
         };
@@ -100,9 +100,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::UNARY;
-            const Precedence    PRECEDENCE    = Precedence::UNARY;
-            const Associativity ASSOCIATIVITY = Associativity::RIGHT;
+            const static Order         ORDER         = Order::UNARY;
+            const static Precedence    PRECEDENCE    = Precedence::UNARY;
+            const static Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
             std::string debug_repr() const override { return "op !"; }
         };
@@ -126,9 +126,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::UNARY;
-            const Precedence    PRECEDENCE    = Precedence::UNARY;
-            const Associativity ASSOCIATIVITY = Associativity::RIGHT;
+            const static Order         ORDER         = Order::UNARY;
+            const static Precedence    PRECEDENCE    = Precedence::UNARY;
+            const static Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
             std::string debug_repr() const override { return "op -"; }
         };
@@ -153,9 +153,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::POWER;
-            const Associativity ASSOCIATIVITY = Associativity::RIGHT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::POWER;
+            const static Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
             std::string debug_repr() const override { return "op ^"; }
         };
@@ -180,9 +180,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::FACTOR;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::FACTOR;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op *"; }
         };
@@ -207,9 +207,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::FACTOR;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::FACTOR;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op /"; }
         };
@@ -234,9 +234,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::TERM;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::TERM;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op +"; }
         };
@@ -261,9 +261,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::TERM;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::TERM;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op -"; }
         };
@@ -288,9 +288,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::COMPARISON;
-            const Associativity ASSOCIATIVITY = Associativity::NONE;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::COMPARISON;
+            const static Associativity ASSOCIATIVITY = Associativity::NONE;
 
             std::string debug_repr() const override { return "op >"; }
         };
@@ -315,9 +315,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::COMPARISON;
-            const Associativity ASSOCIATIVITY = Associativity::NONE;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::COMPARISON;
+            const static Associativity ASSOCIATIVITY = Associativity::NONE;
 
             std::string debug_repr() const override { return "op >="; }
         };
@@ -342,9 +342,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::COMPARISON;
-            const Associativity ASSOCIATIVITY = Associativity::NONE;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::COMPARISON;
+            const static Associativity ASSOCIATIVITY = Associativity::NONE;
 
             std::string debug_repr() const override { return "op <"; }
         };
@@ -369,9 +369,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::COMPARISON;
-            const Associativity ASSOCIATIVITY = Associativity::NONE;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::COMPARISON;
+            const static Associativity ASSOCIATIVITY = Associativity::NONE;
 
             std::string debug_repr() const override { return "op <="; }
         };
@@ -396,9 +396,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::EQUALITY;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::EQUALITY;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op =="; }
         };
@@ -423,9 +423,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::EQUALITY;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::EQUALITY;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op !="; }
         };
@@ -450,9 +450,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::LOGICAL;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::LOGICAL;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op or"; }
         };
@@ -477,9 +477,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::LOGICAL;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::LOGICAL;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op and"; }
         };
@@ -504,9 +504,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::RANGE;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::RANGE;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op range"; }
         };
@@ -531,9 +531,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::RANGE;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::RANGE;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op range constraint"; }
         };
@@ -558,9 +558,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::SEQUENCE;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::SEQUENCE;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op sequence"; }
         };
@@ -585,9 +585,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::COMMA;
-            const Associativity ASSOCIATIVITY = Associativity::LEFT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::COMMA;
+            const static Associativity ASSOCIATIVITY = Associativity::LEFT;
 
             std::string debug_repr() const override { return "op comma"; }
         };
@@ -611,9 +611,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::VALUE_ASSIGNMENT;
-            const Associativity ASSOCIATIVITY = Associativity::NONE;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::VALUE_ASSIGNMENT;
+            const static Associativity ASSOCIATIVITY = Associativity::NONE;
 
             std::string debug_repr() const override { return "op :="; }
         };
@@ -637,9 +637,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::VALUE_ASSIGNMENT;
-            const Associativity ASSOCIATIVITY = Associativity::RIGHT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::VALUE_ASSIGNMENT;
+            const static Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
             std::string debug_repr() const override { return "op ="; }
         };
@@ -663,9 +663,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::TYPE_ASSIGNMENT;
-            const Associativity ASSOCIATIVITY = Associativity::RIGHT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::TYPE_ASSIGNMENT;
+            const static Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
             std::string debug_repr() const override { return "op :"; }
         };
@@ -689,9 +689,9 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::ARROW;
-            const Associativity ASSOCIATIVITY = Associativity::RIGHT;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::ARROW;
+            const static Associativity ASSOCIATIVITY = Associativity::RIGHT;
 
             std::string debug_repr() const override { return "op :->"; }
         };
@@ -715,11 +715,44 @@ namespace mattflow {
                 // Empty.
             }
 
-            const Order         ORDER         = Order::BINARY;
-            const Precedence    PRECEDENCE    = Precedence::ARROW;
-            const Associativity ASSOCIATIVITY = Associativity::NONE;
+            const static Order         ORDER         = Order::BINARY;
+            const static Precedence    PRECEDENCE    = Precedence::ARROW;
+            const static Associativity ASSOCIATIVITY = Associativity::NONE;
 
             std::string debug_repr() const override { return "op ->"; }
+        };
+
+        struct GetOrderVisitor {
+            template <typename OperatorNodeType>
+            Order operator()(const OperatorNodeType&) {
+                if constexpr (std::is_base_of_v<OperatorNode, OperatorNodeType>) {
+                    return OperatorNodeType::ORDER;
+                } else {
+                    return Order::NONE;
+                }
+            }
+        };
+
+        struct GetPrecedenceVisitor {
+            template <typename OperatorNodeType>
+            Precedence operator()(const OperatorNodeType&) {
+                if constexpr (std::is_base_of_v<OperatorNode, OperatorNodeType>) {
+                    return OperatorNodeType::PRECEDENCE;
+                } else {
+                    return Precedence::NONE;
+                }
+            }
+        };
+
+        struct GetAssociativityVisitor {
+            template <typename OperatorNodeType>
+            Associativity operator()(const OperatorNodeType&) {
+                if constexpr (std::is_base_of_v<OperatorNode, OperatorNodeType>) {
+                    return OperatorNodeType::ASSOCIATIVITY;
+                } else {
+                    return Associativity::SENTINEL;
+                }
+            }
         };
     }  // namespace ast
 }  // namespace mattflow
