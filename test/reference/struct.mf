@@ -1,0 +1,29 @@
+my_struct := struct {
+    x : float32
+}
+
+procedural_new_struct := add_field(my_struct, "y", float32)
+
+using_new_struct := struct {
+    using my_struct
+    y : float32
+}
+
+// TODO(Matthew): tags need something to act as an operator after the param list, for
+//                now placed a "|" here to solve that.
+// + := (a : struct, b : struct) | binop : struct -> {
++ := (a : struct, b : struct) | binop : struct -> {
+    mut tmp := struct {}
+
+    for name, type in get_fields(a) do
+        tmp = add_field(tmp, name, type)
+
+    for name, type in get_fields(b) do
+        tmp = add_field(tmp, name, type)
+
+    tmp
+}
+
+op_new_struct := my_struct + struct {
+    y : float32
+}
