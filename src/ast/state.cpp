@@ -5,7 +5,7 @@
 
 void mfast::push_enclosure(
     VALIN mfast::NodeInfo&& enclosing_node_info,
-    mfast::EnclosingProps   enclosing_category,
+    mfast::NodeProps        enclosing_category,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
     VALOUT mfast::ParserState& parser_state
@@ -23,9 +23,9 @@ void mfast::push_enclosure(
     nodes.node_info.emplace_back(std::forward<mfast::NodeInfo>(enclosing_node_info));
 
     // Push enclosing vertex onto the stack below.
-    if ((enclosing_category & EnclosingProps::ROOT) != EnclosingProps::ROOT) {
+    if ((enclosing_category & NodeProps::ROOT) != NodeProps::ROOT) {
         parser_state.non_operating_vertices.back().emplace_back(enclosing_vertex);
-        parser_state.last_seen.back() = NodeCategory::NONOP;
+        parser_state.last_seen.back() = NodeProps::NONOP;
     }
 
     // Push new stacks for operating and non-operating vertices.
@@ -33,20 +33,20 @@ void mfast::push_enclosure(
     parser_state.non_operating_vertices.push_back({});
 
     // Push a new last-seen category entry.
-    parser_state.last_seen.emplace_back(NodeCategory::NONE);
+    parser_state.last_seen.emplace_back(NodeProps::NONE);
 
     // Push enclosure category.
     parser_state.enclosed_by.emplace_back(enclosing_category);
 }
 
 void mfast::pop_enclosure(
-    [[maybe_unused]] EnclosingProps expected_enclosing_props,
-    VALOUT AST&                     ast,
-    VALOUT NodeBuffers&             nodes,
-    VALOUT ParserState&             parser_state
+    [[maybe_unused]] NodeProps expected_enclosing_props,
+    VALOUT AST&                ast,
+    VALOUT NodeBuffers&        nodes,
+    VALOUT ParserState&        parser_state
 ) {
     mfassert(
-        (expected_enclosing_props & EnclosingProps::ROOT) == EnclosingProps::ROOT
+        (expected_enclosing_props & NodeProps::ROOT) == NodeProps::ROOT
             || parser_state.enclosed_by.size() > 1,
         "Trying to pop non-root enclosures but ended up at root."
     );
@@ -55,8 +55,7 @@ void mfast::pop_enclosure(
     link_operations_on_stack(Precedence::NONE, ast, nodes, parser_state);
 
     mfassert(
-        (parser_state.enclosed_by.back() & expected_enclosing_props)
-            != EnclosingProps::NONE,
+        (parser_state.enclosed_by.back() & expected_enclosing_props) != NodeProps::NONE,
         "Trying to pop an enclosure that doesn't have one of the expected properties."
     );
 
@@ -66,16 +65,14 @@ void mfast::pop_enclosure(
     );
 
 #if defined(DEBUG)
-    if ((expected_enclosing_props & EnclosingProps::SINGLE_EXPR)
-        == EnclosingProps::SINGLE_EXPR)
-    {
+    if ((expected_enclosing_props & NodeProps::SINGLE_EXPR) == NodeProps::SINGLE_EXPR) {
         mfassert(
             parser_state.non_operating_vertices.back().size() == 1,
             "Trying to pop an enclosure expecting one expression, and got %ld "
             "expressions instead",
             parser_state.non_operating_vertices.back().size()
         );
-    } else if ((expected_enclosing_props & EnclosingProps::MULTI_EXPR) == EnclosingProps::MULTI_EXPR)
+    } else if ((expected_enclosing_props & NodeProps::MULTI_EXPR) == NodeProps::MULTI_EXPR)
     {
         mfassert(
             parser_state.non_operating_vertices.back().size() >= 1,
@@ -101,22 +98,22 @@ void mfast::pop_enclosure(
 }
 
 void mfast::pop_enclosures_up_to(
-    [[maybe_unused]] EnclosingProps target_enclosing_props,
-    VALOUT AST&                     ast,
-    VALOUT NodeBuffers&             nodes,
-    VALOUT ParserState&             parser_state,
-    bool                            including /*= false*/
+    [[maybe_unused]] NodeProps target_enclosing_props,
+    VALOUT AST&                ast,
+    VALOUT NodeBuffers&        nodes,
+    VALOUT ParserState&        parser_state,
+    bool                       including /*= false*/
 ) {
     while (parser_state.enclosed_by.size() > 0) {
         bool found_target = (parser_state.enclosed_by.back() & target_enclosing_props)
-                            != EnclosingProps::NONE;
+                            != NodeProps::NONE;
 
         // Only pop the current enclosure if it is either not the target or we are
         // including the target in the popping.
         if (!including && found_target) break;
 
         mfassert(
-            (target_enclosing_props & EnclosingProps::ROOT) == EnclosingProps::ROOT
+            (target_enclosing_props & NodeProps::ROOT) == NodeProps::ROOT
                 || parser_state.enclosed_by.size() > 1,
             "Trying to pop non-root enclosures but ended up at root."
         );
@@ -130,8 +127,7 @@ void mfast::pop_enclosures_up_to(
         );
 
 #if defined(DEBUG)
-        if ((target_enclosing_props & EnclosingProps::SINGLE_EXPR)
-            == EnclosingProps::SINGLE_EXPR)
+        if ((target_enclosing_props & NodeProps::SINGLE_EXPR) == NodeProps::SINGLE_EXPR)
         {
             mfassert(
                 parser_state.non_operating_vertices.back().size() == 1,
@@ -139,7 +135,7 @@ void mfast::pop_enclosures_up_to(
                 "expressions instead",
                 parser_state.non_operating_vertices.back().size()
             );
-        } else if ((target_enclosing_props & EnclosingProps::MULTI_EXPR) == EnclosingProps::MULTI_EXPR)
+        } else if ((target_enclosing_props & NodeProps::MULTI_EXPR) == NodeProps::MULTI_EXPR)
         {
             mfassert(
                 parser_state.non_operating_vertices.back().size() >= 1,
@@ -171,10 +167,10 @@ void mfast::pop_enclosures_up_to(
 }
 
 void mfast::pop_enclosures_up_to_and_including(
-    [[maybe_unused]] EnclosingProps target_enclosing_props,
-    VALOUT AST&                     ast,
-    VALOUT NodeBuffers&             nodes,
-    VALOUT ParserState&             parser_state
+    [[maybe_unused]] NodeProps target_enclosing_props,
+    VALOUT AST&                ast,
+    VALOUT NodeBuffers&        nodes,
+    VALOUT ParserState&        parser_state
 ) {
     pop_enclosures_up_to(target_enclosing_props, ast, nodes, parser_state, true);
 }

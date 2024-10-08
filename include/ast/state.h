@@ -17,8 +17,8 @@ namespace mattflow {
             std::vector<std::vector<ASTVertex>> operating_vertices;
             std::vector<std::vector<ASTVertex>> non_operating_vertices;
             std::vector<ASTVertex>              enclosing_vertices;
-            std::vector<EnclosingProps>         enclosed_by;
-            std::vector<NodeCategory>           last_seen;
+            std::vector<NodeProps>              enclosed_by;
+            std::vector<NodeProps>              last_seen;
         };
 
         /**
@@ -34,7 +34,7 @@ namespace mattflow {
          */
         void push_enclosure(
             VALIN NodeInfo&&    enclosing_node_info,
-            EnclosingProps      enclosing_category,
+            NodeProps           enclosing_category,
             VALOUT AST&         ast,
             VALOUT NodeBuffers& nodes,
             VALOUT ParserState& parser_state
@@ -51,7 +51,7 @@ namespace mattflow {
          * @param parser_state The ParserState from which the stack entries are popped.
          */
         void pop_enclosure(
-            EnclosingProps      expected_enclosing_category,
+            NodeProps           expected_enclosing_category,
             VALOUT AST&         ast,
             VALOUT NodeBuffers& nodes,
             VALOUT ParserState& parser_state
@@ -70,7 +70,7 @@ namespace mattflow {
          * @param include Whether to pop the target enclosure as well.
          */
         void pop_enclosures_up_to(
-            EnclosingProps      target_enclosing_category,
+            NodeProps           target_enclosing_category,
             VALOUT AST&         ast,
             VALOUT NodeBuffers& nodes,
             VALOUT ParserState& parser_state,
@@ -89,7 +89,7 @@ namespace mattflow {
          * @param parser_state The ParserState from which the stack entries are popped.
          */
         void pop_enclosures_up_to_and_including(
-            EnclosingProps      target_enclosing_category,
+            NodeProps           target_enclosing_category,
             VALOUT AST&         ast,
             VALOUT NodeBuffers& nodes,
             VALOUT ParserState& parser_state

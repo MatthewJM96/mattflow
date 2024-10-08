@@ -22,7 +22,7 @@ namespace mattflow {
             // If we are adding a type node, check if the last-seen vertex was a type
             // assignment node and if so create a type record.
             if constexpr (std::is_base_of_v<_NodeType, TypeNode>) {
-                if (parser_state.last_seen.back() == NodeCategory::ASSIGN_TYPE) {
+                if (parser_state.last_seen.back() == NodeProps::ASSIGN_TYPE) {
                     IdentifierNode* in
                         = std::get_if<IdentifierNode>(&nodes.get_node_info(
                             parser_state.non_operating_vertices.back().back()
@@ -37,7 +37,7 @@ namespace mattflow {
                     // TODO(Matthew): how shall we deal with this?
                 }
             } else if constexpr (std::is_base_of_v<_NodeType, IdentifierNode>) {
-                if (parser_state.last_seen.back() == NodeCategory::ASSIGN_TYPE) {
+                if (parser_state.last_seen.back() == NodeProps::ASSIGN_TYPE) {
                     IdentifierNode* in
                         = std::get_if<IdentifierNode>(&nodes.get_node_info(
                             parser_state.non_operating_vertices.back().back()
@@ -75,7 +75,7 @@ namespace mattflow {
             nodes.vertex_node_map[vertex] = nodes.node_info.size();
             nodes.node_info.emplace_back(nonop_node);
 
-            parser_state.last_seen.back() = mfast::NodeCategory::NONOP;
+            parser_state.last_seen.back() = mfast::NodeProps::NONOP;
 
             // Move forward a token.
             curr_token += 1;
@@ -126,9 +126,9 @@ namespace mattflow {
             nodes.node_info.emplace_back(node_info);
 
             if (node_info.ORDER == mfast::Order::UNARY) {
-                parser_state.last_seen.back() = mfast::NodeCategory::UNOP;
+                parser_state.last_seen.back() = mfast::NodeProps::UNOP;
             } else {
-                parser_state.last_seen.back() = mfast::NodeCategory::BINOP;
+                parser_state.last_seen.back() = mfast::NodeProps::BINOP;
             }
 
             // Move forward a token.

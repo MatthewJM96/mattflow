@@ -28,7 +28,7 @@ void mfast::parse(
     ParserState parser_state;
     push_enclosure(
         BlockExprNode{ tokens.begin(), tokens.end() },
-        EnclosingProps::ROOT | EnclosingProps::MULTI_EXPR,
+        NodeProps::ROOT | NodeProps::MULTI_EXPR,
         ast,
         nodes,
         parser_state
@@ -40,10 +40,10 @@ void mfast::parse(
         switch (it->type) {
             case mflex::TokenType::IF:
                 mfassert(
-                    parser_state.last_seen.back() != NodeCategory::IF
-                        && parser_state.last_seen.back() != NodeCategory::THEN
-                        && parser_state.last_seen.back() != NodeCategory::ELIF
-                        && parser_state.last_seen.back() != NodeCategory::ELSE,
+                    parser_state.last_seen.back() != NodeProps::IF
+                        && parser_state.last_seen.back() != NodeProps::THEN
+                        && parser_state.last_seen.back() != NodeProps::ELIF
+                        && parser_state.last_seen.back() != NodeProps::ELSE,
                     "Cannot embed an if-expression directly in a subexpression of "
                     "another if-expression."
                 );
@@ -54,13 +54,13 @@ void mfast::parse(
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     IfExprNode{ it, it },
-                    EnclosingProps::MULTI_EXPR | EnclosingProps::IF,
+                    NodeProps::MULTI_EXPR | NodeProps::IF,
                     ast,
                     nodes,
                     parser_state
                 );
 
-                parser_state.last_seen.back() = NodeCategory::IF;
+                parser_state.last_seen.back() = NodeProps::IF;
 
                 // Move forward a token.
                 it += 1;
@@ -70,11 +70,10 @@ void mfast::parse(
                 // condition-expression of the if-expression. Pop enclosures that may
                 // have resulted.
                 // TODO(Matthew): How do we validate this?
-                pop_enclosures_up_to(EnclosingProps::IF, ast, nodes, parser_state);
+                pop_enclosures_up_to(NodeProps::IF, ast, nodes, parser_state);
 
                 mfassert(
-                    (parser_state.enclosed_by.back() & EnclosingProps::IF)
-                        == EnclosingProps::IF,
+                    (parser_state.enclosed_by.back() & NodeProps::IF) == NodeProps::IF,
                     "Encountered a 'then' but not in an if-expression."
                 );
 
@@ -83,8 +82,8 @@ void mfast::parse(
                 //                value. How shall we validate this? Now is the last
                 //                chance.
                 // mfassert(
-                //     parser_state.last_seen.back() == NodeCategory::IF
-                //         || parser_state.last_seen.back() == NodeCategory::ELIF,
+                //     parser_state.last_seen.back() == NodeProps::IF
+                //         || parser_state.last_seen.back() == NodeProps::ELIF,
                 //     "Encountered a 'then' which was not preceded by an 'if' or 'elif'
                 //     " "condition."
                 // );
@@ -96,7 +95,7 @@ void mfast::parse(
                     mfast::Precedence::NONE, ast, nodes, parser_state
                 );
 
-                parser_state.last_seen.back() = NodeCategory::THEN;
+                parser_state.last_seen.back() = NodeProps::THEN;
 
                 // Move forward a token.
                 it += 1;
@@ -106,16 +105,15 @@ void mfast::parse(
                 // or then -expression of the if-expression. Pop enclosures that may
                 // have resulted.
                 // TODO(Matthew): How do we validate this?
-                pop_enclosures_up_to(EnclosingProps::IF, ast, nodes, parser_state);
+                pop_enclosures_up_to(NodeProps::IF, ast, nodes, parser_state);
 
                 mfassert(
-                    (parser_state.enclosed_by.back() & EnclosingProps::IF)
-                        == EnclosingProps::IF,
+                    (parser_state.enclosed_by.back() & NodeProps::IF) == NodeProps::IF,
                     "Encountered a 'elif' but not in an if-expression."
                 );
 
                 // mfassert(
-                //     parser_state.last_seen.back() == NodeCategory::THEN,
+                //     parser_state.last_seen.back() == NodeProps::THEN,
                 //     "Encountered an 'elif' which was not preceded by a 'then' "
                 //     "expression."
                 // );
@@ -127,7 +125,7 @@ void mfast::parse(
                     mfast::Precedence::NONE, ast, nodes, parser_state
                 );
 
-                parser_state.last_seen.back() = NodeCategory::ELIF;
+                parser_state.last_seen.back() = NodeProps::ELIF;
 
                 // Move forward a token.
                 it += 1;
@@ -137,21 +135,20 @@ void mfast::parse(
                 // or then -expression of the if-expression. Pop enclosures that may
                 // have resulted.
                 // TODO(Matthew): How do we validate this?
-                pop_enclosures_up_to(EnclosingProps::IF, ast, nodes, parser_state);
+                pop_enclosures_up_to(NodeProps::IF, ast, nodes, parser_state);
 
                 mfassert(
-                    (parser_state.enclosed_by.back() & EnclosingProps::IF)
-                        == EnclosingProps::IF,
+                    (parser_state.enclosed_by.back() & NodeProps::IF) == NodeProps::IF,
                     "Encountered a 'else' but not in an if-expression."
                 );
 
                 // mfassert(
-                //     parser_state.last_seen.back() == NodeCategory::THEN,
+                //     parser_state.last_seen.back() == NodeProps::THEN,
                 //     "Encountered an 'else' which was not preceded by a 'then' "
                 //     "expression."
                 // );
 
-                parser_state.last_seen.back() = NodeCategory::ELSE;
+                parser_state.last_seen.back() = NodeProps::ELSE;
 
                 // Link operations on stack as we have an end of expression.
                 // TODO(Matthew): detect failure case for this (aka unterminated
@@ -170,13 +167,13 @@ void mfast::parse(
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     ForNode{ it, it },
-                    EnclosingProps::MULTI_EXPR | EnclosingProps::FOR,
+                    NodeProps::MULTI_EXPR | NodeProps::FOR,
                     ast,
                     nodes,
                     parser_state
                 );
 
-                parser_state.last_seen.back() = NodeCategory::FOR;
+                parser_state.last_seen.back() = NodeProps::FOR;
 
                 // Move forward a token.
                 it += 1;
@@ -188,13 +185,13 @@ void mfast::parse(
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     WhileNode{ it, it },
-                    EnclosingProps::MULTI_EXPR | EnclosingProps::WHILE,
+                    NodeProps::MULTI_EXPR | NodeProps::WHILE,
                     ast,
                     nodes,
                     parser_state
                 );
 
-                parser_state.last_seen.back() = NodeCategory::WHILE;
+                parser_state.last_seen.back() = NodeProps::WHILE;
 
                 // Move forward a token.
                 it += 1;
@@ -208,10 +205,7 @@ void mfast::parse(
                 // the for-expression. Pop enclosures that may have resulted.
                 // TODO(Matthew): How do we validate this?
                 pop_enclosures_up_to(
-                    EnclosingProps::FOR | EnclosingProps::WHILE,
-                    ast,
-                    nodes,
-                    parser_state
+                    NodeProps::FOR | NodeProps::WHILE, ast, nodes, parser_state
                 );
 
                 // Add RANGE CONSTRAINT vertex.
@@ -225,16 +219,13 @@ void mfast::parse(
                 // resulted.
                 // TODO(Matthew): How do we validate this?
                 pop_enclosures_up_to(
-                    EnclosingProps::FOR | EnclosingProps::WHILE,
-                    ast,
-                    nodes,
-                    parser_state
+                    NodeProps::FOR | NodeProps::WHILE, ast, nodes, parser_state
                 );
 
                 mfassert(
                     (parser_state.enclosed_by.back()
-                     & (EnclosingProps::FOR | EnclosingProps::WHILE))
-                        != EnclosingProps::NONE,
+                     & (NodeProps::FOR | NodeProps::WHILE))
+                        != NodeProps::NONE,
                     "Encountered a 'do' but not in a for or while -expression."
                 );
 
@@ -251,7 +242,7 @@ void mfast::parse(
                     mfast::Precedence::NONE, ast, nodes, parser_state
                 );
 
-                parser_state.last_seen.back() = NodeCategory::DO;
+                parser_state.last_seen.back() = NodeProps::DO;
 
                 // Move forward a token.
                 it += 1;
@@ -267,11 +258,13 @@ void mfast::parse(
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     BracketExprNode{ it, it },
-                    EnclosingProps::SINGLE_EXPR | EnclosingProps::BRACKET_EXPR,
+                    NodeProps::SINGLE_EXPR | NodeProps::BRACKET_EXPR,
                     ast,
                     nodes,
                     parser_state
                 );
+
+                parser_state.last_seen.back() = NodeProps::BRACKET_EXPR;
 
                 // Move forward a token.
                 it += 1;
@@ -279,8 +272,10 @@ void mfast::parse(
             case mflex::TokenType::RIGHT_BRACKET:
                 // Pop enclosure of paren expr.
                 pop_enclosures_up_to_and_including(
-                    EnclosingProps::BRACKET_EXPR, ast, nodes, parser_state
+                    NodeProps::BRACKET_EXPR, ast, nodes, parser_state
                 );
+
+                parser_state.last_seen.back() = NodeProps::BRACKET_EXPR;
 
                 // Move forward a token.
                 it += 1;
@@ -310,12 +305,13 @@ void mfast::parse(
                 // Push a new enclosure for block expr.
                 push_enclosure(
                     StructNode{ it, it, nullptr },
-                    EnclosingProps::STRUCT | EnclosingProps::MULTI_EXPR
-                        | EnclosingProps::BRACE_EXPR,
+                    NodeProps::STRUCT | NodeProps::MULTI_EXPR | NodeProps::BRACE_EXPR,
                     ast,
                     nodes,
                     parser_state
                 );
+
+                parser_state.last_seen.back() = NodeProps::BRACE_EXPR;
 
                 // Move forward two tokens (one extra for '{').
                 it += 2;
@@ -327,11 +323,13 @@ void mfast::parse(
                 // Push a new enclosure for block expr.
                 push_enclosure(
                     BlockExprNode{ it, it },
-                    EnclosingProps::MULTI_EXPR | EnclosingProps::BRACE_EXPR,
+                    NodeProps::MULTI_EXPR | NodeProps::BRACE_EXPR,
                     ast,
                     nodes,
                     parser_state
                 );
+
+                parser_state.last_seen.back() = NodeProps::BRACE_EXPR;
 
                 // Move forward a token.
                 it += 1;
@@ -339,8 +337,10 @@ void mfast::parse(
             case mflex::TokenType::RIGHT_BRACE:
                 // Pop enclosure of block expr.
                 pop_enclosures_up_to_and_including(
-                    EnclosingProps::BRACE_EXPR, ast, nodes, parser_state
+                    NodeProps::BRACE_EXPR, ast, nodes, parser_state
                 );
+
+                parser_state.last_seen.back() = NodeProps::BRACE_EXPR;
 
                 // Move forward a token.
                 it += 1;
@@ -352,11 +352,13 @@ void mfast::parse(
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     ParenExprNode{ it, it },
-                    EnclosingProps::SINGLE_EXPR | EnclosingProps::PAREN_EXPR,
+                    NodeProps::SINGLE_EXPR | NodeProps::PAREN_EXPR,
                     ast,
                     nodes,
                     parser_state
                 );
+
+                parser_state.last_seen.back() = NodeProps::PAREN_EXPR;
 
                 // Move forward a token.
                 it += 1;
@@ -364,8 +366,10 @@ void mfast::parse(
             case mflex::TokenType::RIGHT_PAREN:
                 // Pop enclosure of paren expr.
                 pop_enclosures_up_to_and_including(
-                    EnclosingProps::PAREN_EXPR, ast, nodes, parser_state
+                    NodeProps::PAREN_EXPR, ast, nodes, parser_state
                 );
+
+                parser_state.last_seen.back() = NodeProps::PAREN_EXPR;
 
                 // Move forward a token.
                 it += 1;
@@ -378,8 +382,8 @@ void mfast::parse(
                 continue;
             case mflex::TokenType::ASSIGN_TYPE:
                 mfassert(
-                    parser_state.last_seen.back() == NodeCategory::IDENTIFIER
-                        || parser_state.last_seen.back() == NodeCategory::PAREN_EXPR,
+                    parser_state.last_seen.back() == NodeProps::IDENTIFIER
+                        || parser_state.last_seen.back() == NodeProps::PAREN_EXPR,
                     "Trying to assign a type to something that cannot receive a type."
                 );
 
@@ -388,7 +392,7 @@ void mfast::parse(
                     it, ast, nodes, parser_state
                 );
 
-                parser_state.last_seen.back() = NodeCategory::ASSIGN_TYPE;
+                parser_state.last_seen.back() = NodeProps::ASSIGN_TYPE;
                 continue;
             case mflex::TokenType::ASSIGN_VALUE:
                 // Add ASSIGN_VALUE vertex.
@@ -621,5 +625,5 @@ void mfast::parse(
     }
 
     // Pop enclosures root enclosure.
-    pop_enclosures_up_to_and_including(EnclosingProps::ROOT, ast, nodes, parser_state);
+    pop_enclosures_up_to_and_including(NodeProps::ROOT, ast, nodes, parser_state);
 }

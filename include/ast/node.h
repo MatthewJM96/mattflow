@@ -15,48 +15,38 @@
 
 namespace mattflow {
     namespace ast {
-        enum class NodeCategory {
-            NONE,
-            BINOP,
-            UNOP,
-            NONOP,
-            IF,
-            THEN,
-            ELIF,
-            ELSE,
-            FOR,
-            WHILE,
-            DO,
-            PAREN_EXPR,
-            IDENTIFIER,
-            ASSIGN_TYPE
+        enum class NodeProps : uint32_t {
+            NONE          = 0x00000000,
+            ROOT          = 0x00000001,
+            SINGLE_EXPR   = 0x00000002,
+            MULTI_EXPR    = 0x00000004,
+            LIST_OR_RANGE = 0x00000008,
+            STRUCT        = 0x00000010,
+            IF            = 0x00000020,
+            THEN          = 0x00000040,
+            ELIF          = 0x00000080,
+            ELSE          = 0x00000100,
+            FOR           = 0x00000200,
+            WHILE         = 0x00000400,
+            DO            = 0x00000800,
+            PAREN_EXPR    = 0x00001000,
+            BRACKET_EXPR  = 0x00002000,
+            BRACE_EXPR    = 0x00004000,
+            UNOP          = 0x00008000,
+            BINOP         = 0x00010000,
+            NONOP         = 0x00020000,
+            ASSIGN_TYPE   = 0x00040000,
+            IDENTIFIER    = 0x00080000
         };
 
-        enum class EnclosingProps : uint16_t {
-            NONE            = 0x00000,
-            ROOT            = 0x00001,
-            SINGLE_EXPR     = 0x00002,
-            MULTI_EXPR      = 0x00004,
-            LIST_OR_RANGE   = 0x00008,
-            STRUCT          = 0x00010,
-            FUNCTION_PARAMS = 0x00020,
-            FUNCTION_BODY   = 0x00040,
-            IF              = 0x00080,
-            FOR             = 0x00100,
-            WHILE           = 0x00200,
-            PAREN_EXPR      = 0x00400,
-            BRACKET_EXPR    = 0x00800,
-            BRACE_EXPR      = 0x01000
-        };
-
-        inline EnclosingProps operator|(EnclosingProps a, EnclosingProps b) {
-            return static_cast<EnclosingProps>(
+        inline NodeProps operator|(NodeProps a, NodeProps b) {
+            return static_cast<NodeProps>(
                 static_cast<uint16_t>(a) | static_cast<uint16_t>(b)
             );
         }
 
-        inline EnclosingProps operator&(EnclosingProps a, EnclosingProps b) {
-            return static_cast<EnclosingProps>(
+        inline NodeProps operator&(NodeProps a, NodeProps b) {
+            return static_cast<NodeProps>(
                 static_cast<uint16_t>(a) & static_cast<uint16_t>(b)
             );
         }

@@ -12,36 +12,35 @@ void mfast::maybe_link_operations_on_stack(
 ) {
     // If we have two non-operating nodes in a row, we have a break of expression.
     // TODO(Matthew): handle other control flow
-    if (parser_state.last_seen.back() == mfast::NodeCategory::NONOP) {
+    if ((parser_state.last_seen.back() & NodeProps::NONOP) == NodeProps::NONOP) {
         mfassert(
-            (parser_state.enclosed_by.back() & EnclosingProps::SINGLE_EXPR)
-                != EnclosingProps::SINGLE_EXPR,
+            (parser_state.enclosed_by.back() & NodeProps::SINGLE_EXPR)
+                != NodeProps::SINGLE_EXPR,
             "Multiple expressions in a single expression closure."
         );
 
         // We detect the end of an if expression by the fact we have two consecutive
         // expressions not separated by a keyword.
-        if ((parser_state.enclosed_by.back() & EnclosingProps::IF)
-            == EnclosingProps::IF)
-        {
+        if ((parser_state.enclosed_by.back() & NodeProps::IF) == NodeProps::IF) {
             mfassert(
-                parser_state.last_seen.back() == NodeCategory::THEN
-                    || parser_state.last_seen.back() == NodeCategory::ELSE,
+                (parser_state.last_seen.back() & NodeProps::THEN) == NodeProps::THEN
+                    || (parser_state.last_seen.back() & NodeProps::ELSE)
+                           == NodeProps::ELSE,
                 "Closing an if-expression whose last block is neither a then or else "
                 "expression."
             );
 
             // Pop if enclosure.
-            pop_enclosure(EnclosingProps::IF, ast, nodes, parser_state);
-        } else if ((parser_state.enclosed_by.back() & EnclosingProps::FOR) == EnclosingProps::FOR)
+            pop_enclosure(NodeProps::IF, ast, nodes, parser_state);
+        } else if ((parser_state.enclosed_by.back() & NodeProps::FOR) == NodeProps::FOR)
         {
             mfassert(
-                parser_state.last_seen.back() == NodeCategory::DO,
+                (parser_state.last_seen.back() & NodeProps::DO) == NodeProps::DO,
                 "Closing a for-expression whose last block is not a do expression."
             );
 
             // Pop for enclosure.
-            pop_enclosure(EnclosingProps::FOR, ast, nodes, parser_state);
+            pop_enclosure(NodeProps::FOR, ast, nodes, parser_state);
         }
 
         mfast::link_operations_on_stack(
