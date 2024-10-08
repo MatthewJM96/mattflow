@@ -238,7 +238,7 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
 
             trim_whitespace(remaining_source_view);
 
-            ////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////
             // Multi-line comments.
 
         } else if (remaining_source_view.source.starts_with("/*")) {
@@ -258,7 +258,7 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
 
             trim_whitespace(remaining_source_view);
 
-            ////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////
             // Tokens
 
         } else {
