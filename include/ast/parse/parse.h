@@ -1,5 +1,5 @@
-#ifndef __mattflow_ast_parse_h
-#define __mattflow_ast_parse_h
+#ifndef __mattflow_ast_parse_parse_h
+#define __mattflow_ast_parse_parse_h
 
 #include "ast/ast.h"
 #include "ast/node.h"
@@ -28,4 +28,4 @@ namespace mattflow {
 }  // namespace mattflow
 namespace mfast = mattflow::ast;
 
-#endif  // __mattflow_ast_parse_h
+#endif  // __mattflow_ast_parse_parse_h

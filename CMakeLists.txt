@@ -114,9 +114,9 @@ endif()
 ################################
 
 add_library(mattflow
-    "${PROJECT_SOURCE_DIR}/src/ast/link.cpp"
-    "${PROJECT_SOURCE_DIR}/src/ast/parse.cpp"
-    "${PROJECT_SOURCE_DIR}/src/ast/state.cpp"
+    "${PROJECT_SOURCE_DIR}/src/ast/parse/link.cpp"
+    "${PROJECT_SOURCE_DIR}/src/ast/parse/parse.cpp"
+    "${PROJECT_SOURCE_DIR}/src/ast/parse/state.cpp"
     "${PROJECT_SOURCE_DIR}/src/backend/llvm.cpp"
     "${PROJECT_SOURCE_DIR}/src/lex/lexer.cpp"
     "${PROJECT_SOURCE_DIR}/src/lex/token.cpp"

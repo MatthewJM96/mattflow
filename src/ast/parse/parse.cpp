@@ -1,12 +1,12 @@
 #include "stdafx.h"
 
-#include "ast/link.h"
 #include "ast/node.h"
-#include "ast/single_token.h"
-#include "ast/state.h"
+#include "ast/parse/link.h"
+#include "ast/parse/single_token.h"
+#include "ast/parse/state.h"
 #include "literal/identifier.h"
 
-#include "ast/parse.h"
+#include "ast/parse/parse.h"
 
 void mfast::parse(
     VALIN const mflex::Tokens& tokens,

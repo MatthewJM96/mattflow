@@ -2,13 +2,13 @@
 .vscode/
 
 # Build artifacts
-build/
+/build/
 
 # Test artifacts
-test/results
+/test/results
 
 # Run log artifacts
-log/
+/log/
 
 # Debug artifacts
 *.png

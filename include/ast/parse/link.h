@@ -1,8 +1,8 @@
-#ifndef __mattflow_ast_link_h
-#define __mattflow_ast_link_h
+#ifndef __mattflow_ast_parse_link_h
+#define __mattflow_ast_parse_link_h
 
-#include "ast/parse.h"
-#include "ast/state.h"
+#include "ast/parse/parse.h"
+#include "ast/parse/state.h"
 
 namespace mattflow {
     namespace ast {
@@ -39,4 +39,4 @@ namespace mattflow {
 }  // namespace mattflow
 namespace mfast = mattflow::ast;
 
-#endif  // __mattflow_ast_link_h
+#endif  // __mattflow_ast_parse_link_h

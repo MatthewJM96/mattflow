@@ -3,7 +3,7 @@
 #include <argparse/argparse.hpp>
 
 #include "ast/debug.h"
-#include "ast/parse.h"
+#include "ast/parse/parse.h"
 #include "backend/llvm.h"
 #include "lex/lexer.h"
 

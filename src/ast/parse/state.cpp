@@ -1,7 +1,8 @@
 #include "stdafx.h"
 
-#include "ast/link.h"
-#include "ast/state.h"
+#include "ast/parse/link.h"
+
+#include "ast/parse/state.h"
 
 void mfast::push_enclosure(
     VALIN mfast::NodeInfo&& enclosing_node_info,

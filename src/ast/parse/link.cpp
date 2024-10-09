@@ -1,10 +1,10 @@
 #include "stdafx.h"
 
 #include "ast/node.h"
-#include "ast/state.h"
+#include "ast/parse/state.h"
 #include "ast/visitor/operator.h"
 
-#include "ast/link.h"
+#include "ast/parse/link.h"
 
 void mfast::maybe_link_operations_on_stack(
     VALOUT mfast::AST& ast,
