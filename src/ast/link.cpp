@@ -2,6 +2,7 @@
 
 #include "ast/node.h"
 #include "ast/state.h"
+#include "ast/visitor/operator.h"
 
 #include "ast/link.h"
 

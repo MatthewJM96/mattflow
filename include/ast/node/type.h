@@ -345,17 +345,6 @@ namespace mattflow {
 
             std::string debug_repr() const override { return "type: float64"; }
         };
-
-        struct GetTypeVisitor {
-            template <typename TypeNodeType>
-            mftype::Type operator()(const TypeNodeType&) {
-                if constexpr (std::is_base_of_v<TypeNode, TypeNodeType>) {
-                    return TypeNodeType::TYPE;
-                } else {
-                    return mftype::UnresolvedType{};
-                }
-            }
-        };
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;

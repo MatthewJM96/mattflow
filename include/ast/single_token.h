@@ -3,6 +3,7 @@
 
 #include "ast/ast.h"
 #include "ast/node.h"
+#include "ast/visitor/type.h"
 #include "lex/token.h"
 
 namespace mattflow {
@@ -27,19 +28,14 @@ namespace mattflow {
             // If we are adding a type node, check if the last-seen vertex was a type
             // assignment node and if so create a type record.
             if constexpr (std::is_base_of_v<_NodeType, TypeNode>) {
+                // We could be assigning a type as a value.
                 if (parser_state.last_seen.back() == NodeProps::ASSIGN_TYPE) {
-                    IdentifierNode* in
-                        = std::get_if<IdentifierNode>(&nodes.get_node_info(
+                    std::visit(
+                        AssignTypeVisitor<_NodeType>{ type_table },
+                        nodes.get_node_info(
                             parser_state.non_operating_vertices.back().back()
-                        ));
-
-                    if (in) {
-                        type_table.associate_type(in->name, _NodeType::TYPE);
-                    }
-
-                    // We don't care if we fail, just means it was a function we were
-                    // dealing with - for which I haven't figured out how to track.
-                    // TODO(Matthew): how shall we deal with this?
+                        )
+                    );
                 }
             } else if constexpr (std::is_base_of_v<_NodeType, IdentifierNode>) {
                 if (parser_state.last_seen.back() == NodeProps::ASSIGN_TYPE) {
