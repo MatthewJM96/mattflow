@@ -40,10 +40,10 @@ void mfast::parse(
         switch (it->type) {
             case mflex::TokenType::IF:
                 mfassert(
-                    parser_state.last_seen.back() != NodeProps::IF
-                        && parser_state.last_seen.back() != NodeProps::THEN
-                        && parser_state.last_seen.back() != NodeProps::ELIF
-                        && parser_state.last_seen.back() != NodeProps::ELSE,
+                    (parser_state.last_seen.back()
+                     & (NodeProps::IF | NodeProps::THEN | NodeProps::ELIF
+                        | NodeProps::ELSE))
+                        == NodeProps::NONE,
                     "Cannot embed an if-expression directly in a subexpression of "
                     "another if-expression."
                 );
@@ -382,8 +382,9 @@ void mfast::parse(
                 continue;
             case mflex::TokenType::ASSIGN_TYPE:
                 mfassert(
-                    parser_state.last_seen.back() == NodeProps::IDENTIFIER
-                        || parser_state.last_seen.back() == NodeProps::PAREN_EXPR,
+                    (parser_state.last_seen.back()
+                     & (NodeProps::IDENTIFIER | NodeProps::PAREN_EXPR))
+                        != NodeProps::NONE,
                     "Trying to assign a type to something that cannot receive a type."
                 );
 

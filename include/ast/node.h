@@ -41,14 +41,30 @@ namespace mattflow {
 
         inline NodeProps operator|(NodeProps a, NodeProps b) {
             return static_cast<NodeProps>(
-                static_cast<uint16_t>(a) | static_cast<uint16_t>(b)
+                static_cast<uint32_t>(a) | static_cast<uint32_t>(b)
             );
+        }
+
+        inline NodeProps& operator|=(NodeProps& a, NodeProps b) {
+            a = static_cast<NodeProps>(
+                static_cast<uint32_t>(a) | static_cast<uint32_t>(b)
+            );
+
+            return a;
         }
 
         inline NodeProps operator&(NodeProps a, NodeProps b) {
             return static_cast<NodeProps>(
-                static_cast<uint16_t>(a) & static_cast<uint16_t>(b)
+                static_cast<uint32_t>(a) & static_cast<uint32_t>(b)
             );
+        }
+
+        inline NodeProps& operator&=(NodeProps& a, NodeProps b) {
+            a = static_cast<NodeProps>(
+                static_cast<uint32_t>(a) | static_cast<uint32_t>(b)
+            );
+
+            return a;
         }
 
         template <typename CandidateNodeType>

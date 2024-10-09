@@ -19,6 +19,11 @@ namespace mattflow {
             const auto nonop_node
                 = _NodeType{ curr_token, curr_token, std::forward<Args>(args)... };
 
+            // Link operations on stack if we have an end of expression.
+            mfast::maybe_link_operations_on_stack(ast, nodes, parser_state);
+
+            parser_state.last_seen.back() = mfast::NodeProps::NONOP;
+
             // If we are adding a type node, check if the last-seen vertex was a type
             // assignment node and if so create a type record.
             if constexpr (std::is_base_of_v<_NodeType, TypeNode>) {
@@ -62,10 +67,9 @@ namespace mattflow {
                     // dealing with - for which I haven't figured out how to track.
                     // TODO(Matthew): how shall we deal with this?
                 }
-            }
 
-            // Link operations on stack if we have an end of expression.
-            mfast::maybe_link_operations_on_stack(ast, nodes, parser_state);
+                parser_state.last_seen.back() |= mfast::NodeProps::IDENTIFIER;
+            }
 
             // Add vertex to AST for node, and push it onto the stack.
             auto vertex = boost::add_vertex(ast);
@@ -74,8 +78,6 @@ namespace mattflow {
             // Add node info about bool node and associate with vertex in AST.
             nodes.vertex_node_map[vertex] = nodes.node_info.size();
             nodes.node_info.emplace_back(nonop_node);
-
-            parser_state.last_seen.back() = mfast::NodeProps::NONOP;
 
             // Move forward a token.
             curr_token += 1;
