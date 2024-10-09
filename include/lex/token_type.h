@@ -9,14 +9,6 @@
 
 namespace mattflow {
     namespace lex {
-        enum class TokenMatchingStrategy {
-            EXACT,
-            KEYWORD,
-            IDENTIFIER,
-            STRING,
-            NUMBER
-        };
-
         enum class TokenType : int16_t {
             SENTINEL = std::numeric_limits<int16_t>::min(),
 
@@ -101,82 +93,75 @@ namespace mattflow {
         };
 
         struct TokenMatcher {
-            TokenType             type;
-            TokenMatchingStrategy matching_strategy;
-            std::string           pattern;
+            TokenType   type;
+            std::string pattern;
         };
 
-        const std::vector<char> KEYWORD_STOPWORDS
+        const std::array<char, 20> KEYWORD_STOPWORDS
             = { ' ', '\n', '(', ')', '{', '}', '[', ']', ',', '.',
                 '-', '!',  '=', '<', '>', ':', '+', '/', '*', '^' };
 
-        static std::vector<TokenMatcher> TOKEN_MATCHERS = {
-            {              TokenType::LEFT_PAREN,TokenMatchingStrategy::EXACT,            "("                                                                                 },
-            {             TokenType::RIGHT_PAREN,   TokenMatchingStrategy::EXACT,                                            ")"},
-            {              TokenType::LEFT_BRACE,   TokenMatchingStrategy::EXACT,                                            "{"},
-            {             TokenType::RIGHT_BRACE,   TokenMatchingStrategy::EXACT,                                            "}"},
-            {            TokenType::LEFT_BRACKET,   TokenMatchingStrategy::EXACT,                                            "["},
-            {           TokenType::RIGHT_BRACKET,   TokenMatchingStrategy::EXACT,                                            "]"},
-            {                   TokenType::COMMA,   TokenMatchingStrategy::EXACT,                                            ","},
-            {                TokenType::SEQUENCE,   TokenMatchingStrategy::EXACT,                                           ".."},
-            {                     TokenType::DOT,   TokenMatchingStrategy::EXACT,                                            "."},
-            {              TokenType::NOT_EQUALS,   TokenMatchingStrategy::EXACT,                                           "!="},
-            {                     TokenType::NOT,   TokenMatchingStrategy::EXACT,                                            "!"},
-            {                  TokenType::EQUALS,   TokenMatchingStrategy::EXACT,                                           "=="},
-            {               TokenType::LESS_THAN,   TokenMatchingStrategy::EXACT,                                            "<"},
-            {   TokenType::LESS_THAN_OR_EQUAL_TO,   TokenMatchingStrategy::EXACT,                                           "<="},
-            {            TokenType::GREATER_THAN,   TokenMatchingStrategy::EXACT,                                            ">"},
-            {TokenType::GREATER_THAN_OR_EQUAL_TO,   TokenMatchingStrategy::EXACT,                                           ">="},
-            {    TokenType::ASSIGN_DEDUCED_VALUE,   TokenMatchingStrategy::EXACT,                                           ":="},
-            {           TokenType::DEDUCED_ARROW,   TokenMatchingStrategy::EXACT,                                          ":->"},
-            {             TokenType::ASSIGN_TYPE,   TokenMatchingStrategy::EXACT,                                            ":"},
-            {            TokenType::ASSIGN_VALUE,   TokenMatchingStrategy::EXACT,                                            "="},
-            {                   TokenType::ARROW,   TokenMatchingStrategy::EXACT,                                           "->"},
-            {                   TokenType::MINUS,   TokenMatchingStrategy::EXACT,                                            "-"},
-            {                    TokenType::PLUS,   TokenMatchingStrategy::EXACT,                                            "+"},
-            {                   TokenType::SLASH,   TokenMatchingStrategy::EXACT,                                            "/"},
-            {                    TokenType::STAR,   TokenMatchingStrategy::EXACT,                                            "*"},
-            {                   TokenType::POWER,   TokenMatchingStrategy::EXACT,                                            "^"},
-            {                      TokenType::OR, TokenMatchingStrategy::KEYWORD,                                           "or"},
-            {                     TokenType::AND, TokenMatchingStrategy::KEYWORD,                                          "and"},
-            {                      TokenType::IF, TokenMatchingStrategy::KEYWORD,                                           "if"},
-            {                    TokenType::THEN, TokenMatchingStrategy::KEYWORD,                                         "then"},
-            {                    TokenType::ELIF, TokenMatchingStrategy::KEYWORD,                                         "elif"},
-            {                    TokenType::ELSE, TokenMatchingStrategy::KEYWORD,                                         "else"},
-            {                     TokenType::FOR, TokenMatchingStrategy::KEYWORD,                                          "for"},
-            {                      TokenType::IN, TokenMatchingStrategy::KEYWORD,                                           "in"},
-            {                   TokenType::WHERE, TokenMatchingStrategy::KEYWORD,                                        "where"},
-            {                   TokenType::WHILE, TokenMatchingStrategy::KEYWORD,                                        "while"},
-            {                      TokenType::DO, TokenMatchingStrategy::KEYWORD,                                           "do"},
-            {                   TokenType::MATCH, TokenMatchingStrategy::KEYWORD,                                        "match"},
-            {                   TokenType::PRINT, TokenMatchingStrategy::KEYWORD,                                        "print"},
-            {                  TokenType::STRUCT, TokenMatchingStrategy::KEYWORD,                                       "struct"},
-            {                    TokenType::TRUE, TokenMatchingStrategy::KEYWORD,                                         "true"},
-            {                   TokenType::FALSE, TokenMatchingStrategy::KEYWORD,                                        "false"},
-            {                     TokenType::NIL, TokenMatchingStrategy::KEYWORD,                                         "null"},
-            {                    TokenType::CHAR, TokenMatchingStrategy::KEYWORD,                                         "char"},
-            {                    TokenType::BOOL, TokenMatchingStrategy::KEYWORD,                                         "bool"},
-            {                     TokenType::INT, TokenMatchingStrategy::KEYWORD,                                          "int"},
-            {                    TokenType::INT8, TokenMatchingStrategy::KEYWORD,                                         "int8"},
-            {                   TokenType::INT16, TokenMatchingStrategy::KEYWORD,                                        "int16"},
-            {                   TokenType::INT32, TokenMatchingStrategy::KEYWORD,                                        "int32"},
-            {                   TokenType::INT64, TokenMatchingStrategy::KEYWORD,                                        "int64"},
-            {                    TokenType::UINT, TokenMatchingStrategy::KEYWORD,                                         "uint"},
-            {                   TokenType::UINT8, TokenMatchingStrategy::KEYWORD,                                        "uint8"},
-            {                  TokenType::UINT16, TokenMatchingStrategy::KEYWORD,                                       "uint16"},
-            {                  TokenType::UINT32, TokenMatchingStrategy::KEYWORD,                                       "uint32"},
-            {                  TokenType::UINT64, TokenMatchingStrategy::KEYWORD,                                       "uint64"},
-            {                 TokenType::FLOAT32, TokenMatchingStrategy::KEYWORD,                                      "float32"},
-            {                 TokenType::FLOAT64, TokenMatchingStrategy::KEYWORD,                                      "float64"},
-            {              TokenType::IDENTIFIER,
-             TokenMatchingStrategy::IDENTIFIER,
-             "^(?:[a-zA-Z_][a-zA-Z_0-9]*)"                                                                                      },
-            {                  TokenType::STRING,
-             TokenMatchingStrategy::STRING,
-             "^(?:(?:\\\"{3}((?:[^\\\"]*)*)\\\"{3})|(?:\\\"([^\\\"\\n]*)\\\"))"                                                 },
-            {                  TokenType::NUMBER,
-             TokenMatchingStrategy::NUMBER,
-             "^(?:[0-9]+(?:\\.[0-9]*)?)"                                                                                        },
+        static std::array<TokenMatcher, 26> EXACT_TOKEN_MATCHERS = {
+            TokenMatcher{              TokenType::LEFT_PAREN,   "("},
+            TokenMatcher{             TokenType::RIGHT_PAREN,   ")"},
+            TokenMatcher{              TokenType::LEFT_BRACE,   "{"},
+            TokenMatcher{             TokenType::RIGHT_BRACE,   "}"},
+            TokenMatcher{            TokenType::LEFT_BRACKET,   "["},
+            TokenMatcher{           TokenType::RIGHT_BRACKET,   "]"},
+            TokenMatcher{                   TokenType::COMMA,   ","},
+            TokenMatcher{                TokenType::SEQUENCE,  ".."},
+            TokenMatcher{                     TokenType::DOT,   "."},
+            TokenMatcher{              TokenType::NOT_EQUALS,  "!="},
+            TokenMatcher{                     TokenType::NOT,   "!"},
+            TokenMatcher{                  TokenType::EQUALS,  "=="},
+            TokenMatcher{               TokenType::LESS_THAN,   "<"},
+            TokenMatcher{   TokenType::LESS_THAN_OR_EQUAL_TO,  "<="},
+            TokenMatcher{            TokenType::GREATER_THAN,   ">"},
+            TokenMatcher{TokenType::GREATER_THAN_OR_EQUAL_TO,  ">="},
+            TokenMatcher{    TokenType::ASSIGN_DEDUCED_VALUE,  ":="},
+            TokenMatcher{           TokenType::DEDUCED_ARROW, ":->"},
+            TokenMatcher{             TokenType::ASSIGN_TYPE,   ":"},
+            TokenMatcher{            TokenType::ASSIGN_VALUE,   "="},
+            TokenMatcher{                   TokenType::ARROW,  "->"},
+            TokenMatcher{                   TokenType::MINUS,   "-"},
+            TokenMatcher{                    TokenType::PLUS,   "+"},
+            TokenMatcher{                   TokenType::SLASH,   "/"},
+            TokenMatcher{                    TokenType::STAR,   "*"},
+            TokenMatcher{                   TokenType::POWER,   "^"}
+        };
+
+        static std::array<TokenMatcher, 31> KEYWORD_TOKEN_MATCHERS = {
+            TokenMatcher{     TokenType::OR,      "or"},
+            TokenMatcher{    TokenType::AND,     "and"},
+            TokenMatcher{     TokenType::IF,      "if"},
+            TokenMatcher{   TokenType::THEN,    "then"},
+            TokenMatcher{   TokenType::ELIF,    "elif"},
+            TokenMatcher{   TokenType::ELSE,    "else"},
+            TokenMatcher{    TokenType::FOR,     "for"},
+            TokenMatcher{     TokenType::IN,      "in"},
+            TokenMatcher{  TokenType::WHERE,   "where"},
+            TokenMatcher{  TokenType::WHILE,   "while"},
+            TokenMatcher{     TokenType::DO,      "do"},
+            TokenMatcher{  TokenType::MATCH,   "match"},
+            TokenMatcher{  TokenType::PRINT,   "print"},
+            TokenMatcher{ TokenType::STRUCT,  "struct"},
+            TokenMatcher{   TokenType::TRUE,    "true"},
+            TokenMatcher{  TokenType::FALSE,   "false"},
+            TokenMatcher{    TokenType::NIL,    "null"},
+            TokenMatcher{   TokenType::CHAR,    "char"},
+            TokenMatcher{   TokenType::BOOL,    "bool"},
+            TokenMatcher{    TokenType::INT,     "int"},
+            TokenMatcher{   TokenType::INT8,    "int8"},
+            TokenMatcher{  TokenType::INT16,   "int16"},
+            TokenMatcher{  TokenType::INT32,   "int32"},
+            TokenMatcher{  TokenType::INT64,   "int64"},
+            TokenMatcher{   TokenType::UINT,    "uint"},
+            TokenMatcher{  TokenType::UINT8,   "uint8"},
+            TokenMatcher{ TokenType::UINT16,  "uint16"},
+            TokenMatcher{ TokenType::UINT32,  "uint32"},
+            TokenMatcher{ TokenType::UINT64,  "uint64"},
+            TokenMatcher{TokenType::FLOAT32, "float32"},
+            TokenMatcher{TokenType::FLOAT64, "float64"},
         };
     }  // namespace lex
 }  // namespace mattflow

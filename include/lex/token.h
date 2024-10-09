@@ -26,6 +26,13 @@ namespace mattflow {
         };
 
         using Tokens = std::vector<Token>;
+
+        bool try_match_token(
+            VALIN const mf::SourceView& remaining_source_view,
+            VALOUT mflex::Token& token,
+            VALOUT mflit::IdentifierTable& identifier_table,
+            VALOUT mflit::StringTable& string_table
+        );
     }  // namespace lex
 }  // namespace mattflow
 namespace mflex = mattflow::lex;

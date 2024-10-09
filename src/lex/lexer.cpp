@@ -27,187 +27,6 @@ static void trim_whitespace(VALINOUT mf::SourceView& source_view) {
     source_view.source = source_view.source.substr(offset);
 }
 
-static bool try_match_token(
-    VALIN const mf::SourceView& remaining_source_view,
-    VALOUT mflex::Token& token,
-    VALOUT mflit::IdentifierTable& identifier_table,
-    VALOUT mflit::StringTable& string_table
-) {
-    for (auto& matcher : mflex::TOKEN_MATCHERS) {
-        bool   found_match  = false;
-        size_t match_length = 0;
-
-        if (matcher.matching_strategy == mflex::TokenMatchingStrategy::EXACT
-            || matcher.matching_strategy == mflex::TokenMatchingStrategy::KEYWORD)
-        {
-            // Try to match current pattern exactly.
-            //   NOTE: reinterpret_cast needed to satisfy MSVC.
-            found_match = remaining_source_view.source.starts_with(matcher.pattern);
-
-            if (matcher.matching_strategy == mflex::TokenMatchingStrategy::KEYWORD) {
-                // Make sure the keyword is followed by one of the valid stopwords.
-                char next_char
-                    = *(remaining_source_view.source.data() + matcher.pattern.length());
-                bool found_stopword = false;
-                for (char stopword : mflex::KEYWORD_STOPWORDS) {
-                    if (next_char == stopword) {
-                        found_stopword = true;
-                        break;
-                    }
-                }
-
-                found_match = found_match && found_stopword;
-            }
-
-            match_length = matcher.pattern.length();
-        } else if (matcher.matching_strategy == mflex::TokenMatchingStrategy::IDENTIFIER)
-        {
-            size_t curr_char
-                = static_cast<size_t>(*remaining_source_view.source.data());
-            size_t offset = 0;
-
-            if ((static_cast<size_t>('a') <= curr_char
-                 && curr_char <= static_cast<size_t>('z'))
-                || (static_cast<size_t>('A') <= curr_char
-                    && curr_char <= static_cast<size_t>('Z'))
-                || static_cast<size_t>('_') == curr_char)
-            {
-                do {
-                    curr_char = *(remaining_source_view.source.data() + ++offset);
-                } while ((static_cast<size_t>('a') <= curr_char
-                          && curr_char <= static_cast<size_t>('z'))
-                         || (static_cast<size_t>('A') <= curr_char
-                             && curr_char <= static_cast<size_t>('Z'))
-                         || (static_cast<size_t>('0') <= curr_char
-                             && curr_char <= static_cast<size_t>('9'))
-                         || static_cast<size_t>('_') == curr_char);
-            }
-
-            if (offset > 0) {
-                found_match  = true;
-                match_length = offset;
-
-                token.identifier_idx = identifier_table.try_insert(
-                    remaining_source_view.source.substr(0, match_length)
-                );
-            }
-        } else if (matcher.matching_strategy == mflex::TokenMatchingStrategy::STRING) {
-            size_t offset          = 0;
-            size_t internal_offset = 0;
-
-            if (remaining_source_view.source.starts_with("\"\"\"")) {
-                offset          = 2;
-                internal_offset = 3;
-                while (++offset < remaining_source_view.source.length()) {
-                    if (remaining_source_view.source.substr(offset).starts_with("\"\"\""
-                        ))
-                    {
-                        found_match = true;
-                        break;
-                    }
-                }
-            } else if (remaining_source_view.source.starts_with("\"")) {
-                offset          = 0;
-                internal_offset = 1;
-                while (++offset < remaining_source_view.source.length()) {
-                    if (remaining_source_view.source.substr(offset).starts_with("\"")) {
-                        found_match = true;
-                        break;
-                    }
-                }
-            }
-
-            if (found_match) {
-                match_length     = offset + internal_offset;
-                token.string_idx = string_table.try_insert(
-                    std::string(remaining_source_view.source.substr(
-                        internal_offset, match_length - 2 * internal_offset
-                    ))
-                );
-            }
-        } else if (matcher.matching_strategy == mflex::TokenMatchingStrategy::NUMBER) {
-            size_t curr_char
-                = static_cast<size_t>(*remaining_source_view.source.data());
-            size_t offset = 0;
-
-            while (static_cast<size_t>('0') <= curr_char
-                   && curr_char <= static_cast<size_t>('9'))
-            {
-                curr_char = *(remaining_source_view.source.data() + ++offset);
-            }
-
-            if (offset == 0) {
-                found_match = false;
-                goto end_matching;
-            }
-
-            found_match = true;
-
-            if (curr_char == '.') {
-                ++offset;
-            } else {
-                goto scientific_notation;
-            }
-
-            do {
-                curr_char = *(remaining_source_view.source.data() + ++offset);
-            } while (static_cast<size_t>('0') <= curr_char
-                     && curr_char <= static_cast<size_t>('9'));
-
-scientific_notation:
-
-            if (curr_char == 'd' || curr_char == 'D' || curr_char == 'e'
-                || curr_char == 'E')
-            {
-                ++offset;
-            } else {
-                match_length = offset;
-                goto end_matching;
-            }
-
-            do {
-                curr_char = *(remaining_source_view.source.data() + ++offset);
-            } while (static_cast<size_t>('0') <= curr_char
-                     && curr_char <= static_cast<size_t>('9'));
-
-            match_length = offset;
-end_matching:
-            if (found_match) {
-                token.number
-                    = mflit::Number(remaining_source_view.source.substr(0, match_length)
-                    );
-            }
-        }
-
-        // Construct token if we matched.
-        if (found_match) {
-            token.type    = matcher.type;
-            token.file_id = remaining_source_view.file_id;
-
-            token.length       = match_length;
-            token.start_line   = remaining_source_view.start_line;
-            token.start_column = remaining_source_view.start_column;
-
-            // Find end line and column of token.
-            token.end_line   = token.start_line;
-            token.end_column = token.start_column;
-            for (auto c : remaining_source_view.source.substr(0, token.length)) {
-                if (c == '\n') {
-                    ++token.end_line;
-                    token.end_column = 0;
-                } else {
-                    ++token.end_column;
-                }
-            }
-
-            // Don't consider any other patterns.
-            return true;
-        }
-    }
-
-    return false;
-}
-
 void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
     // Get handle on global identifier and string tables.
     mflit::IdentifierTable& identifier_table = mflit::IdentifierTable::get();
@@ -238,10 +57,13 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
 
             trim_whitespace(remaining_source_view);
 
-            ////////////////////////////////////////////////////////////////////////////
-            // Multi-line comments.
+            continue;
+        }
 
-        } else if (remaining_source_view.source.starts_with("/*")) {
+        ////////////////////////////////////////////////////////////////////////////////
+        // Multi-line comments.
+
+        if (remaining_source_view.source.starts_with("/*")) {
             size_t end_of_multiline = remaining_source_view.source.find("*/");
 
             for (auto c : remaining_source_view.source.substr(0, end_of_multiline)) {
@@ -258,28 +80,29 @@ void mflex::parse(SourceView source_view, VALOUT Tokens& tokens) {
 
             trim_whitespace(remaining_source_view);
 
-            ////////////////////////////////////////////////////////////////////////////
-            // Tokens
-
-        } else {
-            Token token;
-            token.type = TokenType::SENTINEL;
-
-            if (try_match_token(
-                    remaining_source_view, token, identifier_table, string_table
-                ))
-            {
-                tokens.emplace_back(token);
-            }
-
-            mfassert(token.type != TokenType::SENTINEL, "Unidentified Lexical Object");
-
-            remaining_source_view.source
-                = remaining_source_view.source.substr(token.length);
-            remaining_source_view.start_line   = token.end_line;
-            remaining_source_view.start_column = token.end_column;
-
-            trim_whitespace(remaining_source_view);
+            continue;
         }
+
+        ////////////////////////////////////////////////////////////////////////////////
+        // Tokens
+
+        Token token;
+        token.type = TokenType::SENTINEL;
+
+        if (try_match_token(
+                remaining_source_view, token, identifier_table, string_table
+            ))
+        {
+            tokens.emplace_back(token);
+        }
+
+        mfassert(token.type != TokenType::SENTINEL, "Unidentified Lexical Object");
+
+        remaining_source_view.source
+            = remaining_source_view.source.substr(token.length);
+        remaining_source_view.start_line   = token.end_line;
+        remaining_source_view.start_column = token.end_column;
+
+        trim_whitespace(remaining_source_view);
     }
 }
