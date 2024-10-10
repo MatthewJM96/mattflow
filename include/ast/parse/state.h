@@ -19,6 +19,7 @@ namespace mattflow {
             std::vector<ASTVertex>              enclosing_vertices;
             std::vector<NodeProps>              enclosed_by;
             std::vector<NodeProps>              last_seen;
+            std::vector<ASTVertex>              leaf_vertices;
         };
 
         /**
