@@ -74,10 +74,10 @@ static bool try_string_match(
     VALOUT mflit::StringTable& string_table,
     VALOUT size_t&             match_length
 ) {
-    bool   string_started  = false;
-    bool   found_match     = false;
-    size_t offset          = 0;
-    size_t internal_offset = 0;
+    [[maybe_unused]] bool string_started  = false;
+    bool                  found_match     = false;
+    size_t                offset          = 0;
+    size_t                internal_offset = 0;
 
     if (remaining_source_view.source.starts_with("\"\"\"")) {
         string_started  = true;
