@@ -132,29 +132,19 @@ void mfast::link_operations_on_stack(
                 // non-operating vertex. If we do, then stitch to that operator.
                 if (stitch_to == STITCH_TO_NEXT_NON_OP) {
                     // Stitch to last two non-operating vertices.
-                    boost::add_edge(
-                        op_vert,
-                        *(parser_state.non_operating_vertices.back().end() - 2),
-                        ast
-                    );
-                    boost::add_edge(
-                        op_vert,
-                        *(parser_state.non_operating_vertices.back().end() - 1),
-                        ast
-                    );
+                    boost::add_edge(op_vert, *(nonop_verts.end() - 2), ast);
+                    boost::add_edge(op_vert, *(nonop_verts.end() - 1), ast);
 
                     // Pop those non-operating vertices.
-                    parser_state.non_operating_vertices.back().pop_back();
-                    parser_state.non_operating_vertices.back().pop_back();
+                    nonop_verts.pop_back();
+                    nonop_verts.pop_back();
                 } else {
                     // Stitch to last non-operating vertex, and the stitch_to target.
-                    boost::add_edge(
-                        op_vert, parser_state.non_operating_vertices.back().back(), ast
-                    );
+                    boost::add_edge(op_vert, nonop_verts.back(), ast);
                     boost::add_edge(op_vert, stitch_to, ast);
 
                     // Pop the non-operating vertex.
-                    parser_state.non_operating_vertices.back().pop_back();
+                    nonop_verts.pop_back();
                 }
 
                 // We should now stitch to this operator we have just dealt with.
