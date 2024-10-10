@@ -627,4 +627,8 @@ void mfast::parse(
 
     // Pop enclosures root enclosure.
     pop_enclosures_up_to_and_including(NodeProps::ROOT, ast, nodes, parser_state);
+
+    for (auto v : parser_state.leaf_vertices) {
+        std::cout << v << std::endl;
+    }
 }

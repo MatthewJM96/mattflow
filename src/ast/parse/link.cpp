@@ -109,6 +109,14 @@ void mfast::link_operations_on_stack(
             // non-operating vertex. If we do, then stitch to that operator.
             if (stitch_to == STITCH_TO_NEXT_NON_OP) {
                 boost::add_edge(op_vert, nonop_verts.back(), ast);
+
+                // Operator with op_vert vertex is no longer a leaf node if the
+                // nonop_vert vertex is in fact a closed operator.
+                if (std::visit(
+                        IsOperatorVisitor{}, nodes.get_node_info(nonop_verts.back())
+                    ))
+                    parser_state.leaf_vertices.erase(op_vert);
+
                 nonop_verts.pop_back();
             } else {
                 boost::add_edge(op_vert, stitch_to, ast);
@@ -135,6 +143,18 @@ void mfast::link_operations_on_stack(
                     boost::add_edge(op_vert, *(nonop_verts.end() - 2), ast);
                     boost::add_edge(op_vert, *(nonop_verts.end() - 1), ast);
 
+                    // Operator with op_vert vertex is no longer a leaf node if either
+                    // nonop_vert vertex is in fact a closed operator.
+                    if (std::visit(
+                            IsOperatorVisitor{},
+                            nodes.get_node_info(*(nonop_verts.end() - 2))
+                        )
+                        || std::visit(
+                            IsOperatorVisitor{},
+                            nodes.get_node_info(*(nonop_verts.end() - 1))
+                        ))
+                        parser_state.leaf_vertices.erase(op_vert);
+
                     // Pop those non-operating vertices.
                     nonop_verts.pop_back();
                     nonop_verts.pop_back();
@@ -142,6 +162,10 @@ void mfast::link_operations_on_stack(
                     // Stitch to last non-operating vertex, and the stitch_to target.
                     boost::add_edge(op_vert, nonop_verts.back(), ast);
                     boost::add_edge(op_vert, stitch_to, ast);
+
+                    // Operator with op_vert vertex is no longer a leaf node as
+                    // stitch_to is guaranteed to be an operator.
+                    parser_state.leaf_vertices.erase(op_vert);
 
                     // Pop the non-operating vertex.
                     nonop_verts.pop_back();
@@ -277,6 +301,14 @@ void mfast::link_operations_on_stack(
                     // Do the stitching.
                     boost::add_edge(next_op_vert, lhs_stitch, ast);
                     boost::add_edge(next_op_vert, rhs_stitch, ast);
+
+                    // Operator with op_vert vertex is no longer a leaf node if either
+                    // *_stitch vertex is in fact a closed operator.
+                    if (std::visit(IsOperatorVisitor{}, nodes.get_node_info(lhs_stitch))
+                        || std::visit(
+                            IsOperatorVisitor{}, nodes.get_node_info(rhs_stitch)
+                        ))
+                        parser_state.leaf_vertices.erase(op_vert);
 
                     // We should now stitch to this operator we have just dealt with.
                     stitch_next_to = next_op_vert;

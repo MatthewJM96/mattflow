@@ -5,6 +5,17 @@
 
 namespace mattflow {
     namespace ast {
+        struct IsOperatorVisitor {
+            template <typename OperatorNodeType>
+            bool operator()(const OperatorNodeType&) {
+                if constexpr (std::is_base_of_v<OperatorNode, OperatorNodeType>) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
         struct GetOrderVisitor {
             template <typename OperatorNodeType>
             Order operator()(const OperatorNodeType&) {

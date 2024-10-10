@@ -71,9 +71,6 @@ namespace mattflow {
             auto vertex = boost::add_vertex(ast);
             parser_state.non_operating_vertices.back().emplace_back(vertex);
 
-            // Add nonop as a leaf vertex - all nonops are leaf vertices.
-            parser_state.leaf_vertices.emplace_back(vertex);
-
             // Add node info about bool node and associate with vertex in AST.
             nodes.vertex_node_map[vertex] = nodes.node_info.size();
             nodes.node_info.emplace_back(nonop_node);
@@ -121,6 +118,9 @@ namespace mattflow {
             // Add vertex to AST for node, and push it onto the stack.
             auto vertex = boost::add_vertex(ast);
             parser_state.operating_vertices.back().emplace_back(vertex);
+
+            // Add op as a leaf vertex - all ops that point only to non-ops are leaves.
+            parser_state.leaf_vertices.insert(vertex);
 
             // Add node info about bool node and associate with vertex in AST.
             nodes.vertex_node_map[vertex] = nodes.node_info.size();
