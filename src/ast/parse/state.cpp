@@ -31,7 +31,9 @@ void mfast::push_enclosure(
 
     // Push new stacks for operating and non-operating vertices.
     parser_state.operating_vertices.push_back({});
+    parser_state.operating_vertices.back().reserve(20);
     parser_state.non_operating_vertices.push_back({});
+    parser_state.non_operating_vertices.back().reserve(20);
 
     // Push a new last-seen category entry.
     parser_state.last_seen.emplace_back(NodeProps::NONE);
