@@ -10,7 +10,7 @@ mfcli::operator+(const mfcli::CompilationTime& lhs, const mfcli::CompilationTime
 }
 
 mfcli::Profile mfcli::Profile::from(const mattflow::SourceView& source_view) {
-    return Profile{ {}, source_view.end_line - source_view.start_line };
+    return Profile{ {}, source_view.end_line - source_view.start_line + 1 };
 }
 
 mfcli::Profile mfcli::operator+(const mfcli::Profile& lhs, const mfcli::Profile& rhs) {
