@@ -133,7 +133,10 @@ int main(int argc, char** argv) {
         mfcli::Profile total_profile
             = std::accumulate(profiles.begin(), profiles.end(), mfcli::Profile{});
 
-        if (profile) mfcli::print_profile(total_profile);
+        if (profile) {
+            std::cout << "Total Profile:" << std::endl;
+            mfcli::print_profile(total_profile);
+        }
     }
 
     return 0;
