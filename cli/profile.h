@@ -11,7 +11,8 @@ namespace mattflow {
             std::chrono::nanoseconds backend_dur;
         };
 
-        CompilationTime operator+(const CompilationTime& lhs, const CompilationTime& rhs);
+        CompilationTime
+        operator+(const CompilationTime& lhs, const CompilationTime& rhs);
 
         struct Profile {
             CompilationTime times;
@@ -23,8 +24,8 @@ namespace mattflow {
         Profile operator+(const Profile& lhs, const Profile& rhs);
 
         void print_profile(const Profile& profile);
-    }
-}
+    }  // namespace cli
+}  // namespace mattflow
 namespace mfcli = mattflow::cli;
 
 #endif  // __mattflow_cli_profile_h

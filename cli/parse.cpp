@@ -65,7 +65,8 @@ mfcli::Profile mfcli::parse_file(
 
     mfbe::convert_module_to_llvm_ir(ast, node_buffers, type_table);
 
-    profile.times.backend_dur = std::chrono::high_resolution_clock::now() - backend_start;
+    profile.times.backend_dur
+        = std::chrono::high_resolution_clock::now() - backend_start;
 
     return profile;
 }

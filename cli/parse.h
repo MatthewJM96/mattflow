@@ -9,7 +9,7 @@ namespace mattflow {
             const std::string& file, bool plot_ast, const std::filesystem::path& log_dir
         );
     }
-}
+}  // namespace mattflow
 namespace mfcli = mattflow::cli;
 
 #endif  // __mattflow_cli_parse_h

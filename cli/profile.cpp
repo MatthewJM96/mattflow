@@ -2,10 +2,11 @@
 
 #include "profile.h"
 
-mfcli::CompilationTime mfcli::operator+(const mfcli::CompilationTime& lhs, const mfcli::CompilationTime& rhs) {
+mfcli::CompilationTime
+mfcli::operator+(const mfcli::CompilationTime& lhs, const mfcli::CompilationTime& rhs) {
     return { lhs.lex_dur + rhs.lex_dur,
-            lhs.ast_dur + rhs.ast_dur,
-            lhs.backend_dur + rhs.backend_dur };
+             lhs.ast_dur + rhs.ast_dur,
+             lhs.backend_dur + rhs.backend_dur };
 }
 
 mfcli::Profile mfcli::Profile::from(const mattflow::SourceView& source_view) {
@@ -17,8 +18,8 @@ mfcli::Profile mfcli::operator+(const mfcli::Profile& lhs, const mfcli::Profile&
 }
 
 static char* make_time_string(std::chrono::nanoseconds time) {
-    auto raw_time = time.count();
-    char* result = new char[10];
+    auto  raw_time = time.count();
+    char* result   = new char[10];
     if (raw_time > 1e10) {
         snprintf(result, 10, "%5ld%s", static_cast<uint64_t>(raw_time / 1e9), "s");
     } else if (raw_time > 1e7) {
