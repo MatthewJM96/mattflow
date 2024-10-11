@@ -44,8 +44,9 @@ void mfcli::print_profile(const mfcli::Profile& profile) {
 
     uint64_t lines_per_second = profile.lines / total_time;
 
-    printf("    Lexing:             %s\n", make_time_string(times.lex_dur));
-    printf("    Syntactic Analysis: %s\n", make_time_string(times.ast_dur));
-    printf("    LLVM Backend:       %s\n", make_time_string(times.backend_dur));
-    printf("    Lines per Second:     %5ld\n\n", lines_per_second);
+    setlocale(LC_NUMERIC, "");
+    printf("    Lexing             :     %s\n", make_time_string(times.lex_dur));
+    printf("    Syntactic Analysis :     %s\n", make_time_string(times.ast_dur));
+    printf("    LLVM Backend       :     %s\n", make_time_string(times.backend_dur));
+    printf("    Lines per Second   :  %'10ld\n\n", lines_per_second);
 }
