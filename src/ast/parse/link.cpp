@@ -12,7 +12,6 @@ void mfast::maybe_link_operations_on_stack(
     VALOUT mfast::ParserState& parser_state
 ) {
     // If we have two non-operating nodes in a row, we have a break of expression.
-    // TODO(Matthew): handle other control flow
     if ((parser_state.last_seen.back() & NodeProps::NONOP) == NodeProps::NONOP) {
         mfassert(
             (parser_state.enclosed_by.back() & NodeProps::SINGLE_EXPR)
@@ -33,11 +32,12 @@ void mfast::maybe_link_operations_on_stack(
 
             // Pop if enclosure.
             pop_enclosure(NodeProps::IF, ast, nodes, parser_state);
-        } else if ((parser_state.enclosed_by.back() & NodeProps::FOR) == NodeProps::FOR)
+        } else if ((parser_state.enclosed_by.back() & (NodeProps::FOR | NodeProps::WHILE)) != NodeProps::NONE)
         {
             mfassert(
                 (parser_state.last_seen.back() & NodeProps::DO) == NodeProps::DO,
-                "Closing a for-expression whose last block is not a do expression."
+                "Closing a for- or while-expression whose last block is not a do-"
+                "expression."
             );
 
             // Pop for enclosure.
