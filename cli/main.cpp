@@ -2,87 +2,11 @@
 
 #include <argparse/argparse.hpp>
 
-#include "ast/debug.h"
-#include "ast/parse/parse.h"
-#include "backend/llvm.h"
-#include "lex/lexer.h"
-
 #include "exit_codes.h"
+#include "parse.h"
+#include "profile.h"
 
 #define MATTFLOW_VERSION_STRING "mattflow v" + std::string(MATTFLOW_VERSION)
-
-struct CompilationTime {
-    std::chrono::nanoseconds lex_dur;
-    std::chrono::nanoseconds ast_dur;
-    std::chrono::nanoseconds backend_dur;
-};
-
-CompilationTime operator+(const CompilationTime& lhs, const CompilationTime& rhs) {
-    return { lhs.lex_dur + rhs.lex_dur,
-             lhs.ast_dur + rhs.ast_dur,
-             lhs.backend_dur + rhs.backend_dur };
-}
-
-static std::filesystem::path make_dot_filepath(
-    const std::filesystem::path& path, const std::filesystem::path& log_dir
-) {
-    return log_dir / path.filename().replace_extension(".dot");
-}
-
-CompilationTime parse_file(
-    const std::string& file, bool plot_ast, const std::filesystem::path& log_dir
-) {
-    mattflow::SourceView source_view;
-    if (!mattflow::SourceView::from_filepath(file, source_view)) {
-        std::cout << "ERROR : Could not read file at path " << file << std::endl;
-        exit(FILE_UNREADABLE);
-    }
-
-    std::cout << "Parsing " << file << std::endl;
-
-    CompilationTime duration;
-
-    // Lexing
-
-    auto lex_start = std::chrono::high_resolution_clock::now();
-
-    mflex::Tokens tokens;
-    mflex::parse(source_view, tokens);
-
-    duration.lex_dur = std::chrono::high_resolution_clock::now() - lex_start;
-
-    // Syntactic Analysis
-
-    auto ast_start = std::chrono::high_resolution_clock::now();
-
-    mfast::AST                  ast;
-    mfast::NodeBuffers          node_buffers;
-    mftype::IdentifierTypeTable type_table;
-    mfast::parse(tokens, ast, node_buffers, type_table);
-
-    duration.ast_dur = std::chrono::high_resolution_clock::now() - ast_start;
-
-    if (plot_ast == true) {
-        auto dot_filepath = make_dot_filepath(file, log_dir);
-
-        std::ofstream ast_os(dot_filepath);
-        boost::write_graphviz(ast_os, ast, mfast::NodeInfoWriter(&node_buffers));
-
-        (void)std::system(("dot -Tpng -O " + dot_filepath.string()).c_str());
-
-        std::filesystem::remove(dot_filepath);
-    }
-
-    // Backend
-
-    auto backend_start = std::chrono::high_resolution_clock::now();
-
-    mfbe::convert_module_to_llvm_ir(ast, node_buffers, type_table);
-
-    duration.backend_dur = std::chrono::high_resolution_clock::now() - backend_start;
-
-    return duration;
-}
 
 int main(int argc, char** argv) {
     // Set up argument parser with our various options.
@@ -197,30 +121,19 @@ int main(int argc, char** argv) {
     std::cout << std::endl;
 
     // Parse each input file in turn.
-    std::vector<CompilationTime> durations;
+    std::vector<mfcli::Profile> profiles;
     for (auto& input_file : input_files) {
-        durations.emplace_back(parse_file(input_file, plot_ast, log_dir));
+        profiles.emplace_back(mfcli::parse_file(input_file, plot_ast, log_dir));
 
-        if (profile) {
-            std::cout << "    Lexing: " << durations.back().lex_dur.count() / 1000
-                      << "us\n    Syntactic Analysis: "
-                      << durations.back().ast_dur.count() / 1000
-                      << "us\n    LLVM Backend: "
-                      << durations.back().backend_dur.count() / 1000 << "us"
-                      << std::endl;
-        }
+        if (profile) mfcli::print_profile(profiles.back());
     }
 
     // Emit profiling information if requested.
     if (profile) {
-        auto total_duration
-            = std::accumulate(durations.begin(), durations.end(), CompilationTime{});
+        mfcli::Profile total_profile
+            = std::accumulate(profiles.begin(), profiles.end(), mfcli::Profile{});
 
-        std::cout << "\nTotal Compile Time:\n    Lexing: "
-                  << total_duration.lex_dur.count() / 1000
-                  << "us\n    Syntactic Analysis: "
-                  << total_duration.ast_dur.count() / 1000 << "us\n    LLVM Backend: "
-                  << total_duration.backend_dur.count() / 1000 << "us" << std::endl;
+        if (profile) mfcli::print_profile(total_profile);
     }
 
     return 0;

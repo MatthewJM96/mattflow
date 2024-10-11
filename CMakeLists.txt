@@ -201,6 +201,8 @@ find_package(argparse REQUIRED)
 
 add_executable(mattflow_cli
     "${PROJECT_SOURCE_DIR}/cli/main.cpp"
+    "${PROJECT_SOURCE_DIR}/cli/parse.cpp"
+    "${PROJECT_SOURCE_DIR}/cli/profile.cpp"
 )
 
 target_precompile_headers(mattflow_cli
