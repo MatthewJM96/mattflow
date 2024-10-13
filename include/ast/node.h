@@ -36,7 +36,8 @@ namespace mattflow {
             BINOP         = 0x00010000,
             NONOP         = 0x00020000,
             ASSIGN_TYPE   = 0x00040000,
-            IDENTIFIER    = 0x00080000
+            IDENTIFIER    = 0x00080000,
+            SCOPE         = 0x00100000
         };
 
         inline NodeProps operator|(NodeProps a, NodeProps b) {

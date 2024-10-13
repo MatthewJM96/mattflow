@@ -9,7 +9,8 @@ void mfast::push_enclosure(
     mfast::NodeProps        enclosing_category,
     VALOUT mfast::AST& ast,
     VALOUT mfast::NodeBuffers& nodes,
-    VALOUT mfast::ParserState& parser_state
+    VALOUT mfast::ParserState& parser_state,
+    VALINOUT mfvar::ScopeTree& scope_tree
 ) {
     // Push new precedence and associativity tracking.
     parser_state.precedence.emplace_back(Precedence::NONE);
@@ -27,6 +28,16 @@ void mfast::push_enclosure(
     if ((enclosing_category & NodeProps::ROOT) != NodeProps::ROOT) {
         parser_state.non_operating_vertices.back().emplace_back(enclosing_vertex);
         parser_state.last_seen.back() = NodeProps::NONOP;
+    }
+
+    // If enclosure represents a scope then add a scope to the stack.
+    if ((enclosing_category & NodeProps::SCOPE) == NodeProps::SCOPE) {
+        mfvar::Scope old_scope = parser_state.scopes.back();
+        mfvar::Scope new_scope = boost::add_vertex(scope_tree);
+
+        parser_state.scopes.emplace_back(new_scope);
+
+        boost::add_edge(old_scope, new_scope, scope_tree);
     }
 
     // Push new stacks for operating and non-operating vertices.
@@ -83,6 +94,11 @@ void mfast::pop_enclosure(
         );
     }
 #endif  // defined(DEBUG)
+
+    // If enclosure represents a scope then pop scope from the stack.
+    if ((parser_state.enclosed_by.back() & NodeProps::SCOPE) == NodeProps::SCOPE) {
+        parser_state.scopes.pop_back();
+    }
 
     // TODO(Matthew): update the token iterator for end of enclosure.
 

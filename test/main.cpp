@@ -131,8 +131,9 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     mfast::AST                  ast;
     mfast::NodeBuffers          node_buffers;
     mftype::IdentifierTypeTable type_table;
+    mfvar::ScopeTree            scope_tree;
     try {
-        mfast::parse(tokens, ast, node_buffers, type_table);
+        mfast::parse(tokens, ast, node_buffers, type_table, scope_tree);
     } catch (const std::exception& e) {
         std::cout << "    ...failed.\n\nException: " << e.what() << std::endl;
 

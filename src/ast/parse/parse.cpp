@@ -12,7 +12,8 @@ void mfast::parse(
     VALIN const mflex::Tokens& tokens,
     VALOUT AST&                ast,
     VALOUT NodeBuffers&        nodes,
-    VALOUT mftype::IdentifierTypeTable& type_table
+    VALOUT mftype::IdentifierTypeTable& type_table,
+    VALOUT mfvar::ScopeTree& scope_tree
 ) {
     // Ensure buffers are clear for building fresh AST.
     ast.clear();
@@ -29,7 +30,8 @@ void mfast::parse(
         NodeProps::ROOT | NodeProps::MULTI_EXPR,
         ast,
         nodes,
-        parser_state
+        parser_state,
+        scope_tree
     );
 
     // Iterate tokens, parsing as appropriate.
@@ -55,7 +57,8 @@ void mfast::parse(
                     NodeProps::MULTI_EXPR | NodeProps::IF,
                     ast,
                     nodes,
-                    parser_state
+                    parser_state,
+                    scope_tree
                 );
 
                 parser_state.last_seen.back() = NodeProps::IF;
@@ -168,7 +171,8 @@ void mfast::parse(
                     NodeProps::MULTI_EXPR | NodeProps::FOR,
                     ast,
                     nodes,
-                    parser_state
+                    parser_state,
+                    scope_tree
                 );
 
                 parser_state.last_seen.back() = NodeProps::FOR;
@@ -186,7 +190,8 @@ void mfast::parse(
                     NodeProps::MULTI_EXPR | NodeProps::WHILE,
                     ast,
                     nodes,
-                    parser_state
+                    parser_state,
+                    scope_tree
                 );
 
                 parser_state.last_seen.back() = NodeProps::WHILE;
@@ -259,7 +264,8 @@ void mfast::parse(
                     NodeProps::SINGLE_EXPR | NodeProps::BRACKET_EXPR,
                     ast,
                     nodes,
-                    parser_state
+                    parser_state,
+                    scope_tree
                 );
 
                 parser_state.last_seen.back() = NodeProps::BRACKET_EXPR;
@@ -306,7 +312,8 @@ void mfast::parse(
                     NodeProps::STRUCT | NodeProps::MULTI_EXPR | NodeProps::BRACE_EXPR,
                     ast,
                     nodes,
-                    parser_state
+                    parser_state,
+                    scope_tree
                 );
 
                 parser_state.last_seen.back() = NodeProps::BRACE_EXPR;
@@ -324,7 +331,8 @@ void mfast::parse(
                     NodeProps::MULTI_EXPR | NodeProps::BRACE_EXPR,
                     ast,
                     nodes,
-                    parser_state
+                    parser_state,
+                    scope_tree
                 );
 
                 parser_state.last_seen.back() = NodeProps::BRACE_EXPR;
@@ -353,7 +361,8 @@ void mfast::parse(
                     NodeProps::SINGLE_EXPR | NodeProps::PAREN_EXPR,
                     ast,
                     nodes,
-                    parser_state
+                    parser_state,
+                    scope_tree
                 );
 
                 parser_state.last_seen.back() = NodeProps::PAREN_EXPR;
@@ -450,11 +459,7 @@ void mfast::parse(
             case mflex::TokenType::GREATER_THAN_OR_EQUAL_TO:
                 // Add GREATER THAN OR EQUAL TO vertex.
                 add_single_token_op<GreaterOrEqualOperatorNode>(
-                    it,
-
-                    ast,
-                    nodes,
-                    parser_state
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::PLUS:
@@ -466,11 +471,7 @@ void mfast::parse(
                 //                binary operations (subtraction and negation).
                 // Add SUBTRACTION vertex.
                 add_single_token_op<SubtractionOperatorNode>(
-                    it,
-
-                    ast,
-                    nodes,
-                    parser_state
+                    it, ast, nodes, parser_state
                 );
                 continue;
             case mflex::TokenType::SLASH:

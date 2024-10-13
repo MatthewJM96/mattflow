@@ -4,6 +4,7 @@
 #include "ast/ast.h"
 #include "ast/node.h"
 #include "lex/token.h"
+#include "variable/scope.h"
 
 namespace mattflow {
     namespace ast {
@@ -17,12 +18,14 @@ namespace mattflow {
          * node added to the AST.
          * @param type_table The type table in which any non-primitive types are
          * recorded, with the information so far gathered about those types.
+         * @param scope_tree The tree of scopes existent in this parsed token stream.
          */
         void parse(
             VALIN const mflex::Tokens& tokens,
             VALOUT AST&                ast,
             VALOUT NodeBuffers&        nodes,
-            VALOUT mftype::IdentifierTypeTable& type_table
+            VALOUT mftype::IdentifierTypeTable& type_table,
+            VALOUT mfvar::ScopeTree& scope_tree
         );
     }  // namespace ast
 }  // namespace mattflow

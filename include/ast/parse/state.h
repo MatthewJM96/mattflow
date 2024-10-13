@@ -3,6 +3,7 @@
 
 #include "ast/ast.h"
 #include "ast/node.h"
+#include "variable/scope.h"
 
 namespace mattflow {
     namespace ast {
@@ -19,6 +20,7 @@ namespace mattflow {
             std::vector<ASTVertex>              enclosing_vertices;
             std::vector<NodeProps>              enclosed_by;
             std::vector<NodeProps>              last_seen;
+            std::vector<mfvar::Scope>           scopes;
             std::set<ASTVertex>                 leaf_vertices;
         };
 
@@ -32,13 +34,15 @@ namespace mattflow {
          * @param nodes The node buffers in which the enclosure node will be placed.
          * @param parser_state The ParserState on which the new stack entries are
          * pushed.
+         * @param scope_tree The tree of scopes existent in this parsed token stream.
          */
         void push_enclosure(
             VALIN NodeInfo&&    enclosing_node_info,
             NodeProps           enclosing_category,
             VALOUT AST&         ast,
             VALOUT NodeBuffers& nodes,
-            VALOUT ParserState& parser_state
+            VALOUT ParserState& parser_state,
+            VALINOUT mfvar::ScopeTree& scope_tree
         );
 
         /**

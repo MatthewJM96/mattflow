@@ -44,7 +44,8 @@ mfcli::Profile mfcli::parse_file(
     mfast::AST                  ast;
     mfast::NodeBuffers          node_buffers;
     mftype::IdentifierTypeTable type_table;
-    mfast::parse(tokens, ast, node_buffers, type_table);
+    mfvar::ScopeTree            scope_tree;
+    mfast::parse(tokens, ast, node_buffers, type_table, scope_tree);
 
     profile.times.ast_dur = std::chrono::high_resolution_clock::now() - ast_start;
 
