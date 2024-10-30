@@ -14,7 +14,7 @@ namespace mattflow {
             VALOUT mfast::AST& ast,
             VALOUT mfast::NodeBuffers& nodes,
             VALOUT mfast::ParserState& parser_state,
-            VALOUT mftype::IdentifierTypeTable& type_table,
+            VALOUT mfvar::VariableTypeTable& var_table,
             Args&&... args
         ) {
             const auto nonop_node
@@ -31,7 +31,7 @@ namespace mattflow {
                 // We could be assigning a type as a value.
                 if (parser_state.last_seen.back() == NodeProps::ASSIGN_TYPE) {
                     std::visit(
-                        AssignTypeVisitor<_NodeType>{ type_table },
+                        AssignTypeVisitor<_NodeType>{ var_table },
                         nodes.get_node_info(
                             parser_state.non_operating_vertices.back().back()
                         )

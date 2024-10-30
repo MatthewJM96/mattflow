@@ -3,13 +3,14 @@
 
 #include "ast/ast.h"
 #include "ast/node.h"
+#include "variable/variable.h"
 
 namespace mattflow {
     namespace backend {
         void convert_module_to_llvm_ir(
             VALIN mfast::AST& ast,
             VALIN mfast::NodeBuffers& nodes,
-            VALIN mftype::IdentifierTypeTable& type_table
+            VALIN mfvar::VariableTypeTable& var_table
         );
     }  // namespace backend
 }  // namespace mattflow

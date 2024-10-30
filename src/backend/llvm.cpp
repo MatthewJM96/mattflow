@@ -13,11 +13,11 @@
 void mfbe::convert_module_to_llvm_ir(
     VALIN mfast::AST& ast,
     VALIN mfast::NodeBuffers& nodes,
-    VALIN mftype::IdentifierTypeTable& type_table
+    VALIN mfvar::VariableTypeTable& var_table
 ) {
     (void)ast;
     (void)nodes;
-    (void)type_table;
+    (void)var_table;
 
     // auto module_root = *boost::vertices(ast).first;
 

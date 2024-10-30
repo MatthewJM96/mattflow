@@ -5,6 +5,7 @@
 #include "ast/node.h"
 #include "lex/token.h"
 #include "variable/scope.h"
+#include "variable/variable.h"
 
 namespace mattflow {
     namespace ast {
@@ -24,7 +25,7 @@ namespace mattflow {
             VALIN const mflex::Tokens& tokens,
             VALOUT AST&                ast,
             VALOUT NodeBuffers&        nodes,
-            VALOUT mftype::IdentifierTypeTable& type_table,
+            VALOUT mfvar::VariableTypeTable& var_table,
             VALOUT mfvar::ScopeTree& scope_tree
         );
     }  // namespace ast

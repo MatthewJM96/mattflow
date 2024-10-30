@@ -2,8 +2,7 @@
 #define __mattflow_ast_node_type_h
 
 #include "ast/node/node.h"
-
-#include "../../type.h"
+#include "type/type.h"
 
 namespace mattflow {
     namespace ast {

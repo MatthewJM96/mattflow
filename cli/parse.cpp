@@ -4,6 +4,7 @@
 #include "ast/parse/parse.h"
 #include "backend/llvm.h"
 #include "lex/lexer.h"
+#include "variable/variable.h"
 
 #include "exit_codes.h"
 
@@ -41,11 +42,11 @@ mfcli::Profile mfcli::parse_file(
 
     auto ast_start = std::chrono::high_resolution_clock::now();
 
-    mfast::AST                  ast;
-    mfast::NodeBuffers          node_buffers;
-    mftype::IdentifierTypeTable type_table;
-    mfvar::ScopeTree            scope_tree;
-    mfast::parse(tokens, ast, node_buffers, type_table, scope_tree);
+    mfast::AST               ast;
+    mfast::NodeBuffers       node_buffers;
+    mfvar::VariableTypeTable var_table;
+    mfvar::ScopeTree         scope_tree;
+    mfast::parse(tokens, ast, node_buffers, var_table, scope_tree);
 
     profile.times.ast_dur = std::chrono::high_resolution_clock::now() - ast_start;
 
@@ -64,7 +65,7 @@ mfcli::Profile mfcli::parse_file(
 
     auto backend_start = std::chrono::high_resolution_clock::now();
 
-    mfbe::convert_module_to_llvm_ir(ast, node_buffers, type_table);
+    mfbe::convert_module_to_llvm_ir(ast, node_buffers, var_table);
 
     profile.times.backend_dur
         = std::chrono::high_resolution_clock::now() - backend_start;

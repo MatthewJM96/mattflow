@@ -12,7 +12,7 @@ void mfast::parse(
     VALIN const mflex::Tokens& tokens,
     VALOUT AST&                ast,
     VALOUT NodeBuffers&        nodes,
-    VALOUT mftype::IdentifierTypeTable& type_table,
+    VALOUT mfvar::VariableTypeTable& var_table,
     VALOUT mfvar::ScopeTree& scope_tree
 ) {
     // Ensure buffers are clear for building fresh AST.
@@ -499,91 +499,91 @@ void mfast::parse(
             case mflex::TokenType::NIL:
                 // Add null vertex.
                 add_single_token_nonop<NullNode>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::CHAR:
                 // Add CHAR vertex.
                 add_single_token_nonop<CharNode>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::BOOL:
                 // Add BOOL vertex.
                 add_single_token_nonop<BoolNode>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::INT:
                 // Add INT vertex.
                 add_single_token_nonop<IntNode>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::INT8:
                 // Add INT8 vertex.
                 add_single_token_nonop<Int8Node>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::INT16:
                 // Add INT16 vertex.
                 add_single_token_nonop<Int16Node>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::INT32:
                 // Add INT32 vertex.
                 add_single_token_nonop<Int32Node>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::INT64:
                 // Add INT64 vertex.
                 add_single_token_nonop<Int64Node>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::UINT:
                 // Add UINT vertex.
                 add_single_token_nonop<UIntNode>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::UINT8:
                 // Add UINT8 vertex.
                 add_single_token_nonop<UInt8Node>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::UINT16:
                 // Add UINT16 vertex.
                 add_single_token_nonop<UInt16Node>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::UINT32:
                 // Add UINT32 vertex.
                 add_single_token_nonop<UInt32Node>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::UINT64:
                 // Add UINT64 vertex.
                 add_single_token_nonop<UInt64Node>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::FLOAT32:
                 // Add FP32 vertex.
                 add_single_token_nonop<Float32Node>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::FLOAT64:
                 // Add FP64 vertex.
                 add_single_token_nonop<Float64Node>(
-                    it, ast, nodes, parser_state, type_table
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::TRUE:
@@ -594,26 +594,26 @@ void mfast::parse(
                     ast,
                     nodes,
                     parser_state,
-                    type_table,
+                    var_table,
                     it->type == mflex::TokenType::TRUE
                 );
                 continue;
             case mflex::TokenType::NUMBER:
                 // Add number vertex.
                 add_single_token_nonop<NumberValNode>(
-                    it, ast, nodes, parser_state, type_table, it->number
+                    it, ast, nodes, parser_state, var_table, it->number
                 );
                 continue;
             case mflex::TokenType::STRING:
                 // Add string vertex.
                 add_single_token_nonop<StringValNode>(
-                    it, ast, nodes, parser_state, type_table, it->string_idx
+                    it, ast, nodes, parser_state, var_table, it->string_idx
                 );
                 continue;
             case mflex::TokenType::IDENTIFIER:
                 // Add identifier vertex.
                 add_single_token_nonop<IdentifierNode>(
-                    it, ast, nodes, parser_state, type_table, it->identifier_idx
+                    it, ast, nodes, parser_state, var_table, it->identifier_idx
                 );
                 continue;
             case mflex::TokenType::MATCH:

@@ -2,6 +2,7 @@
 
 #include "lex/lexer.h"
 #include "literal/string.h"
+#include "variable/variable.h"
 
 #include "ast/debug.h"
 #include "ast/parse/parse.h"
@@ -128,12 +129,12 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
 
     std::cout << "\nParsing syntax of source code..." << std::endl;
 
-    mfast::AST                  ast;
-    mfast::NodeBuffers          node_buffers;
-    mftype::IdentifierTypeTable type_table;
-    mfvar::ScopeTree            scope_tree;
+    mfast::AST               ast;
+    mfast::NodeBuffers       node_buffers;
+    mfvar::VariableTypeTable var_table;
+    mfvar::ScopeTree         scope_tree;
     try {
-        mfast::parse(tokens, ast, node_buffers, type_table, scope_tree);
+        mfast::parse(tokens, ast, node_buffers, var_table, scope_tree);
     } catch (const std::exception& e) {
         std::cout << "    ...failed.\n\nException: " << e.what() << std::endl;
 
