@@ -27,9 +27,11 @@ namespace mattflow {
             if (m_throw) {
                 throw std::runtime_error(formatted_msg);
             } else {
-                std::printf(formatted_msg);
+                std::printf("%s", formatted_msg);
                 assert(false);
             }
+
+            delete[] formatted_msg;
         }
     protected:
         Debug() : m_throw(false) {
