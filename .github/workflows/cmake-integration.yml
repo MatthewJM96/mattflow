@@ -218,6 +218,7 @@ jobs:
     - name: Configure CMake
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
+        export LLVM_DIR=/opt/homebrew/opt/llvm@18 ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=clang++
         -DCMAKE_C_COMPILER=clang
