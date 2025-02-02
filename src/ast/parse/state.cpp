@@ -24,6 +24,20 @@ void mfast::push_enclosure(
     nodes.vertex_node_map[enclosing_vertex] = nodes.node_info.size();
     nodes.node_info.emplace_back(std::forward<mfast::NodeInfo>(enclosing_node_info));
 
+    mfassert(
+        (enclosing_category & NodeProps::IF) != NodeProps::IF
+            || (parser_state.enclosed_by.back() & NodeProps::IF) != NodeProps::IF,
+        "May not have an if-expr directly within an if-expr without explicit block "
+        "scope."
+    );
+
+    mfassert(
+        (enclosing_category & NodeProps::FOR) != NodeProps::FOR
+            || (parser_state.enclosed_by.back() & NodeProps::FOR) != NodeProps::FOR,
+        "May not have an for-expr directly within an for-expr without explicit block "
+        "scope."
+    );
+
     // Push enclosing vertex onto the stack below.
     if ((enclosing_category & NodeProps::ROOT) != NodeProps::ROOT) {
         parser_state.non_operating_vertices.back().emplace_back(enclosing_vertex);
