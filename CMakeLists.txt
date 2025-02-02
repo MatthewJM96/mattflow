@@ -107,6 +107,10 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(DEBUG=1)
 endif()
 
+if (RUNNER)
+    add_compile_definitions(RUNNER=1)
+endif()
+
 ########################################################################################
 
 ################################
@@ -215,13 +219,6 @@ target_compile_definitions(mattflow_cli
         MATTFLOW_VERSION="${MF_VERSION}"
 )
 
-if (RUNNER)
-    target_compile_definitions(mattflow_cli
-        PUBLIC
-            RUNNER=1
-    )
-endif()
-
 ########################################################################################
 
 ########################################################
@@ -283,13 +280,6 @@ target_precompile_headers(mattflow_tests
     PUBLIC
         include/stdafx.h
 )
-
-if (RUNNER)
-    target_compile_definitions(mattflow_tests
-        PUBLIC
-            RUNNER=1
-    )
-endif()
 
 ########################################################################################
 
