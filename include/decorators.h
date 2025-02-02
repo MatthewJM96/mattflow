@@ -40,7 +40,7 @@
 // Variant Constexpr
 
 #if defined(MATTFLOW_OS_MAC)
-#  define MATTFLOW_VARIANT_CONSTEXPR
+#  define MATTFLOW_VARIANT_CONSTEXPR const
 #else
 #  define MATTFLOW_VARIANT_CONSTEXPR constexpr
 #endif
