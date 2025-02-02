@@ -3,4 +3,9 @@ repos:
   rev: v15.0.4
   hooks:
   - id: clang-format
-  
+- repo: https://github.com/pocc/pre-commit-hooks
+  rev: v1.3.5
+  hooks:
+  - id: clang-tidy
+  - id: cppcheck
+  - id: cpplint
