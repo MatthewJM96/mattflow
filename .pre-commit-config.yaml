@@ -8,5 +8,5 @@ repos:
   hooks:
   - id: clang-tidy
   - id: cppcheck
-    args: [--enable=performance, --enable=portability, --force, --check-level-=exhaustive, -Iinclude/]
+    args: [--enable=performance, --enable=portability, --force, --check-level=exhaustive, -Iinclude/]
   - id: cpplint
