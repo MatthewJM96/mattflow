@@ -30,6 +30,8 @@ namespace mattflow {
                 std::printf(formatted_msg);
                 assert(false);
             }
+
+            delete[] formatted_msg;
         }
     protected:
         Debug() : m_throw(false) {
