@@ -10,3 +10,4 @@ repos:
   - id: cppcheck
     args: [--enable=performance, --enable=portability, --force, --check-level=exhaustive, -Iinclude/]
   - id: cpplint
+    args: [--filter=-legal,-build,-runtime/indentation_namespace,-whitespace]
