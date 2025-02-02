@@ -65,6 +65,7 @@ jobs:
 
     - name: Configure CMake
       run: >
+        export LLVM_DIR=/usr/lib/llvm-18/ ;
         source ${{ github.workspace }}/.venv/bin/activate ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
