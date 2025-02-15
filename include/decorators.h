@@ -37,12 +37,4 @@
   TYPE(TYPE&& rhs)            = delete;                                                \
   TYPE& operator=(TYPE&& rhs) = delete
 
-// Variant Constexpr
-
-#if defined(MATTFLOW_OS_MAC)
-#  define MATTFLOW_VARIANT_CONSTEXPR const
-#else
-#  define MATTFLOW_VARIANT_CONSTEXPR constexpr
-#endif
-
 #endif  // __mattflow_decorators_h

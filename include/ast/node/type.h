@@ -41,8 +41,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::BOOL;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::BOOL;
+#endif
 
             std::string debug_repr() const override { return "type: bool"; }
         };
@@ -65,8 +68,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::CHAR;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::CHAR;
+#endif
 
             std::string debug_repr() const override { return "type: char"; }
         };
@@ -89,8 +95,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::INT;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::INT;
+#endif
 
             std::string debug_repr() const override { return "type: int"; }
         };
@@ -113,8 +122,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::INT8;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::INT8;
+#endif
 
             std::string debug_repr() const override { return "type: int8"; }
         };
@@ -137,8 +149,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::INT16;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::INT16;
+#endif
 
             std::string debug_repr() const override { return "type: int16"; }
         };
@@ -161,8 +176,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::INT32;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::INT32;
+#endif
 
             std::string debug_repr() const override { return "type: int32"; }
         };
@@ -185,8 +203,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::INT64;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::INT64;
+#endif
 
             std::string debug_repr() const override { return "type: int64"; }
         };
@@ -209,8 +230,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::UINT;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::UINT;
+#endif
 
             std::string debug_repr() const override { return "type: uint"; }
         };
@@ -233,8 +257,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::UINT8;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::UINT8;
+#endif
 
             std::string debug_repr() const override { return "type: uint8"; }
         };
@@ -257,8 +284,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::UINT16;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::UINT16;
+#endif
 
             std::string debug_repr() const override { return "type: uint16"; }
         };
@@ -281,8 +311,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::UINT32;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::UINT32;
+#endif
 
             std::string debug_repr() const override { return "type: uint32"; }
         };
@@ -305,8 +338,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::UINT64;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::UINT64;
+#endif
 
             std::string debug_repr() const override { return "type: uint64"; }
         };
@@ -329,8 +365,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::FLOAT32;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::FLOAT32;
+#endif
 
             std::string debug_repr() const override { return "type: float32"; }
         };
@@ -353,8 +392,11 @@ namespace mattflow {
                 // Empty.
             }
 
-            MATTFLOW_VARIANT_CONSTEXPR static mftype::Type TYPE
-                = mftype::PrimitiveType::FLOAT64;
+#if defined(MATTFLOW_OS_MAC)
+            const static mftype::Type TYPE;
+#else
+            constexpr static mftype::Type TYPE = mftype::PrimitiveType::FLOAT64;
+#endif
 
             std::string debug_repr() const override { return "type: float64"; }
         };

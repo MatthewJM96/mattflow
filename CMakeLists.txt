@@ -118,6 +118,7 @@ endif()
 ################################
 
 add_library(mattflow
+    "${PROJECT_SOURCE_DIR}/src/ast/node/type.cpp"
     "${PROJECT_SOURCE_DIR}/src/ast/parse/link.cpp"
     "${PROJECT_SOURCE_DIR}/src/ast/parse/parse.cpp"
     "${PROJECT_SOURCE_DIR}/src/ast/parse/state.cpp"
