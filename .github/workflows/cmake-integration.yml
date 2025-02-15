@@ -104,9 +104,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4.2.2
 
-    - name: setup-msbuild
-      uses: microsoft/setup-msbuild@v1.3.1
-
     - name: Install conan
       run: >
         python3 -m venv ${{ github.workspace }}\.venv ;
@@ -114,6 +111,11 @@ jobs:
         .\.venv\Scripts\activate ;
         pip install conan==2.8.0 ;
         conan profile detect
+
+    - name: Setup VS 2019
+      uses: microsoft/setup-msbuild@v1.3.1
+      with:
+        vs-version: '[16.0,17.0)'
 
     - name: Install LLVM
       run: >
@@ -138,6 +140,9 @@ jobs:
         cmake --build build --parallel 4 --config ${{ matrix.build_type }} ;
         cmake --build build --target install --config ${{ matrix.build_type }} ;
         cd ..
+
+    - name: Setup VS 2022
+      uses: microsoft/setup-msbuild@v1.3.1
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
