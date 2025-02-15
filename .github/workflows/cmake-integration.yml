@@ -254,9 +254,9 @@ jobs:
     - name: Configure CMake
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
-        export PATH="/usr/local/opt/llvm@18/bin:$PATH" ;
-        export LD_LIBRARY_PATH="/usr/local/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
-        export LLVM_DIR="/usr/local/opt/llvm@18" ;
+        export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
+        export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
+        export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=clang++
         -DCMAKE_C_COMPILER=clang
