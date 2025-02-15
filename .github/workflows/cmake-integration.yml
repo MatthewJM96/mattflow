@@ -267,6 +267,9 @@ jobs:
     - name: Build
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
+        ls /opt/homebrew/opt/ ;
+        ls /opt/homebrew/opt/llvm@18 ;
+        ls /opt/homebrew/opt/llvm@18/lib ;
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
         export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel 4
