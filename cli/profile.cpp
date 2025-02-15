@@ -20,6 +20,17 @@ mfcli::Profile mfcli::operator+(const mfcli::Profile& lhs, const mfcli::Profile&
 static char* make_time_string(std::chrono::nanoseconds time) {
     auto  raw_time = time.count();
     char* result   = new char[10];
+#if defined(MATTFLOW_OS_MAC)
+    if (raw_time > 1e10) {
+        snprintf(result, 10, "%5llu%s", static_cast<uint64_t>(raw_time / 1e9), "s");
+    } else if (raw_time > 1e7) {
+        snprintf(result, 10, "%5llu%s", static_cast<uint64_t>(raw_time / 1e6), "ms");
+    } else if (raw_time > 1e4) {
+        snprintf(result, 10, "%5llu%s", static_cast<uint64_t>(raw_time / 1e3), "us");
+    } else {
+        snprintf(result, 10, "%5llu%s", static_cast<uint64_t>(raw_time), "ns");
+    }
+#else
     if (raw_time > 1e10) {
         snprintf(result, 10, "%5ld%s", static_cast<uint64_t>(raw_time / 1e9), "s");
     } else if (raw_time > 1e7) {
@@ -29,6 +40,7 @@ static char* make_time_string(std::chrono::nanoseconds time) {
     } else {
         snprintf(result, 10, "%5ld%s", static_cast<uint64_t>(raw_time), "ns");
     }
+#endif
 
     return result;
 };
@@ -48,5 +60,9 @@ void mfcli::print_profile(const mfcli::Profile& profile) {
     printf("    Lexing             :     %s\n", make_time_string(times.lex_dur));
     printf("    Syntactic Analysis :     %s\n", make_time_string(times.ast_dur));
     printf("    LLVM Backend       :     %s\n", make_time_string(times.backend_dur));
+#if defined(MATTFLOW_OS_MAC)
+    printf("    Lines per Second   :  %'10llu\n\n", lines_per_second);
+#else
     printf("    Lines per Second   :  %'10ld\n\n", lines_per_second);
+#endif
 }
