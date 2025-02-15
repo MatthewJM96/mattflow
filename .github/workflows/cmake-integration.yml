@@ -138,7 +138,6 @@ jobs:
         -DCMAKE_C_COMPILER=cl
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -DCMAKE_INSTALL_PREFIX:PATH=.
-        -G "Visual Studio 16 2019"
         -DLLVM_ENABLE_ZLIB=OFF
         -DLLVM_USE_CRT_RELEASE=MT
         -DLLVM_USE_CRT_DEBUG=MTd
