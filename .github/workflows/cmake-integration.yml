@@ -115,6 +115,24 @@ jobs:
         pip install conan==2.8.0 ;
         conan profile detect
 
+    - name: Install LLVM
+      run: >
+        mkdir llvm ;
+        cd llvm ;
+        Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/llvm-18.1.8.src.tar.xz -OutFile llvm.tar.xz ;
+        Install-Module -Name 7Zip4Powershell ;
+        Expand-7Zip llvm.tar.xz src ;
+        mkdir build ;
+        cmake -B build
+        -DCMAKE_CXX_COMPILER=cl
+        -DCMAKE_C_COMPILER=cl
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DCMAKE_INSTALL_PREFIX:PATH=.
+        -S src ;
+        cmake --build build --parallel 4 --config ${{ matrix.build_type }} ;
+        cmake --build build --target install --config ${{ matrix.build_type }} ;
+        cd ..
+
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
