@@ -15,6 +15,6 @@ const mftype::Type mfast::UInt8Node::TYPE   = mftype::PrimitiveType::UINT8;
 const mftype::Type mfast::UInt16Node::TYPE  = mftype::PrimitiveType::UINT16;
 const mftype::Type mfast::UInt32Node::TYPE  = mftype::PrimitiveType::UINT32;
 const mftype::Type mfast::UInt64Node::TYPE  = mftype::PrimitiveType::UINT64;
-const mftype::Type mfast::Float32Node::TYPE = mftype::PrimitiveType::Float32;
-const mftype::Type mfast::Float64Node::TYPE = mftype::PrimitiveType::Float64;
+const mftype::Type mfast::Float32Node::TYPE = mftype::PrimitiveType::FLOAT32;
+const mftype::Type mfast::Float64Node::TYPE = mftype::PrimitiveType::FLOAT64;
 #endif
