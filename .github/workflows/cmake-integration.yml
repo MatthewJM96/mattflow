@@ -120,7 +120,7 @@ jobs:
         mkdir llvm ;
         cd llvm ;
         Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/llvm-18.1.8.src.tar.xz -OutFile llvm.tar.xz ;
-        Install-Module -Name 7Zip4Powershell ;
+        Install-Module -Name 7Zip4Powershell -Force ;
         Expand-7Zip llvm.tar.xz src ;
         mkdir build ;
         cmake -B build
