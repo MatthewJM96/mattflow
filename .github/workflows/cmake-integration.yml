@@ -257,6 +257,7 @@ jobs:
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
         export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
         export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$DYLD_LIBRARY_PATH" ;
+        llvm-config --libnames support core irreader ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=clang++
         -DCMAKE_C_COMPILER=clang
