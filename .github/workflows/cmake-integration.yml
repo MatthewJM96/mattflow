@@ -178,9 +178,8 @@ jobs:
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
-        export PATH="${{ steps.strings.outputs.home }}/llvm/bin:$PATH" ;
-        export LD_LIBRARY_PATH="${{ steps.strings.outputs.home }}/llvm/lib:$LD_LIBRARY_PATH" ;
-        export LLVM_DIR=${{ steps.strings.outputs.home }}/llvm ;
+        $env:PATH="${{ steps.strings.outputs.home }}/llvm/bin:${{ steps.strings.outputs.home }}/llvm/lib:$PATH" ;
+        $env:LLVM_DIR=${{ steps.strings.outputs.home }}/llvm ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=cl
         -DCMAKE_C_COMPILER=cl
