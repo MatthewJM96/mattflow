@@ -254,9 +254,10 @@ jobs:
     - name: Configure CMake
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
+        export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
         export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
-        export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
+        export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$DYLD_LIBRARY_PATH" ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=clang++
         -DCMAKE_C_COMPILER=clang
@@ -267,18 +268,20 @@ jobs:
     - name: Build
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
-        ls /opt/homebrew/opt/ ;
-        ls /opt/homebrew/opt/llvm@18 ;
-        ls /opt/homebrew/opt/llvm@18/lib ;
+        export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
         export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
+        export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$DYLD_LIBRARY_PATH" ;
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel 4
         --config ${{ matrix.build_type }}
 
     - name: Test
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
+        export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
+        export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
+        export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$DYLD_LIBRARY_PATH" ;
         ctest --test-dir ${{ steps.strings.outputs.build-output-dir }}
         --build-config ${{ matrix.build_type }} 
         --output-on-failure
