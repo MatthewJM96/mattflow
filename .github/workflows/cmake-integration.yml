@@ -225,6 +225,8 @@ jobs:
         brew install llvm@18
 
     - name: Install conan
+      # We patch the supported MacOS versions as conan 2.8.0 did not support the latest
+      # and greatest that GitHub provides us with.
       run: >
         python3 -m venv ${{ github.workspace }}/.venv ;
         source ${{ github.workspace }}/.venv/bin/activate ;
