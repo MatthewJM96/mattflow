@@ -202,18 +202,17 @@ jobs:
         --build-config ${{ matrix.build_type }} 
         --output-on-failure
 
-#################
-#     MacOS     #
-#################
+####################
+#     MacOS 14     #
+####################
 
   build-macos:
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-14
 
     strategy:
       fail-fast: true
 
       matrix:
-        os: [macos-13, macos-14]
         build_type: [Release, Debug]
         c_compiler: [clang]
 
@@ -250,7 +249,7 @@ jobs:
         cache-name: cache-conan
       with:
         path: ${{ steps.strings.outputs.home }}/.conan2
-        key: ${{ matrix.os }}-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}--${{ hashFiles('conanfile.txt') }}
+        key: macos-14-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}--${{ hashFiles('conanfile.txt') }}
   
     - name: Configure CMake
       run: >
@@ -259,9 +258,6 @@ jobs:
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
         export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
         export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$DYLD_LIBRARY_PATH" ;
-        ls /opt/homebrew/opt/llvm@18/bin ;
-        ls /opt/homebrew/opt/llvm@18/lib ;
-        llvm-config --libnames support core irreader ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=clang++
         -DCMAKE_C_COMPILER=clang
