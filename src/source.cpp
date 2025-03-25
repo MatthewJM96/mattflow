@@ -36,6 +36,9 @@ bool mattflow::SourceView::from_filepath(
 ) {
     if (!std::filesystem::is_regular_file(path)) return false;
 
+    // TODO(Matthew): This pointer is caller delete and yet we just forget about it
+    //                after building the source view object. Return it too, and require
+    //                the caller of this routine to then mange the memory.
     char* contents = read_file_to_string(path);
     if (contents == nullptr) return false;
 
