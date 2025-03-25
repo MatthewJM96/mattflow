@@ -165,7 +165,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=cl
         -DCMAKE_C_COMPILER=cl
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -DCMAKE_INSTALL_PREFIX:PATH=.
+        -DCMAKE_INSTALL_PREFIX:PATH=..
         -DLLVM_ENABLE_ZLIB=OFF
         -DLLVM_USE_CRT_RELEASE=MT
         -DLLVM_USE_CRT_DEBUG=MTd
@@ -178,7 +178,7 @@ jobs:
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
-        $env:PATH="${{ steps.strings.outputs.home }}/llvm/bin:${{ steps.strings.outputs.home }}/llvm/lib;"+$env:PATH ;
+        $env:PATH="${{ steps.strings.outputs.home }}/llvm/bin;${{ steps.strings.outputs.home }}/llvm/lib;"+$env:PATH ;
         $env:LLVM_DIR="${{ steps.strings.outputs.home }}/llvm" ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=cl
