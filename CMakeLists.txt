@@ -182,6 +182,10 @@ target_link_libraries(mattflow
     ${mattflow_Libraries}
 )
 
+if (APPLE)
+    target_link_options(mattflow PRIVATE "LINKER:-fkeep_dwarf_unwind")
+endif()
+
 target_compile_definitions(mattflow
     PUBLIC
         MATTFLOW_VERSION="${MF_VERSION}"
@@ -263,6 +267,10 @@ target_link_libraries(mattflow_cli
     ${mattflow_cli_Libraries}
 )
 
+if (APPLE)
+    target_link_options(mattflow_cli PRIVATE "LINKER:-fkeep_dwarf_unwind")
+endif()
+
 ########################################################################################
 #
 # mattflow tests Library
@@ -325,6 +333,10 @@ target_include_directories(mattflow_tests
 target_link_libraries(mattflow_tests
     ${mattflow_tests_Libraries}
 )
+
+if (APPLE)
+    target_link_options(mattflow_tests PRIVATE "LINKER:-fkeep_dwarf_unwind")
+endif()
 
 target_compile_definitions(mattflow_tests
     PUBLIC
