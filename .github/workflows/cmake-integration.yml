@@ -259,8 +259,8 @@ jobs:
         ls -l $LLVM_DIR/bin ;
         ls -l $LLVM_DIR/lib ;
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
-        export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
-        export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$DYLD_LIBRARY_PATH" ;
+        export LDFLAGS="-L/opt/homebrew/opt/llvm@18/lib" ;
+        export CPPFLAGS="-I/opt/homebrew/opt/llvm@18/include" ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=clang++
         -DCMAKE_C_COMPILER=clang
@@ -273,8 +273,8 @@ jobs:
         source ${{ github.workspace }}/.venv/bin/activate ;
         export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
-        export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
-        export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$DYLD_LIBRARY_PATH" ;
+        export LDFLAGS="-L/opt/homebrew/opt/llvm@18/lib" ;
+        export CPPFLAGS="-I/opt/homebrew/opt/llvm@18/include" ;
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel 4
         --config ${{ matrix.build_type }}
 
@@ -283,8 +283,8 @@ jobs:
         source ${{ github.workspace }}/.venv/bin/activate ;
         export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
-        export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
-        export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$DYLD_LIBRARY_PATH" ;
+        export LDFLAGS="-L/opt/homebrew/opt/llvm@18/lib" ;
+        export CPPFLAGS="-I/opt/homebrew/opt/llvm@18/include" ;
         ctest --test-dir ${{ steps.strings.outputs.build-output-dir }}
         --build-config ${{ matrix.build_type }} 
         --output-on-failure
