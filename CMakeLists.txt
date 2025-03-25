@@ -157,6 +157,7 @@ set(mattflow_Libraries
 
 if(MATTFLOW_ENABLE_PROFILING)
 set(mattflow_Libraries
+    ${mattflow_Libraries}
     profiler
 )
 endif()
