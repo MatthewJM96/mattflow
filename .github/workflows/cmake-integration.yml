@@ -255,6 +255,9 @@ jobs:
       run: >
         source ${{ github.workspace }}/.venv/bin/activate ;
         export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
+        ls -l $LLVM_DIR ;
+        ls -l $LLVM_DIR/bin ;
+        ls -l $LLVM_DIR/lib ;
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
         export LD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$LD_LIBRARY_PATH" ;
         export DYLD_LIBRARY_PATH="/opt/homebrew/opt/llvm@18/lib:$DYLD_LIBRARY_PATH" ;
