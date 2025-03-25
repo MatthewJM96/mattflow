@@ -1,0 +1,90 @@
+name: MacOS CI
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+
+  build-macos:
+    runs-on: macos-15
+
+    strategy:
+      fail-fast: true
+
+      matrix:
+        build_type: [Release, Debug]
+        c_compiler: [gcc-14, clang]
+        include:
+          - c_compiler: gcc-14
+            cpp_compiler: g++-14
+          - c_compiler: clang
+            cpp_compiler: clang++
+
+    steps:
+    - uses: actions/checkout@v4.2.2
+
+    - name: Install system dependencies
+      run: >
+        brew install llvm@18
+
+    - name: Install conan
+      run: >
+        python3 -m venv ${{ github.workspace }}/.venv ;
+        source ${{ github.workspace }}/.venv/bin/activate ;
+        pip install conan==2.14.0 ;
+        conan profile detect
+
+    - name: Set reusable strings
+      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
+      id: strings
+      shell: bash
+      run: >
+        echo "home=$HOME" >> "$GITHUB_OUTPUT" ;
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+    - name: Cache conan dependencies
+      id: cache-conan
+      uses: actions/cache@v4.2.0
+      env:
+        cache-name: cache-conan
+      with:
+        path: ${{ steps.strings.outputs.home }}/.conan2
+        key: macos-15-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}--${{ hashFiles('conanfile.txt') }}
+  
+    - name: Configure CMake
+      run: >
+        source ${{ github.workspace }}/.venv/bin/activate ;
+        export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
+        export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
+        export LDFLAGS="-L/opt/homebrew/opt/llvm@18/lib" ;
+        export CPPFLAGS="-I/opt/homebrew/opt/llvm@18/include" ;
+        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DRUNNER=1
+        -S ${{ github.workspace }}
+
+    - name: Build
+      run: >
+        source ${{ github.workspace }}/.venv/bin/activate ;
+        export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
+        export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
+        export LDFLAGS="-L/opt/homebrew/opt/llvm@18/lib" ;
+        export CPPFLAGS="-I/opt/homebrew/opt/llvm@18/include" ;
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel 4
+        --config ${{ matrix.build_type }}
+
+    - name: Test
+      run: >
+        source ${{ github.workspace }}/.venv/bin/activate ;
+        export LLVM_DIR="/opt/homebrew/opt/llvm@18" ;
+        export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
+        export LDFLAGS="-L/opt/homebrew/opt/llvm@18/lib" ;
+        export CPPFLAGS="-I/opt/homebrew/opt/llvm@18/include" ;
+        ctest --test-dir ${{ steps.strings.outputs.build-output-dir }}
+        --build-config ${{ matrix.build_type }} 
+        --output-on-failure

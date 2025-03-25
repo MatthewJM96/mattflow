@@ -1,0 +1,120 @@
+name: Windows CI
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+
+  build-windows:
+    runs-on: windows-2022
+
+    strategy:
+      # TODO: Set to true once Windows building works well.
+      fail-fast: false
+
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+    - uses: actions/checkout@v4.2.2
+
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1.3.1
+
+    - name: Install conan
+      run: >
+        python3 -m venv ${{ github.workspace }}\.venv ;
+        cd ${{ github.workspace }} ;
+        .\.venv\Scripts\activate ;
+        pip install conan==2.14.0 ;
+        conan profile detect
+
+    - name: Set reusable strings
+      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
+      id: strings
+      run: >
+        echo "home=$HOME" >> $env:GITHUB_OUTPUT ;
+        echo "build-output-dir=${{ github.workspace }}\build" >> $env:GITHUB_OUTPUT
+
+    - name: Cache dependencies
+      id: cache-dependencies
+      uses: actions/cache@v4.2.0
+      env:
+        cache-name: cache-conan
+      with:
+        path: |
+          ${{ steps.strings.outputs.home }}/.conan2
+          ${{ steps.strings.outputs.home }}/llvm
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.build_type }}--${{ hashFiles('CMakeLists.txt') }}--${{ hashFiles('conanfile.txt') }}
+
+    - if: ${{ steps.cache-dependencies.outputs.cache-hit == 'true' }}
+      name: Remove conan system-reqs cache and delete boost conan_sources.tgz
+      continue-on-error: true
+      run: >
+        cd ${{ github.workspace }} ;
+        .\.venv\Scripts\activate ;
+        conan remove --system-reqs '*' ;
+        Get-ChildItem ${{ steps.strings.outputs.home }}\.conan2\data\boost
+        -File -Include conan_sources.tgz -Recurse -Force
+        | Remove-Item -Recurse -Force
+
+    - name: Install LLVM
+      run: >
+        mkdir ${{ steps.strings.outputs.home }}/llvm ;
+        cd ${{ steps.strings.outputs.home }}/llvm ;
+        Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/llvm-18.1.8.src.tar.xz -OutFile llvm.tar.xz ;
+        Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/third-party-18.1.8.src.tar.xz -OutFile third-party.tar.xz ;
+        Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/cmake-18.1.8.src.tar.xz -OutFile cmake.tar.xz ;
+        Install-Module -Name 7Zip4Powershell -Force ;
+        Expand-7Zip llvm.tar.xz . ;
+        Expand-7Zip third-party.tar.xz . ;
+        Expand-7Zip cmake.tar.xz . ;
+        Expand-7Zip llvm.tar src ;
+        Expand-7Zip third-party.tar src ;
+        Expand-7Zip cmake.tar src ;
+        mv src/cmake-18.1.8.src src/cmake ;
+        mv src/third-party-18.1.8.src src/third-party ;
+        mkdir build ;
+        cmake -B build
+        -DCMAKE_CXX_COMPILER=cl
+        -DCMAKE_C_COMPILER=cl
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DCMAKE_INSTALL_PREFIX:PATH=..
+        -DLLVM_ENABLE_ZLIB=OFF
+        -DLLVM_USE_CRT_RELEASE=MT
+        -DLLVM_USE_CRT_DEBUG=MTd
+        -S src/llvm-18.1.8.src ;
+        cmake --build build --parallel 4 --config ${{ matrix.build_type }} ;
+        cmake --build build --target install --config ${{ matrix.build_type }} ;
+        ls . ;
+
+    - name: Configure CMake
+      run: >
+        cd ${{ github.workspace }} ;
+        .\.venv\Scripts\activate ;
+        $env:PATH="${{ steps.strings.outputs.home }}/llvm/bin;${{ steps.strings.outputs.home }}/llvm/lib;"+$env:PATH ;
+        $env:LLVM_DIR="${{ steps.strings.outputs.home }}/llvm" ;
+        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=cl
+        -DCMAKE_C_COMPILER=cl
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DRUNNER=1
+        -S ${{ github.workspace }}
+
+    - name: Build
+      run: >
+        cd ${{ github.workspace }} ;
+        .\.venv\Scripts\activate ;
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel 4
+        --config ${{ matrix.build_type }}
+
+    - name: Test
+      run: >
+        cd ${{ github.workspace }} ;
+        .\.venv\Scripts\activate ;
+        ctest --test-dir ${{ steps.strings.outputs.build-output-dir }}
+        --build-config ${{ matrix.build_type }} 
+        --output-on-failure
