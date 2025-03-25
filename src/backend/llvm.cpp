@@ -4,32 +4,67 @@
 
 #include "backend/llvm.h"
 
-// struct LLVM_IR_Converter {
+struct LLVM_IR_Converter {
+    LLVM_IR_Converter(
+        llvm::LLVMContext* _context, llvm::IRBuilder<>* _builder, llvm::Module* _module
+    ) :
+        context(_context), builder(_builder), module(_module) {
+        // Empty.
+    }
 
-//     void operator()(const mfast::NumberValNode&) {
-//     }
-// };
+    llvm::LLVMContext* context;
+    llvm::IRBuilder<>* builder;
+    llvm::Module*      module;
+
+    template <typename NodeType>
+    void operator()(const NodeType&) { }
+
+    void operator()(const mfast::NumberValNode&) { }
+};
 
 void mfbe::convert_module_to_llvm_ir(
     VALIN mfast::AST& ast,
     VALIN mfast::NodeBuffers& nodes,
     VALIN mfvar::VariableTypeTable& var_table
 ) {
-    (void)ast;
-    (void)nodes;
     (void)var_table;
 
-    // auto module_root = *boost::vertices(ast).first;
+    // Determine module root vertex and all leaf nodes.
 
-    // TODO(Matthew): What is the best way to parellelise this? Do we even want to? For
-    //                now we go through the AST from the node top-down but maybe we want
-    //                to start from leaf nodes.
+    // size_t module_root = *boost::vertices(ast).first;
+    std::queue<mfast::ASTVertex>                queued_vertices;
+    std::unordered_map<mfast::ASTVertex, void*> processed_vertices;
+    for (auto vertex : boost::make_iterator_range(boost::vertices(ast))) {
+        auto [beg, end] = boost::out_edges(vertex, ast);
 
-    // // A Hello World Example as reference.
+        if (end - beg == 0) {
+            queued_vertices.push(vertex);
+        }
+    }
 
-    // llvm::LLVMContext context;
-    // llvm::IRBuilder   builder(context);
-    // llvm::Module      module("a_module", context);
+    // TODO(Matthew): Can we parellelise this?
+
+    // Set up module, builder and associated LLVM context.
+
+    llvm::LLVMContext context;
+    llvm::IRBuilder   builder(context);
+    llvm::Module      module("a_module", context);
+
+    // The plan:
+    //  Iterate leaf nodes, setting up their respective LLVM data and link to this in
+    //  hash map. Iterate the nodes pointing to the leaf nodes and do the same, wherever
+    //  all nodes pointed to by that node are in the hash map. Place all nodes not thus
+    //  processed onto a queue. Iterate all nodes in the queue and then all nodes
+    //  pointed to by nodes processed in the last round in the same way. Recurse.
+
+    while (!queued_vertices.empty()) {
+        mfast::ASTVertex vertex = queued_vertices.front();
+
+        std::visit(
+            LLVM_IR_Converter{ &context, &builder, &module },
+            nodes.get_node_info(vertex)
+        );
+    }
 
     // const auto func_type = llvm::FunctionType::get(builder.getVoidTy(), false);
     // const auto main_func = llvm::Function::Create(
