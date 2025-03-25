@@ -66,7 +66,7 @@ if (UNIX OR MINGW)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wused-but-marked-unused -Werror")
     endif()
 elseif (MSVC)
-    set(CMAKE_CXX_FLAGS "/W3 /WX /EHsc /Zc:preprocessor")
+    set(CMAKE_CXX_FLAGS "/W3 /WX /wd5102 /EHsc /Zc:preprocessor")
     set(CMAKE_CXX_FLAGS_RELEASE "/MD /O2")
     set(CMAKE_CXX_FLAGS_DEBUG "/MDd /Od /Zi")
 
