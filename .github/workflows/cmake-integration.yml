@@ -203,18 +203,23 @@ jobs:
         --output-on-failure
 
 ####################
-#     MacOS 14     #
+#     MacOS 15     #
 ####################
 
   build-macos:
-    runs-on: macos-14
+    runs-on: macos-15
 
     strategy:
       fail-fast: true
 
       matrix:
         build_type: [Release, Debug]
-        c_compiler: [clang]
+        c_compiler: [gcc-14, clang]
+        include:
+          - c_compiler: gcc-14
+            cpp_compiler: g++-14
+          - c_compiler: clang
+            cpp_compiler: clang++
 
     steps:
     - uses: actions/checkout@v4.2.2
@@ -245,7 +250,7 @@ jobs:
         cache-name: cache-conan
       with:
         path: ${{ steps.strings.outputs.home }}/.conan2
-        key: macos-14-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}--${{ hashFiles('conanfile.txt') }}
+        key: macos-15-${{ env.cache-name }}-${{ matrix.build_type }}-${{ matrix.c_compiler }}-${{ hashFiles('CMakeLists.txt') }}--${{ hashFiles('conanfile.txt') }}
   
     - name: Configure CMake
       run: >
@@ -255,8 +260,8 @@ jobs:
         export LDFLAGS="-L/opt/homebrew/opt/llvm@18/lib" ;
         export CPPFLAGS="-I/opt/homebrew/opt/llvm@18/include" ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=clang++
-        -DCMAKE_C_COMPILER=clang
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -DRUNNER=1
         -S ${{ github.workspace }}
