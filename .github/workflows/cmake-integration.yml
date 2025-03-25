@@ -282,6 +282,8 @@ jobs:
         export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH" ;
         export LDFLAGS="-L/opt/homebrew/opt/llvm@18/lib" ;
         export CPPFLAGS="-I/opt/homebrew/opt/llvm@18/include" ;
+        cd ${{ github.workspace }}/test ;
+        ../build/mattflow_tests ;
         ctest --test-dir ${{ steps.strings.outputs.build-output-dir }}
         --build-config ${{ matrix.build_type }} 
         --output-on-failure
