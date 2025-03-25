@@ -183,7 +183,7 @@ target_link_libraries(mattflow
 )
 
 if (APPLE)
-    target_link_options(mattflow PRIVATE "LINKER:-fkeep_dwarf_unwind")
+    target_link_options(mattflow PRIVATE "LINKER:-keep_dwarf_unwind")
 endif()
 
 target_compile_definitions(mattflow
@@ -268,7 +268,7 @@ target_link_libraries(mattflow_cli
 )
 
 if (APPLE)
-    target_link_options(mattflow_cli PRIVATE "LINKER:-fkeep_dwarf_unwind")
+    target_link_options(mattflow_cli PRIVATE "LINKER:-keep_dwarf_unwind")
 endif()
 
 ########################################################################################
@@ -335,7 +335,7 @@ target_link_libraries(mattflow_tests
 )
 
 if (APPLE)
-    target_link_options(mattflow_tests PRIVATE "LINKER:-fkeep_dwarf_unwind")
+    target_link_options(mattflow_tests PRIVATE "LINKER:-keep_dwarf_unwind")
 endif()
 
 target_compile_definitions(mattflow_tests
