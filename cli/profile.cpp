@@ -30,6 +30,16 @@ static char* make_time_string(std::chrono::nanoseconds time) {
     } else {
         snprintf(result, 10, "%5llu%s", static_cast<uint64_t>(raw_time), "ns");
     }
+#elif defined(MATTFLOW_OS_WINDOWS)
+    if (raw_time > 1e10) {
+        snprintf(result, 10, "%5lld%s", static_cast<uint64_t>(raw_time / 1e9), "s");
+    } else if (raw_time > 1e7) {
+        snprintf(result, 10, "%5lld%s", static_cast<uint64_t>(raw_time / 1e6), "ms");
+    } else if (raw_time > 1e4) {
+        snprintf(result, 10, "%5lld%s", static_cast<uint64_t>(raw_time / 1e3), "us");
+    } else {
+        snprintf(result, 10, "%5lld%s", static_cast<uint64_t>(raw_time), "ns");
+    }
 #else
     if (raw_time > 1e10) {
         snprintf(result, 10, "%5ld%s", static_cast<uint64_t>(raw_time / 1e9), "s");
