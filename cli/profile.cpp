@@ -17,43 +17,29 @@ mfcli::Profile mfcli::operator+(const mfcli::Profile& lhs, const mfcli::Profile&
     return { lhs.times + rhs.times, lhs.lines + rhs.lines };
 }
 
-static char* make_time_string(std::chrono::nanoseconds time) {
-    auto  raw_time = time.count();
-    char* result   = new char[10];
-#if defined(MATTFLOW_OS_MAC)
+static std::string make_time_string(std::chrono::nanoseconds time) {
+    std::string result;
+
+    auto raw_time = time.count();
     if (raw_time > 1e10) {
-        snprintf(result, 10, "%5llu%s", static_cast<uint64_t>(raw_time / 1e9), "s");
+        result = std::to_string(raw_time / 1e9) + "s";
     } else if (raw_time > 1e7) {
-        snprintf(result, 10, "%5llu%s", static_cast<uint64_t>(raw_time / 1e6), "ms");
+        result = std::to_string(raw_time / 1e6) + "ms";
     } else if (raw_time > 1e4) {
-        snprintf(result, 10, "%5llu%s", static_cast<uint64_t>(raw_time / 1e3), "us");
+        result = std::to_string(raw_time / 1e3) + "us";
     } else {
-        snprintf(result, 10, "%5llu%s", static_cast<uint64_t>(raw_time), "ns");
+        result = std::to_string(raw_time) + "ns";
     }
-#elif defined(MATTFLOW_OS_WINDOWS)
-    if (raw_time > 1e10) {
-        snprintf(result, 10, "%5lld%s", static_cast<uint64_t>(raw_time / 1e9), "s");
-    } else if (raw_time > 1e7) {
-        snprintf(result, 10, "%5lld%s", static_cast<uint64_t>(raw_time / 1e6), "ms");
-    } else if (raw_time > 1e4) {
-        snprintf(result, 10, "%5lld%s", static_cast<uint64_t>(raw_time / 1e3), "us");
-    } else {
-        snprintf(result, 10, "%5lld%s", static_cast<uint64_t>(raw_time), "ns");
-    }
-#else
-    if (raw_time > 1e10) {
-        snprintf(result, 10, "%5ld%s", static_cast<uint64_t>(raw_time / 1e9), "s");
-    } else if (raw_time > 1e7) {
-        snprintf(result, 10, "%5ld%s", static_cast<uint64_t>(raw_time / 1e6), "ms");
-    } else if (raw_time > 1e4) {
-        snprintf(result, 10, "%5ld%s", static_cast<uint64_t>(raw_time / 1e3), "us");
-    } else {
-        snprintf(result, 10, "%5ld%s", static_cast<uint64_t>(raw_time), "ns");
-    }
-#endif
 
     return result;
 };
+
+static std::string format_with_commas(uint64_t value) {
+    std::stringstream ss;
+    ss.imbue(std::locale(""));
+    ss << std::fixed << value;
+    return ss.str();
+}
 
 void mfcli::print_profile(const mfcli::Profile& profile) {
     auto times = profile.times;
@@ -64,15 +50,16 @@ void mfcli::print_profile(const mfcli::Profile& profile) {
     );
     total_time /= 1.e9;
 
-    uint64_t lines_per_second = profile.lines / static_cast<uint64_t>(total_time);
+    uint64_t lines_per_second
+        = static_cast<uint64_t>(static_cast<double>(profile.lines) / total_time);
 
     setlocale(LC_NUMERIC, "");
-    printf("    Lexing             :     %s\n", make_time_string(times.lex_dur));
-    printf("    Syntactic Analysis :     %s\n", make_time_string(times.ast_dur));
-    printf("    LLVM Backend       :     %s\n", make_time_string(times.backend_dur));
-#if defined(MATTFLOW_OS_MAC)
-    printf("    Lines per Second   :  %'10llu\n\n", lines_per_second);
-#else
-    printf("    Lines per Second   :  %'10ld\n\n", lines_per_second);
-#endif
+    std::cout << "    Lexing             :   " << make_time_string(times.lex_dur)
+              << std::endl;
+    std::cout << "    Syntactic Analysis :   " << make_time_string(times.ast_dur)
+              << std::endl;
+    std::cout << "    LLVM Backend       :   " << make_time_string(times.backend_dur)
+              << std::endl;
+    std::cout << "    Lines per Second   :   " << std::setw(10)
+              << format_with_commas(lines_per_second) << std::endl;
 }
