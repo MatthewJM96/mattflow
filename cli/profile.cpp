@@ -64,7 +64,7 @@ void mfcli::print_profile(const mfcli::Profile& profile) {
     );
     total_time /= 1.e9;
 
-    uint64_t lines_per_second = profile.lines / total_time;
+    uint64_t lines_per_second = profile.lines / static_cast<uint64_t>(total_time);
 
     setlocale(LC_NUMERIC, "");
     printf("    Lexing             :     %s\n", make_time_string(times.lex_dur));
