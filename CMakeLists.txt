@@ -90,12 +90,13 @@ find_package(LLVM REQUIRED CONFIG)
 
 separate_arguments(LLVM_DEFINITIONS NATIVE_COMMAND "${LLVM_DEFINITIONS}")
 
-# TODO(Matthew): review the below comment.
-# This is the recommended way to figure out what to link to for LLVM, but I'm finding
-# that it doesn't work so well, at some point I should put more time into understanding
-# why that is as it isn't being recommended for no reason. That said so long as our
-# approach works, who cares...
-# llvm_map_components_to_libnames(LLVM_LIBS support core irreader)
+if (MSVC)
+    # This is the recommended way to figure out what to link to for LLVM, but I'm
+    # finding that it doesn't work so well on Linux or Mac, at some point I should put
+    # more time into understanding why that is as it isn't being recommended for no
+    # reason. That said so long as our approach works, who cares...
+    llvm_map_components_to_libnames(LLVM_LIBS support core irreader)
+endif()
 
 ########################################################################################
 
@@ -151,15 +152,22 @@ set(mattflow_Include_Dirs
     ${Boost_INCLUDE_DIRS}
     ${LLVM_INCLUDE_DIRS}
 )
-set(mattflow_Libraries
-    LLVM-18
-)
+
+if (MSVC)
+    set(mattflow_Libraries
+        ${LLVM_LIBS}
+    )
+else()
+    set(mattflow_Libraries
+        LLVM-18
+    )
+endif()
 
 if(MATTFLOW_ENABLE_PROFILING)
-set(mattflow_Libraries
-    ${mattflow_Libraries}
-    profiler
-)
+    set(mattflow_Libraries
+        ${mattflow_Libraries}
+        profiler
+    )
 endif()
 
 ########################################################################################
