@@ -58,8 +58,30 @@ void mfbe::convert_module_to_llvm_ir(
     //  pointed to by nodes processed in the last round in the same way. Recurse.
 
     while (!queued_vertices.empty()) {
+        // Get next vertex to process and pop it from queue.
         mfast::ASTVertex vertex = queued_vertices.front();
+        queued_vertices.pop();
 
+        // Iterate all out edges of the vertex we are processing, if any of the
+        // pointed-to vertices are not in the processed_vertices hashmap, then we need
+        // to add the vertex we are processing back onto the end of the queue - a
+        // necessary bit of IR hasn't been generated yet.
+        bool can_process_vertex = true;
+        for (auto edge : boost::make_iterator_range(boost::out_edges(vertex, ast))) {
+            mfast::ASTVertex linked_to_vertex = boost::target(edge);
+
+            auto it = processed_vertices.find(linked_to_vertex);
+            if (it == processed_vertices.end()) {
+                can_process_vertex = false;
+                queued_vertices.push(vertex);
+            }
+        }
+
+        // If vertex had to be added back onto the queue, then don't process it and test
+        // the next vertex.
+        if (!can_process_vertex) continue;
+
+        // Visit node info with the LLVM IR converter.
         std::visit(
             LLVM_IR_Converter{ &context, &builder, &module },
             nodes.get_node_info(vertex)
