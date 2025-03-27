@@ -135,6 +135,9 @@
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
+            },
+            "environment": {
+                "LLVM_DIR": "${sourceDir}/deps/llvm"
             }
         },
         {
@@ -154,6 +157,9 @@
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
+            },
+            "environment": {
+                "LLVM_DIR": "${sourceDir}/deps/llvm"
             }
         }
     ],
