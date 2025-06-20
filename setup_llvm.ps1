@@ -1,7 +1,7 @@
 mkdir deps
 mkdir deps\llvm
 
-cd deps/llvm
+Set-Location deps/llvm
 
 Install-Module -Name 7Zip4Powershell -Force
 
@@ -17,10 +17,10 @@ Expand-7Zip llvm.tar src
 Expand-7Zip third-party.tar src
 Expand-7Zip cmake.tar src
 
-mv src/cmake-18.1.8.src src/cmake
-mv src/third-party-18.1.8.src src/third-party
+Move-Item src/cmake-18.1.8.src src/cmake
+Move-Item src/third-party-18.1.8.src src/third-party
 
-mkdir build
+New-Item build -ItemType Directory
 
 cmake -B build `
     -DCMAKE_CXX_COMPILER=cl `
