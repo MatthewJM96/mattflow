@@ -111,6 +111,7 @@ void mfbe::convert_module_to_llvm_ir(
             nodes.get_node_info(vertex)
         );
 
+        // Store the userdata regarding any generated IR for the node.
         processed_node_data[vertex] = processed_data;
 
         // Decrement out-edges that are unprocessed for all vertices pointing to this
