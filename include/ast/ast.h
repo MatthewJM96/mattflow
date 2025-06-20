@@ -22,7 +22,7 @@ namespace mattflow {
         using AST = boost::adjacency_list<
             boost::vecS,
             boost::vecS,
-            boost::directedS,
+            boost::bidirectionalS,
             boost::property<vertex_data_t, size_t>>;
 
         using ASTVertex = AST::vertex_descriptor;
