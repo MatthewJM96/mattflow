@@ -13,15 +13,19 @@
 
 struct LLVM_IR_Converter {
     LLVM_IR_Converter(
-        llvm::LLVMContext* _context, llvm::IRBuilder<>* _builder, llvm::Module* _module, void** _node_data
+        mfast::AST& _ast, mfast::ASTVertex _vertex, llvm::LLVMContext* _context, llvm::IRBuilder<>* _builder, llvm::Module* _module, void** _node_data
     ) :
-        context(_context), builder(_builder), module(_module), node_data(_node_data) {
+        ast(_ast), vertex(_vertex), context(_context), builder(_builder), module(_module), node_data(_node_data) {
         // Empty.
     }
+
+    mfast::AST& ast;
+    mfast::ASTVertex vertex;
 
     llvm::LLVMContext* context;
     llvm::IRBuilder<>* builder;
     llvm::Module*      module;
+
     void**             node_data;
 
     template <typename NodeType>
@@ -85,7 +89,7 @@ void mfbe::convert_module_to_llvm_ir(
         // Visit node info with the LLVM IR converter.
         void* processed_data = nullptr;
         std::visit(
-            LLVM_IR_Converter{ &context, &builder, &module, &processed_data },
+            LLVM_IR_Converter{ ast, vertex, &context, &builder, &module, &processed_data },
             nodes.get_node_info(vertex)
         );
         
