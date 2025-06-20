@@ -4,7 +4,6 @@
 
 #include "backend/llvm.h"
 
-
 // TODO(Matthew): Can we parellelise this?. Possible ways include:
 //                  subtree-level parallelism, e.g. separating top-level functions
 //                  task-based parellelism by expressing dependencies across nodes
@@ -13,20 +12,30 @@
 
 struct LLVM_IR_Converter {
     LLVM_IR_Converter(
-        mfast::AST& _ast, mfast::ASTVertex _vertex, llvm::LLVMContext* _context, llvm::IRBuilder<>* _builder, llvm::Module* _module, void** _node_data
+        mfast::AST&        _ast,
+        mfast::ASTVertex   _vertex,
+        llvm::LLVMContext* _context,
+        llvm::IRBuilder<>* _builder,
+        llvm::Module*      _module,
+        void**             _node_data
     ) :
-        ast(_ast), vertex(_vertex), context(_context), builder(_builder), module(_module), node_data(_node_data) {
+        ast(_ast),
+        vertex(_vertex),
+        context(_context),
+        builder(_builder),
+        module(_module),
+        node_data(_node_data) {
         // Empty.
     }
 
-    mfast::AST& ast;
+    mfast::AST&      ast;
     mfast::ASTVertex vertex;
 
     llvm::LLVMContext* context;
     llvm::IRBuilder<>* builder;
     llvm::Module*      module;
 
-    void**             node_data;
+    void** node_data;
 
     template <typename NodeType>
     void operator()(const NodeType&) { }
@@ -68,7 +77,7 @@ void mfbe::convert_module_to_llvm_ir(
     // Determine initial number of out-edges of each vertex and queue vertices that
     // have no out-edges (a.k.a. are leaf nodes).
 
-    std::queue<mfast::ASTVertex> queued_vertices;
+    std::queue<mfast::ASTVertex>                   queued_vertices;
     std::unordered_map<mfast::ASTVertex, uint64_t> unprocessed_out_degrees;
     for (auto vertex : boost::make_iterator_range(boost::vertices(ast))) {
         auto [beg, end] = boost::out_edges(vertex, ast);
@@ -85,14 +94,14 @@ void mfbe::convert_module_to_llvm_ir(
         mfast::ASTVertex vertex = queued_vertices.front();
         queued_vertices.pop();
 
-
         // Visit node info with the LLVM IR converter.
         void* processed_data = nullptr;
         std::visit(
-            LLVM_IR_Converter{ ast, vertex, &context, &builder, &module, &processed_data },
+            LLVM_IR_Converter{
+                ast, vertex, &context, &builder, &module, &processed_data },
             nodes.get_node_info(vertex)
         );
-        
+
         processed_node_data[vertex] = processed_data;
 
         // Decrement out-edges that are unprocessed for all vertices pointing to this
