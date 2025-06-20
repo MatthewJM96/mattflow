@@ -89,6 +89,15 @@ void mfbe::convert_module_to_llvm_ir(
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////
+    // Iterate nodes in topological order.
+    //   That is to say, starting with all nodes that had no out edges (aka nodes that
+    //   depend on no other nodes), process the IR representation of those nodes and
+    //   then decrement the nodes that depend on the processed node. If any such node
+    //   no longer has any out edges that lead to unprocessed nodes, it then gets
+    //   queued for processing. Thus all nodes are processed starting at leaves of the
+    //   AST and iteration terminating at the root node of the AST.
+
     while (!queued_vertices.empty()) {
         // Get next vertex to process and pop it from queue.
         mfast::ASTVertex vertex = queued_vertices.front();
