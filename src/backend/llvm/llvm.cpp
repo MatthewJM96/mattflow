@@ -1,8 +1,7 @@
 #include "stdafx.h"
 
-// #include "ast/node.h"
-
-#include "backend/llvm.h"
+#include "backend/llvm/ir/converter.h"
+#include "backend/llvm/llvm.h"
 
 // TODO(Matthew): Can we parellelise this?. Possible ways include:
 //                  subtree-level parallelism, e.g. separating top-level functions
@@ -10,65 +9,7 @@
 //                  leaf-node parellelism via work stealing (useful for expression heavy
 //                      functions)
 
-struct LLVM_IR_Converter {
-    LLVM_IR_Converter(
-        mfast::AST&        _ast,
-        mfast::ASTVertex   _vertex,
-        llvm::LLVMContext* _context,
-        llvm::IRBuilder<>* _builder,
-        llvm::Module*      _module,
-        void**             _node_data
-    ) :
-        ast(_ast),
-        vertex(_vertex),
-        context(_context),
-        builder(_builder),
-        module(_module),
-        node_data(_node_data) {
-        // Empty.
-    }
-
-    mfast::AST&      ast;
-    mfast::ASTVertex vertex;
-
-    llvm::LLVMContext* context;
-    llvm::IRBuilder<>* builder;
-    llvm::Module*      module;
-
-    void** node_data;
-
-    template <typename NodeType>
-    void operator()(const NodeType&) { }
-
-    void operator()(const mfast::NumberValNode& node) {
-        // NOTE: For now we just make everything highest precision we support, this
-        //       might not really be sufficient and we might need to do implicit and
-        //       explicit casting of literals before representing the literal in LLVM
-        //       IR.
-
-        // Create an LLVM constant based on the number type (integer or floating-point)
-        llvm::Constant* constant_value = nullptr;
-
-        if (node.value.is_floating_point()) {
-            // Handle floating-point numbers
-            constant_value = llvm::ConstantFP::get(
-                *context, llvm::APFloat(node.value.template as<double>())
-            );
-        } else {
-            // Handle integers
-            constant_value = llvm::ConstantInt::get(
-                llvm::IntegerType::get(*context, 64), node.value.template as<uint64_t>()
-            );
-        }
-
-        // Store the generated value in node_data for potential future use
-        if (node_data) {
-            *node_data = reinterpret_cast<void*>(constant_value);
-        }
-    }
-};
-
-void mfbe::convert_module_to_llvm_ir(
+void mfbe::llvm::convert_module_to_ir(
     VALIN mfast::AST& ast,
     VALIN mfast::NodeBuffers& nodes,
     VALIN mfvar::VariableTypeTable& var_table
@@ -86,9 +27,9 @@ void mfbe::convert_module_to_llvm_ir(
     ////////////////////////////////////////////////////////////////////////////////////
     // Set up module, builder and associated LLVM context.
 
-    llvm::LLVMContext context;
-    llvm::IRBuilder   builder(context);
-    llvm::Module      module("a_module", context);
+    ::llvm::LLVMContext context;
+    ::llvm::IRBuilder   builder(context);
+    ::llvm::Module      module("a_module", context);
 
     // User data pointers for specific contents of each node.
     //   Note that different nodes will need to store different data and we will want

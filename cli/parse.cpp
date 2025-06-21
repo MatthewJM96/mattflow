@@ -2,7 +2,7 @@
 
 #include "ast/debug.h"
 #include "ast/parse/parse.h"
-#include "backend/llvm.h"
+#include "backend/llvm/llvm.h"
 #include "lex/lexer.h"
 #include "variable/variable.h"
 
@@ -65,7 +65,7 @@ mfcli::Profile mfcli::parse_file(
 
     auto backend_start = std::chrono::high_resolution_clock::now();
 
-    mfbe::convert_module_to_llvm_ir(ast, node_buffers, var_table);
+    mfbe::llvm::convert_module_to_ir(ast, node_buffers, var_table);
 
     profile.times.backend_dur
         = std::chrono::high_resolution_clock::now() - backend_start;
