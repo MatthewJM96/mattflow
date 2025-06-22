@@ -32,7 +32,23 @@ void mfbe::llvm::LLVM_IR_Converter::operator()(const mfast::DivisionOperatorNode
 
 void mfbe::llvm::LLVM_IR_Converter::operator()(const mfast::AdditionOperatorNode& node
 ) {
-    // TODO(Matthew): Implement.
+    auto [beg, end] = boost::out_edges(vertex, ast);
+
+    mfassert(
+        std::distance(beg, end) == 2,
+        "LLVM_IR_Converter expects 2 children of AdditionOperatorNode."
+    );
+
+    auto lhs = boost::target(*beg, ast);
+    auto rhs = boost::target(*(beg + 1), ast);
+
+    auto lhs_data = processed_node_data[lhs];
+    auto rhs_data = processed_node_data[rhs];
+
+    // TODO(Matthew): Need a way of knowing what is in the type-erased data here. I
+    //                think trivially another visitor to extract the appropriate info
+    //                is possible but also we could start simple and assume constants
+    //                to get to some trivial language that compiles.
 }
 
 void mfbe::llvm::LLVM_IR_Converter::operator()(
