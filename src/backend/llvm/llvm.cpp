@@ -46,11 +46,12 @@ void mfbe::llvm::convert_module_to_ir(
     std::queue<mfast::ASTVertex>                   queued_vertices;
     std::unordered_map<mfast::ASTVertex, uint64_t> unprocessed_out_degrees;
     for (auto vertex : boost::make_iterator_range(boost::vertices(ast))) {
-        auto [beg, end] = boost::out_edges(vertex, ast);
+        auto [beg, end]    = boost::out_edges(vertex, ast);
+        auto num_out_edges = std::distance(beg, end);
 
-        unprocessed_out_degrees[vertex] = end - beg;
+        unprocessed_out_degrees[vertex] = num_out_edges;
 
-        if ((end - beg) == 0) {
+        if (num_out_edges == 0) {
             queued_vertices.emplace(vertex);
         }
     }
