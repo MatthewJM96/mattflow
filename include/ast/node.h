@@ -122,6 +122,8 @@ namespace mattflow {
                 }
             }
         };
+
+        using NodeData = std::unordered_map<mfast::ASTVertex, void*>;
     }  // namespace ast
 }  // namespace mattflow
 namespace mfast = mattflow::ast;

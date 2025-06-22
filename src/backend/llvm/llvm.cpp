@@ -37,7 +37,7 @@ void mfbe::llvm::convert_module_to_ir(
     //   allocation of node data in our own AST structure.
     //   TODO(Matthew): either make this note happen as described or update it to
     //                  reflect reality.
-    std::unordered_map<mfast::ASTVertex, void*> processed_node_data;
+    mfast::NodeData processed_node_data;
 
     ////////////////////////////////////////////////////////////////////////////////////
     // Determine initial number of out-edges of each vertex and queue vertices that
@@ -73,8 +73,13 @@ void mfbe::llvm::convert_module_to_ir(
         // Visit node info with the LLVM IR converter.
         void* processed_data = nullptr;
         std::visit(
-            LLVM_IR_Converter{
-                ast, vertex, &context, &builder, &module, &processed_data },
+            LLVM_IR_Converter{ ast,
+                               vertex,
+                               processed_node_data,
+                               &context,
+                               &builder,
+                               &module,
+                               &processed_data },
             nodes.get_node_info(vertex)
         );
 

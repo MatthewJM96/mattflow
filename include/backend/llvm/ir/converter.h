@@ -12,6 +12,7 @@ namespace mattflow {
                 LLVM_IR_Converter(
                     mfast::AST&          _ast,
                     mfast::ASTVertex     _vertex,
+                    mfast::NodeData&     _processed_node_data,
                     ::llvm::LLVMContext* _context,
                     ::llvm::IRBuilder<>* _builder,
                     ::llvm::Module*      _module,
@@ -19,6 +20,7 @@ namespace mattflow {
                 ) :
                     ast(_ast),
                     vertex(_vertex),
+                    processed_node_data(_processed_node_data),
                     context(_context),
                     builder(_builder),
                     module(_module),
@@ -28,6 +30,8 @@ namespace mattflow {
 
                 mfast::AST&      ast;
                 mfast::ASTVertex vertex;
+
+                mfast::NodeData& processed_node_data;
 
                 ::llvm::LLVMContext* context;
                 ::llvm::IRBuilder<>* builder;
