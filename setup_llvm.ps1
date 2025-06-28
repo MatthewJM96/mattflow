@@ -56,6 +56,9 @@ function BuildLLVM {
 
     # Get number of processors
     $procs = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors - 4
+    if ($procs -lt 1) {
+        $procs = 1  # Ensure at least one processor is used.
+    }
 
     # Build
     cmake --build "$BuildDir" --parallel "$procs" --config "$BuildType"
