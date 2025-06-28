@@ -37,7 +37,8 @@ function BuildLLVM {
         [string]$BuildType,
         [string]$BuildDir,
         [string]$InstallDir,
-        [switch]$Force
+        [switch]$Force,
+        [int]$Jobs
     )
 
     # Check if build or install directories exist
@@ -75,10 +76,15 @@ function BuildLLVM {
         -DLLVM_USE_CRT_DEBUG=MTd                    `
         -S src/llvm-18.1.8.src
 
-    # Get number of processors
-    $procs = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors - 4
-    if ($procs -lt 1) {
-        $procs = 1  # Ensure at least one processor is used.
+    # Use custom job count if provided, otherwise default to number of processors less 4
+    $procs = 1
+    if ($Jobs -gt 0) {
+        $procs = $Jobs
+    } else {
+        $procs = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors - 4
+        if ($procs -lt 1) {
+            $procs = 1  # Ensure at least one processor is used.
+        }
     }
 
     # Build
@@ -92,6 +98,7 @@ function BuildLLVM {
 $buildDebug = $false
 $buildRelease = $false
 $forceBuild = $false
+$jobCount = -1
 
 foreach ($arg in $args) {
     if ($arg -eq "/Debug") {
@@ -100,6 +107,14 @@ foreach ($arg in $args) {
         $buildRelease = $true
     } elseif ($arg -eq "/Force") {
         $forceBuild = $true
+    } elseif ($arg -like "/Jobs:*") {
+        # Parse the job count from the argument
+        $jobValue = $arg -replace "^/Jobs:", ""
+        [int]::TryParse($jobValue, [ref]$jobCount)
+        if ($jobCount -le 0) {
+            Write-Host "Invalid value for /Jobs:N. N must be a positive integer." -ForegroundColor Red
+            exit 1
+        }
     }
 }
 
@@ -111,8 +126,8 @@ if (-not $buildDebug -and -not $buildRelease) {
 
 # Do builds based on flags
 if ($buildDebug) {
-    BuildLLVM -BuildType "Debug" -BuildDir "build_debug" -InstallDir "debug" -Force:$forceBuild
+    BuildLLVM -BuildType "Debug" -BuildDir "build_debug" -InstallDir "debug" -Force:$forceBuild -Jobs $jobCount
 }
 if ($buildRelease) {
-    BuildLLVM -BuildType "Release" -BuildDir "build_release" -InstallDir "release" -Force:$forceBuild
+    BuildLLVM -BuildType "Release" -BuildDir "build_release" -InstallDir "release" -Force:$forceBuild -Jobs $jobCount
 }
