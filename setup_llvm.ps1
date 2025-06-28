@@ -1,38 +1,84 @@
-mkdir deps
-mkdir deps\llvm
+# Make sure llvm dir exists in deps, and change to that directory.
+New-Item deps\llvm -ItemType Directory
+Set-Location deps\llvm
 
-Set-Location deps/llvm
-
+# Ensure 7Zip is available for extracting files.
 Install-Module -Name 7Zip4Powershell -Force
 
+# Download LLVM source files
 Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/llvm-18.1.8.src.tar.xz -OutFile llvm.tar.xz
 Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/third-party-18.1.8.src.tar.xz -OutFile third-party.tar.xz
 Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/cmake-18.1.8.src.tar.xz -OutFile cmake.tar.xz
 
+# Extract .tar.xz files
 Expand-7Zip llvm.tar.xz .
 Expand-7Zip third-party.tar.xz .
 Expand-7Zip cmake.tar.xz .
 
+# Extract .tar files
 Expand-7Zip llvm.tar src
 Expand-7Zip third-party.tar src
 Expand-7Zip cmake.tar src
 
+# Rename folders
 Move-Item src/cmake-18.1.8.src src/cmake
 Move-Item src/third-party-18.1.8.src src/third-party
 
-New-Item build -ItemType Directory
+# Function for building LLVM
+function BuildLLVM {
+    param (
+        [string]$BuildType,
+        [string]$BuildDir,
+        [string]$InstallDir
+    )
 
-cmake -B build `
-    -DCMAKE_CXX_COMPILER=cl `
-    -DCMAKE_C_COMPILER=cl `
-    -DCMAKE_BUILD_TYPE=Release `
-    -DCMAKE_INSTALL_PREFIX:PATH=.. `
-    -DLLVM_ENABLE_ZLIB=OFF `
-    -DLLVM_USE_CRT_RELEASE=MT `
-    -DLLVM_USE_CRT_DEBUG=MTd `
-    -S src/llvm-18.1.8.src
+    # Create build and install directories
+    New-Item $BuildDir -ItemType Directory
+    New-Item $InstallDir -ItemType Directory
 
-$procs = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors - 4
-cmake --build build --parallel $procs --config Release
+    # Configure CMake
+    cmake -B $BuildDir                          `
+        -DCMAKE_CXX_COMPILER=cl                 `
+        -DCMAKE_C_COMPILER=cl                   `
+        -DCMAKE_BUILD_TYPE=$BuildType           `
+        -DCMAKE_INSTALL_PREFIX:PATH=$InstallDir `
+        -DLLVM_ENABLE_ZLIB=OFF                  `
+        -DLLVM_USE_CRT_RELEASE=MT               `
+        -DLLVM_USE_CRT_DEBUG=MTd                `
+        -S src/llvm-18.1.8.src
 
-cmake --build build --target install --config Release
+    # Get number of processors
+    $procs = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors - 4
+
+    # Build
+    cmake --build $BuildDir --parallel $procs --config $BuildType
+
+    # Install
+    cmake --build $BuildDir --target install --config $BuildType
+}
+
+# Parse command line arguments
+$buildDebug = $false
+$buildRelease = $false
+
+foreach ($arg in $args) {
+    if ($arg -eq "/Debug") {
+        $buildDebug = $true
+    } elseif ($arg -eq "/Release") {
+        $buildRelease = $true
+    }
+}
+
+# Default behavior: build both if none specified
+if (-not $buildDebug -and -not $buildRelease) {
+    $buildDebug = $true
+    $buildRelease = $true
+}
+
+# Do builds based on flags
+if ($buildDebug) {
+    BuildLLVM -BuildType "Debug" -BuildDir "build_debug" -InstallDir "debug"
+}
+if ($buildRelease) {
+    BuildLLVM -BuildType "Release" -BuildDir "build_release" -InstallDir "release"
+}
