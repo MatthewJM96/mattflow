@@ -36,8 +36,29 @@ function BuildLLVM {
     param (
         [string]$BuildType,
         [string]$BuildDir,
-        [string]$InstallDir
+        [string]$InstallDir,
+        [switch]$Force
     )
+
+    # Check if build or install directories exist
+    $buildDirExists = Test-Path $BuildDir
+    $installDirExists = Test-Path $InstallDir
+
+    # Fail to build if not set to Force the build and one already exists in some form.
+    if (($buildDirExists -or $installDirExists) -and -not $Force) {
+        Write-Host "Build or install directory already exists. Use -Force to overwrite." -ForegroundColor Yellow
+        return
+    }
+
+    # Delete existing build or install directories on Force.
+    if ($Force) {
+        if ($buildDirExists) {
+            Remove-Item $BuildDir -Recurse -Force
+        }
+        if ($installDirExists) {
+            Remove-Item $InstallDir -Recurse -Force
+        }
+    }
 
     # Create build and install directories
     New-Item $BuildDir -ItemType Directory -Force
@@ -70,12 +91,15 @@ function BuildLLVM {
 # Parse command line arguments
 $buildDebug = $false
 $buildRelease = $false
+$forceBuild = $false
 
 foreach ($arg in $args) {
     if ($arg -eq "/Debug") {
         $buildDebug = $true
     } elseif ($arg -eq "/Release") {
         $buildRelease = $true
+    } elseif ($arg -eq "/Force") {
+        $forceBuild = $true
     }
 }
 
@@ -87,8 +111,8 @@ if (-not $buildDebug -and -not $buildRelease) {
 
 # Do builds based on flags
 if ($buildDebug) {
-    BuildLLVM -BuildType "Debug" -BuildDir "build_debug" -InstallDir "debug"
+    BuildLLVM -BuildType "Debug" -BuildDir "build_debug" -InstallDir "debug" -Force:$forceBuild
 }
 if ($buildRelease) {
-    BuildLLVM -BuildType "Release" -BuildDir "build_release" -InstallDir "release"
+    BuildLLVM -BuildType "Release" -BuildDir "build_release" -InstallDir "release" -Force:$forceBuild
 }
