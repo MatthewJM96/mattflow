@@ -4,35 +4,39 @@
 
 #include "variable/variable.h"
 
-mfvar::VariableTypeTable::MapEntry
-mfvar::VariableTypeTable::try_insert(mflit::IdentifierIdx identifier) {
-    auto it = m_var_type_map.find(identifier);
+mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::try_insert(
+    mfvar::Scope scope, mflit::IdentifierIdx identifier
+) {
+    auto& scope_map = get_scope_map(scope);
+    auto  it        = scope_map.find(identifier);
 
-    if (it == m_var_type_map.end()) {
-        return m_var_type_map.insert({ identifier, mftype::UnresolvedType{} });
+    if (it == scope_map.end()) {
+        return scope_map.insert({ identifier, mftype::UnresolvedType{} });
     }
 
     return { it, false };
 }
 
 mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::try_insert(
-    mflit::IdentifierIdx identifier, const mftype::Type& type
+    mfvar::Scope scope, mflit::IdentifierIdx identifier, const mftype::Type& type
 ) {
-    auto it = m_var_type_map.find(identifier);
+    auto& scope_map = get_scope_map(scope);
+    auto  it        = scope_map.find(identifier);
 
-    if (it == m_var_type_map.end()) {
-        return m_var_type_map.insert({ identifier, type });
+    if (it == scope_map.end()) {
+        return scope_map.insert({ identifier, type });
     }
 
     return { it, false };
 }
 
 mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
-    mflit::IdentifierIdx identifier, const mftype::Type& type
+    mfvar::Scope scope, mflit::IdentifierIdx identifier, const mftype::Type& type
 ) {
-    auto it = m_var_type_map.find(identifier);
+    auto& scope_map = get_scope_map(scope);
+    auto  it        = scope_map.find(identifier);
 
-    if (it == m_var_type_map.end()) {
+    if (it == scope_map.end()) {
         return { it, false };
     }
 
@@ -43,4 +47,10 @@ mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
     it->second = type;
 
     return { it, true };
+}
+
+mfvar::VariableTypeTable::Map&
+mfvar::VariableTypeTable::get_scope_map(mfvar::Scope scope) {
+    auto it = m_scope_var_type_map.try_emplace(scope, {}).first;
+    return it->second;
 }
