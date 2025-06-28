@@ -1,7 +1,24 @@
-# Make sure llvm dir exists in deps, and change to that directory.
+# Save the original location at the start of the script
+$originalLocation = Get-Location
+
+# Function to restore the original location and exit
+function Exit-Script {
+    [CmdletBinding()]
+    param (
+        [int]$ExitCode = 0
+    )
+    Set-Location $originalLocation
+    exit $ExitCode
+}
+
+# Trap for unexpected exits (e.g., Ctrl+C, exceptions)
+trap {
+    Exit-Script 1
+}
+
+# Ensure deps directory exists and change to deps\llvm
 New-Item deps\llvm -ItemType Directory -Force
 Set-Location deps\llvm
-
 
 # Check if source directories already exist
 $srcExists = Test-Path "src"
@@ -113,7 +130,7 @@ foreach ($arg in $args) {
         [int]::TryParse($jobValue, [ref]$jobCount)
         if ($jobCount -le 0) {
             Write-Host "Invalid value for /Jobs:N. N must be a positive integer." -ForegroundColor Red
-            exit 1
+            Exit-Script 1
         }
     }
 }
@@ -128,6 +145,9 @@ if (-not $buildDebug -and -not $buildRelease) {
 if ($buildDebug) {
     BuildLLVM -BuildType "Debug" -BuildDir "build_debug" -InstallDir "debug" -Force:$forceBuild -Jobs $jobCount
 }
+
 if ($buildRelease) {
     BuildLLVM -BuildType "Release" -BuildDir "build_release" -InstallDir "release" -Force:$forceBuild -Jobs $jobCount
 }
+
+Exit-Script 0
