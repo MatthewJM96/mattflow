@@ -51,6 +51,6 @@ mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
 
 mfvar::VariableTypeTable::Map&
 mfvar::VariableTypeTable::get_scope_map(mfvar::Scope scope) {
-    auto it = m_scope_var_type_map.try_emplace(scope, {}).first;
+    auto it = m_scope_var_type_map.try_emplace(scope, Map{}).first;
     return it->second;
 }
