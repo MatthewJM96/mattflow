@@ -44,24 +44,24 @@ function BuildLLVM {
     New-Item $InstallDir -ItemType Directory -Force
 
     # Configure CMake
-    cmake -B $BuildDir                          `
-        -DCMAKE_CXX_COMPILER=cl                 `
-        -DCMAKE_C_COMPILER=cl                   `
-        -DCMAKE_BUILD_TYPE=$BuildType           `
-        -DCMAKE_INSTALL_PREFIX:PATH=$InstallDir `
-        -DLLVM_ENABLE_ZLIB=OFF                  `
-        -DLLVM_USE_CRT_RELEASE=MT               `
-        -DLLVM_USE_CRT_DEBUG=MTd                `
+    cmake -B $BuildDir                              `
+        -DCMAKE_CXX_COMPILER=cl                     `
+        -DCMAKE_C_COMPILER=cl                       `
+        -DCMAKE_BUILD_TYPE="$BuildType"             `
+        -DCMAKE_INSTALL_PREFIX:PATH="$InstallDir"   `
+        -DLLVM_ENABLE_ZLIB=OFF                      `
+        -DLLVM_USE_CRT_RELEASE=MT                   `
+        -DLLVM_USE_CRT_DEBUG=MTd                    `
         -S src/llvm-18.1.8.src
 
     # Get number of processors
     $procs = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors - 4
 
     # Build
-    cmake --build $BuildDir --parallel $procs --config $BuildType
+    cmake --build "$BuildDir" --parallel "$procs" --config "$BuildType"
 
     # Install
-    cmake --build $BuildDir --target install --config $BuildType
+    cmake --build "$BuildDir" --target install --config "$BuildType"
 }
 
 # Parse command line arguments
