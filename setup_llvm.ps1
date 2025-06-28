@@ -1,28 +1,35 @@
 # Make sure llvm dir exists in deps, and change to that directory.
-New-Item deps\llvm -ItemType Directory
+New-Item deps\llvm -ItemType Directory -Force
 Set-Location deps\llvm
 
-# Ensure 7Zip is available for extracting files.
-Install-Module -Name 7Zip4Powershell -Force
 
-# Download LLVM source files
-Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/llvm-18.1.8.src.tar.xz -OutFile llvm.tar.xz
-Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/third-party-18.1.8.src.tar.xz -OutFile third-party.tar.xz
-Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/cmake-18.1.8.src.tar.xz -OutFile cmake.tar.xz
+# Check if source directories already exist
+$srcExists = Test-Path "src"
 
-# Extract .tar.xz files
-Expand-7Zip llvm.tar.xz .
-Expand-7Zip third-party.tar.xz .
-Expand-7Zip cmake.tar.xz .
+# Download LLVM source files only if they don't exist
+if ($srcExists) {
+    Write-Host "LLVM source already exists, skipping download."
+} else {
+    # Ensure 7Zip is available for extracting files.
+    Install-Module -Name 7Zip4Powershell -Force
 
-# Extract .tar files
-Expand-7Zip llvm.tar src
-Expand-7Zip third-party.tar src
-Expand-7Zip cmake.tar src
+    # Download source files.
+    Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/llvm-18.1.8.src.tar.xz -OutFile llvm.tar.xz
+    Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/third-party-18.1.8.src.tar.xz -OutFile third-party.tar.xz
+    Invoke-WebRequest https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/cmake-18.1.8.src.tar.xz -OutFile cmake.tar.xz
 
-# Rename folders
-Move-Item src/cmake-18.1.8.src src/cmake
-Move-Item src/third-party-18.1.8.src src/third-party
+    # Extract source files.
+    Expand-7Zip llvm.tar.xz .
+    Expand-7Zip llvm.tar src
+    Expand-7Zip third-party.tar.xz .
+    Expand-7Zip third-party.tar src
+    Expand-7Zip cmake.tar.xz .
+    Expand-7Zip cmake.tar src
+
+    # Move source files into expected named directories.
+    Move-Item src\third-party-18.1.8.src src\third-party -ErrorAction SilentlyContinue
+    Move-Item src\cmake-18.1.8.src src\cmake -ErrorAction SilentlyContinue
+}
 
 # Function for building LLVM
 function BuildLLVM {
