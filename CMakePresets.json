@@ -137,7 +137,7 @@
                 "rhs": "Windows"
             },
             "environment": {
-                "LLVM_DIR": "${sourceDir}/deps/llvm"
+                "LLVM_DIR": "${sourceDir}/deps/llvm/debug"
             }
         },
         {
@@ -159,7 +159,7 @@
                 "rhs": "Windows"
             },
             "environment": {
-                "LLVM_DIR": "${sourceDir}/deps/llvm"
+                "LLVM_DIR": "${sourceDir}/deps/llvm/release"
             }
         }
     ],
