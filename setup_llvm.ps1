@@ -55,6 +55,7 @@ function BuildLLVM {
         [string]$BuildDir,
         [string]$InstallDir,
         [switch]$Force,
+        [switch]$Partial,
         [int]$Jobs
     )
 
@@ -63,8 +64,8 @@ function BuildLLVM {
     $installDirExists = Test-Path $InstallDir
 
     # Fail to build if not set to Force the build and one already exists in some form.
-    if (($buildDirExists -or $installDirExists) -and -not $Force) {
-        Write-Host "Build or install directory already exists. Use -Force to overwrite." -ForegroundColor Yellow
+    if (($buildDirExists -or $installDirExists) -and -not $Force -and -not $Partial) {
+        Write-Host "Build or install directory already exists. Use -Force to overwrite or -Partial to continue from the last build." -ForegroundColor Yellow
         return
     }
 
@@ -83,14 +84,14 @@ function BuildLLVM {
     New-Item $InstallDir -ItemType Directory -Force
 
     # Configure CMake
-    cmake -B $BuildDir                              `
-        -DCMAKE_CXX_COMPILER=cl                     `
-        -DCMAKE_C_COMPILER=cl                       `
-        -DCMAKE_BUILD_TYPE="$BuildType"             `
-        -DCMAKE_INSTALL_PREFIX:PATH="$InstallDir"   `
-        -DLLVM_ENABLE_ZLIB=OFF                      `
-        -DLLVM_USE_CRT_RELEASE=MT                   `
-        -DLLVM_USE_CRT_DEBUG=MTd                    `
+    cmake -B $BuildDir                                  `
+        -DCMAKE_CXX_COMPILER=cl                         `
+        -DCMAKE_C_COMPILER=cl                           `
+        -DCMAKE_BUILD_TYPE="$BuildType"                 `
+        -DCMAKE_INSTALL_PREFIX:PATH="../$InstallDir"    `
+        -DLLVM_ENABLE_ZLIB=OFF                          `
+        -DLLVM_USE_CRT_RELEASE=MT                       `
+        -DLLVM_USE_CRT_DEBUG=MTd                        `
         -S src/llvm-18.1.8.src
 
     # Use custom job count if provided, otherwise default to number of processors less 4
@@ -115,6 +116,7 @@ function BuildLLVM {
 $buildDebug = $false
 $buildRelease = $false
 $forceBuild = $false
+$partialBuild = $false
 $jobCount = -1
 
 foreach ($arg in $args) {
@@ -124,6 +126,8 @@ foreach ($arg in $args) {
         $buildRelease = $true
     } elseif ($arg -eq "/Force") {
         $forceBuild = $true
+    } elseif ($arg -eq "/Partial") {
+        $partialBuild = $true
     } elseif ($arg -like "/Jobs:*") {
         # Parse the job count from the argument
         $jobValue = $arg -replace "^/Jobs:", ""
@@ -143,11 +147,11 @@ if (-not $buildDebug -and -not $buildRelease) {
 
 # Do builds based on flags
 if ($buildDebug) {
-    BuildLLVM -BuildType "Debug" -BuildDir "build_debug" -InstallDir "debug" -Force:$forceBuild -Jobs $jobCount
+    BuildLLVM -BuildType "Debug" -BuildDir "build_debug" -InstallDir "debug" -Force:$forceBuild -Partial:$partialBuild -Jobs $jobCount
 }
 
 if ($buildRelease) {
-    BuildLLVM -BuildType "Release" -BuildDir "build_release" -InstallDir "release" -Force:$forceBuild -Jobs $jobCount
+    BuildLLVM -BuildType "Release" -BuildDir "build_release" -InstallDir "release" -Force:$forceBuild -Partial:$partialBuild -Jobs $jobCount
 }
 
 Exit-Script 0
