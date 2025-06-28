@@ -40,8 +40,8 @@ function BuildLLVM {
     )
 
     # Create build and install directories
-    New-Item $BuildDir -ItemType Directory
-    New-Item $InstallDir -ItemType Directory
+    New-Item $BuildDir -ItemType Directory -Force
+    New-Item $InstallDir -ItemType Directory -Force
 
     # Configure CMake
     cmake -B $BuildDir                          `
