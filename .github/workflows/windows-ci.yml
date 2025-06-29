@@ -37,7 +37,7 @@ jobs:
       id: strings
       run: >
         echo "home=$HOME" >> $env:GITHUB_OUTPUT ;
-        echo "build-output-dir=${{ github.workspace }}\build" >> $env:GITHUB_OUTPUT
+        echo "build-output-dir=${{ github.workspace }}\build" >> $env:GITHUB_OUTPUT ;
         echo "build-type-lower=${{ matrix.build_type }}".ToLower() >> $env:GITHUB_OUTPUT
 
     - name: Cache dependencies
