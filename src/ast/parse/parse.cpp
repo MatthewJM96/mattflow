@@ -615,18 +615,6 @@ void mfast::parse(
                 add_single_token_nonop<IdentifierNode>(
                     it, ast, nodes, parser_state, var_table, it->identifier_idx
                 );
-
-                // Associate identifier with the current scope.
-                // TODO(Matthew): Do we want to do any preliminary checks here for basic
-                //                cases of identifiers being immediately assigned a
-                //                type? We'd need to do something like say "hey parser
-                //                is in a state of wanting to see a type, if it does
-                //                then associate with this identifier." It would need
-                //                to be immediately reset to not looking for such an
-                //                association in any case EXCEPT type assignment
-                //                operator appearing next.
-                var_table.try_insert(parser_state.scopes.back(), it->identifier_idx);
-
                 continue;
             case mflex::TokenType::MATCH:
             case mflex::TokenType::PRINT:
