@@ -38,6 +38,7 @@ jobs:
       run: >
         echo "home=$HOME" >> $env:GITHUB_OUTPUT ;
         echo "build-output-dir=${{ github.workspace }}\build" >> $env:GITHUB_OUTPUT ;
+        echo "deps-dir=${{ github.workspace }}\deps" >> $env:GITHUB_OUTPUT ;
         echo "build-type-lower=${{ matrix.build_type }}".ToLower() >> $env:GITHUB_OUTPUT
 
     - name: Cache dependencies
@@ -48,7 +49,7 @@ jobs:
       with:
         path: |
           ${{ steps.strings.outputs.home }}/.conan2
-          ${{ steps.strings.outputs.home }}/llvm
+          ${{ steps.strings.outputs.deps-dir }}/llvm
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.build_type }}--${{ hashFiles('CMakeLists.txt') }}--${{ hashFiles('conanfile.txt') }}
 
     - if: ${{ steps.cache-dependencies.outputs.cache-hit == 'true' }}
@@ -70,9 +71,9 @@ jobs:
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
-        $env:PATH="${{ steps.strings.outputs.home }}/llvm/${{ steps.strings.outputs.build-type-lower }}/bin;"+$env:PATH ;
-        $env:PATH="${{ steps.strings.outputs.home }}/llvm/${{ steps.strings.outputs.build-type-lower }}/lib;"+$env:PATH ;
-        $env:LLVM_DIR="${{ steps.strings.outputs.home }}/llvm/${{ steps.strings.outputs.build-type-lower }}" ;
+        $env:PATH="${{ steps.strings.outputs.deps-dir }}/llvm/${{ steps.strings.outputs.build-type-lower }}/bin;"+$env:PATH ;
+        $env:PATH="${{ steps.strings.outputs.deps-dir }}/llvm/${{ steps.strings.outputs.build-type-lower }}/lib;"+$env:PATH ;
+        $env:LLVM_DIR="${{ steps.strings.outputs.deps-dir }}/llvm/${{ steps.strings.outputs.build-type-lower }}" ;
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_CXX_COMPILER=cl
         -DCMAKE_C_COMPILER=cl
@@ -84,9 +85,9 @@ jobs:
       run: >
         cd ${{ github.workspace }} ;
         .\.venv\Scripts\activate ;
-        $env:PATH="${{ steps.strings.outputs.home }}/llvm/${{ steps.strings.outputs.build-type-lower }}/bin;"+$env:PATH ;
-        $env:PATH="${{ steps.strings.outputs.home }}/llvm/${{ steps.strings.outputs.build-type-lower }}/lib;"+$env:PATH ;
-        $env:LLVM_DIR="LLVM_DIR="${{ steps.strings.outputs.home }}/llvm/${{ steps.strings.outputs.build-type-lower }}" ;
+        $env:PATH="${{ steps.strings.outputs.deps-dir }}/llvm/${{ steps.strings.outputs.build-type-lower }}/bin;"+$env:PATH ;
+        $env:PATH="${{ steps.strings.outputs.deps-dir }}/llvm/${{ steps.strings.outputs.build-type-lower }}/lib;"+$env:PATH ;
+        $env:LLVM_DIR="LLVM_DIR="${{ steps.strings.outputs.deps-dir }}/llvm/${{ steps.strings.outputs.build-type-lower }}" ;
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel 4
         --config ${{ matrix.build_type }}
 
