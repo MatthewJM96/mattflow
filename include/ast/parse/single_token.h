@@ -25,38 +25,45 @@ namespace mattflow {
 
             parser_state.last_seen.back() = mfast::NodeProps::NONOP;
 
-            // If we are adding a type node, check if the last-seen vertex was a type
-            // assignment node and if so create a type record.
             if constexpr (std::is_base_of_v<_NodeType, TypeNode>) {
-                // We could be assigning a type as a value.
+                // If we are adding a type node, check if the last-seen vertex was a
+                // type assignment node and if so associate the type with the last-seen
+                // non-op if this is an identifier.
                 if (parser_state.last_seen.back() == NodeProps::ASSIGN_TYPE) {
-                    std::visit(
-                        AssignTypeVisitor<_NodeType>{ var_table },
-                        nodes.get_node_info(
-                            parser_state.non_operating_vertices.back().back()
-                        )
-                    );
+                    auto node = std::get_if<IdentifierNode>(&nodes.get_node_info(
+                        parser_state.non_operating_vertices.back().back()
+                    ));
+
+                    if (node) {
+                        var_table.associate_type(
+                            parser_state.scopes.back(), node->name, _NodeType::TYPE
+                        );
+                    }
+
+                    // We don't care if we fail, just means it was a function we were
+                    // dealing with - for which I haven't figured out how to track.
+                    // TODO(Matthew): how shall we deal with this?
                 }
             } else if constexpr (std::is_base_of_v<_NodeType, IdentifierNode>) {
+                // If we are adding an identifier node, check if the last-seen vertex
+                // was a type assignment node and if so associate the identifier (and
+                // the underlying type it represents) with the identifier that is having
+                // its type assigned.
                 if (parser_state.last_seen.back() == NodeProps::ASSIGN_TYPE) {
-                    IdentifierNode* in
-                        = std::get_if<IdentifierNode>(&nodes.get_node_info(
-                            parser_state.non_operating_vertices.back().back()
-                        ));
+                    auto node = std::get_if<IdentifierNode>(&nodes.get_node_info(
+                        parser_state.non_operating_vertices.back().back()
+                    ));
 
-                    if (in) {
+                    if (node) {
                         // We don't need the type of the identifier but rather the type
                         // assigned to the identifier, we can for example assert that if
                         // the identifier already exists that it is of type type and
                         // we may obtain the assigned type, otherwise we can mark it as
                         // existent with a requirement that it turn out later to be of
                         // type type and assigned.
-                        // TODO(Matthew): Finish this. Consider whether we require that
-                        //                any identifier used on right-hand of an
-                        //                expression previously be declared - I think we
-                        //                should require this.
-                        // type_table.associate_type(in.name,
-                        // type_table.get_type_for_identifier(nonop_node.name));
+                        var_table.associate_type(
+                            parser_state.scopes.back(), node->name, nonop_node.name
+                        );
                     }
 
                     // We don't care if we fail, just means it was a function we were
@@ -101,6 +108,22 @@ namespace mattflow {
                 );
             }
 #endif  // DEBUG
+
+            // If the operator being added is a valid means of declaring a variable,
+            // that is to say it is either a deduced-type value assignment (`:=`) or an
+            // explicit type assignment (`:`), then check if the last non-op was an
+            // identifier and register it to the current scope.
+            if constexpr (std::is_base_of_v<_NodeType, AssignDeducedValueOperatorNode> || std::is_base_of_v<_NodeType, AssignTypeOperatorNode>)
+            {
+                auto node = std::get_if<IdentifierNode>(&nodes.get_node_info(
+                    parser_state.non_operating_vertices.back().back()
+                ));
+
+                if (node) {
+                    // Associate identifier with the current scope.
+                    var_table.try_insert(parser_state.scopes.back(), node->name);
+                }
+            }
 
             // If operator has lower precedence than the highest we've so far
             // encountered, we need to deal with the expression as formed so far (up to
