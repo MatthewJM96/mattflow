@@ -54,6 +54,33 @@ mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
     return { it, true };
 }
 
+mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
+    mfvar::Scope scope, mflit::IdentifierIdx identifier, mflit::IdentifierIdx type
+) {
+    // TODO(Matthew): Type association may need to allow for walking up scope tree
+    //                to find where identifier was declared. This is only unnecessary
+    //                if in every case we have new info to inform type association we
+    //                also know the exact scope of the identifier.
+
+    auto& scope_map = get_scope_map(scope);
+    auto  it        = scope_map.find(identifier);
+
+    if (it == scope_map.end()) {
+        return { it, false };
+    }
+
+    // TODO(Matthew): Do we want to do any eager type resolution? This may get in the
+    //                way of fun language features like reflection.
+
+    if (it->second != mftype::Type{ mftype::UnresolvedType{ type } }) {
+        return { it, false };
+    }
+
+    it->second = type;
+
+    return { it, true };
+}
+
 mfvar::VariableTypeTable::Map&
 mfvar::VariableTypeTable::get_scope_map(mfvar::Scope scope) {
     auto it = m_scope_var_type_map.try_emplace(scope, Map{}).first;

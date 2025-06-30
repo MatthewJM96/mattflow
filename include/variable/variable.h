@@ -31,6 +31,11 @@ namespace mattflow {
                 mflit::IdentifierIdx identifier,
                 const mftype::Type&  type
             );
+            MapEntry associate_type(
+                mfvar::Scope         scope,
+                mflit::IdentifierIdx identifier,
+                mflit::IdentifierIdx type
+            );
         protected:
             Map& get_scope_map(mfvar::Scope scope);
 
