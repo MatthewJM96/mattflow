@@ -92,6 +92,7 @@ namespace mattflow {
             VALOUT mfast::AST& ast,
             VALOUT mfast::NodeBuffers& nodes,
             VALOUT mfast::ParserState& parser_state,
+            VALOUT mfvar::VariableTypeTable& var_table,
             Args&&... args
         ) {
             _NodeType node_info
