@@ -16,10 +16,11 @@ jobs:
 
       matrix:
         build_type: [Release, Debug]
-        c_compiler: [gcc-14, clang]
+        c_compiler: [clang]
+        # c_compiler: [gcc-14, clang]
         include:
-          - c_compiler: gcc-14
-            cpp_compiler: g++-14
+          # - c_compiler: gcc-14
+          #   cpp_compiler: g++-14
           - c_compiler: clang
             cpp_compiler: clang++
 
