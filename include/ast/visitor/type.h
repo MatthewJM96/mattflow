@@ -21,6 +21,7 @@ namespace mattflow {
             requires (std::is_base_of_v<TypeNode, TypeNodeType>)
         struct AssignTypeVisitor {
             mfvar::VariableTypeTable& var_table;
+            mfvar::Scope              scope;
 
             template <typename NodeType>
             void operator()(const NodeType& target) {
