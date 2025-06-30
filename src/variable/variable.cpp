@@ -76,7 +76,7 @@ mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
         return { it, false };
     }
 
-    it->second = type;
+    it->second = mftype::UnresolvedType{ type };
 
     return { it, true };
 }
