@@ -201,7 +201,9 @@ void mfast::parse(
                 continue;
             case mflex::TokenType::IN:
                 // Add RANGE vertex.
-                add_single_token_op<RangeOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<RangeOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::WHERE:
                 // We may have a complex expression in the preceding range-expression of
@@ -213,7 +215,7 @@ void mfast::parse(
 
                 // Add RANGE CONSTRAINT vertex.
                 add_single_token_op<RangeConstraintOperatorNode>(
-                    it, ast, nodes, parser_state
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::DO:
@@ -384,7 +386,7 @@ void mfast::parse(
             case mflex::TokenType::ASSIGN_DEDUCED_VALUE:
                 // Add ASSIGN_DEDUCED_VALUE vertex.
                 add_single_token_op<AssignDeducedValueOperatorNode>(
-                    it, ast, nodes, parser_state
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::ASSIGN_TYPE:
@@ -397,7 +399,7 @@ void mfast::parse(
 
                 // Add ASSIGN_TYPE vertex.
                 add_single_token_op<AssignTypeOperatorNode>(
-                    it, ast, nodes, parser_state
+                    it, ast, nodes, parser_state, var_table
                 );
 
                 parser_state.last_seen.back() = NodeProps::ASSIGN_TYPE;
@@ -405,96 +407,124 @@ void mfast::parse(
             case mflex::TokenType::ASSIGN_VALUE:
                 // Add ASSIGN_VALUE vertex.
                 add_single_token_op<AssignValueOperatorNode>(
-                    it, ast, nodes, parser_state
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::DEDUCED_ARROW:
                 // Add DEDUCED_ARROW vertex.
                 add_single_token_op<DeducedArrowOperatorNode>(
-                    it, ast, nodes, parser_state
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::ARROW:
                 // Add ARROW vertex.
-                add_single_token_op<ArrowOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<ArrowOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::COMMA:
                 // Add COMMA vertex.
-                add_single_token_op<CommaOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<CommaOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::SEQUENCE:
                 // Add SEQUENCE vertex.
-                add_single_token_op<SequenceOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<SequenceOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::AND:
                 // Add AND vertex.
-                add_single_token_op<AndOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<AndOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::OR:
                 // Add OR vertex.
-                add_single_token_op<OrOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<OrOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::EQUALS:
                 // Add EQUALS vertex.
-                add_single_token_op<EqualOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<EqualOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::NOT_EQUALS:
                 // Add NOT EQUALS vertex.
-                add_single_token_op<NotEqualOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<NotEqualOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::LESS_THAN:
                 // Add LESS THAN vertex.
-                add_single_token_op<LesserOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<LesserOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::LESS_THAN_OR_EQUAL_TO:
                 // Add LESS THAN OR EQUAL TO vertex.
                 add_single_token_op<LesserOrEqualOperatorNode>(
-                    it, ast, nodes, parser_state
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::GREATER_THAN:
                 // Add GREATER THAN vertex.
-                add_single_token_op<GreaterOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<GreaterOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::GREATER_THAN_OR_EQUAL_TO:
                 // Add GREATER THAN OR EQUAL TO vertex.
                 add_single_token_op<GreaterOrEqualOperatorNode>(
-                    it, ast, nodes, parser_state
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::PLUS:
                 // Add ADDITION vertex.
-                add_single_token_op<AdditionOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<AdditionOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::MINUS:
                 // TODO(Matthew): for now this token can be both repr of unary and
                 //                binary operations (subtraction and negation).
                 // Add SUBTRACTION vertex.
                 add_single_token_op<SubtractionOperatorNode>(
-                    it, ast, nodes, parser_state
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::SLASH:
                 // Add DIVIDE vertex.
-                add_single_token_op<DivisionOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<DivisionOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::STAR:
                 // Add MULTIPLY vertex.
                 add_single_token_op<MultiplicationOperatorNode>(
-                    it, ast, nodes, parser_state
+                    it, ast, nodes, parser_state, var_table
                 );
                 continue;
             case mflex::TokenType::POWER:
                 // Add POWER vertex.
-                add_single_token_op<PowerOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<PowerOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::NOT:
                 // Add NOT vertex.
-                add_single_token_op<NotOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<NotOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::DOT:
                 // Add DOT vertex.
-                add_single_token_op<DotOperatorNode>(it, ast, nodes, parser_state);
+                add_single_token_op<DotOperatorNode>(
+                    it, ast, nodes, parser_state, var_table
+                );
                 continue;
             case mflex::TokenType::NIL:
                 // Add null vertex.

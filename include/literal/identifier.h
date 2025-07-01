@@ -6,6 +6,8 @@ namespace mattflow {
         using IdentifierIdx  = uint64_t;
         using IdentifierHash = uint64_t;
 
+        const IdentifierIdx INVALID_IDENTIFIER = static_cast<IdentifierIdx>(-1);
+
         class IdentifierTable {
         public:
             MATTFLOW_NON_COPYABLE(IdentifierTable);

@@ -25,6 +25,10 @@ namespace mattflow {
             operator==(const UnresolvedType&, const UnresolvedType&) {
                 return true;
             }
+
+            // Defaults to an invalid identifier as unresolved type might refer to a
+            // deduced type, a user type that we don't know about yet, etc.
+            mflit::IdentifierIdx identifer = mflit::INVALID_IDENTIFIER;
         };
 
         using UserType = std::variant<FunctionType, StructType, UnresolvedType>;

@@ -38,20 +38,29 @@ void mfast::push_enclosure(
         "scope."
     );
 
-    // Push enclosing vertex onto the stack below.
-    if ((enclosing_category & NodeProps::ROOT) != NodeProps::ROOT) {
+    // If adding a root node, then add global scope to scope stack.
+    if ((enclosing_category & NodeProps::ROOT) == NodeProps::ROOT) {
+        mfvar::Scope root_scope = boost::add_vertex(scope_tree);
+        parser_state.scopes.emplace_back(root_scope);
+    }
+    // We're not adding a root node, push enclosing vertex onto the stack below.
+    else
+    {
         parser_state.non_operating_vertices.back().emplace_back(enclosing_vertex);
         parser_state.last_seen.back() = NodeProps::NONOP;
-    }
 
-    // If enclosure represents a scope then add a scope to the stack.
-    if ((enclosing_category & NodeProps::SCOPE) == NodeProps::SCOPE) {
-        mfvar::Scope old_scope = parser_state.scopes.back();
-        mfvar::Scope new_scope = boost::add_vertex(scope_tree);
+        // If enclosure represents a scope then add a scope to the stack.
+        //  NOTE: We expect that ROOT will not be tagged as a SCOPE so putting this
+        //        inside the else isn't strictly necessary but it is more robust to
+        //        assume it could be the case.
+        if ((enclosing_category & NodeProps::SCOPE) == NodeProps::SCOPE) {
+            mfvar::Scope old_scope = parser_state.scopes.back();
+            mfvar::Scope new_scope = boost::add_vertex(scope_tree);
 
-        parser_state.scopes.emplace_back(new_scope);
+            parser_state.scopes.emplace_back(new_scope);
 
-        boost::add_edge(old_scope, new_scope, scope_tree);
+            boost::add_edge(old_scope, new_scope, scope_tree);
+        }
     }
 
     // Push new stacks for operating and non-operating vertices.
