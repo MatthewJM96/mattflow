@@ -16,6 +16,62 @@ trap {
     Exit-Script 1
 }
 
+# Show help information
+function Show-Help {
+    Write-Host "LLVM Build Script Usage:" -ForegroundColor Green
+    Write-Host "  /Debug                Build debug configuration."
+    Write-Host "  /Release              Build release configuration."
+    Write-Host "  /Force                Overwrite existing build and install directories."
+    Write-Host "  /Partial              Continue from last build, without overwriting."
+    Write-Host "  /Jobs:N               Use N parallel jobs for building (default: total processors less 4)."
+    Write-Host "  /Help or /?           Display this help information." -ForegroundColor Green
+    Write-Host "`nDefault behavior: Build both Debug and Release if neither is specified."
+    Write-Host "Examples:"
+    Write-Host "  .\build.ps1 /Debug /Force /Jobs:8   # Build debug only with 8 jobs replacing any previous debug build"
+    Write-Host "  .\build.ps1 /Release                # Build release only, if no release build currently exists"
+    Write-Host "  .\build.ps1 /Help                   # Display this help"
+}
+
+# Parse command line arguments
+$buildDebug = $false
+$buildRelease = $false
+$forceBuild = $false
+$partialBuild = $false
+$jobCount = -1
+
+foreach ($arg in $args) {
+    if ($arg -eq "/Debug") {
+        $buildDebug = $true
+    } elseif ($arg -eq "/Release") {
+        $buildRelease = $true
+    } elseif ($arg -eq "/Force") {
+        $forceBuild = $true
+    } elseif ($arg -eq "/Partial") {
+        $partialBuild = $true
+    } elseif ($arg -like "/Jobs:*") {
+        # Parse the job count from the argument
+        $jobValue = $arg -replace "^/Jobs:", ""
+        [int]::TryParse($jobValue, [ref]$jobCount)
+        if ($jobCount -le 0) {
+            Write-Host "Invalid value for /Jobs:N. N must be a positive integer." -ForegroundColor Red
+            Exit-Script 1
+        }
+    } elseif ($arg -eq "/Help" -or $arg -eq "/?") {
+        Show-Help
+        Exit-Script 0
+    } else {
+        Write-Host "Unknown argument: $arg" -ForegroundColor Red
+        Write-Host "Use /Help or /? for usage information." -ForegroundColor Yellow
+        Exit-Script 1
+    }
+}
+
+# Default behavior: build both if none specified
+if (-not $buildDebug -and -not $buildRelease) {
+    $buildDebug = $true
+    $buildRelease = $true
+}
+
 # Ensure deps directory exists and change to deps\llvm
 New-Item deps\llvm -ItemType Directory -Force
 Set-Location deps\llvm
@@ -65,7 +121,7 @@ function BuildLLVM {
 
     # Fail to build if not set to Force the build and one already exists in some form.
     if (($buildDirExists -or $installDirExists) -and -not $Force -and -not $Partial) {
-        Write-Host "Build or install directory already exists. Use -Force to overwrite or -Partial to continue from the last build." -ForegroundColor Yellow
+        Write-Host "Build or install directory already exists. Use /Force to overwrite or /Partial to continue from the last build." -ForegroundColor Yellow
         return
     }
 
@@ -110,39 +166,6 @@ function BuildLLVM {
 
     # Install
     cmake --build "$BuildDir" --target install --config "$BuildType"
-}
-
-# Parse command line arguments
-$buildDebug = $false
-$buildRelease = $false
-$forceBuild = $false
-$partialBuild = $false
-$jobCount = -1
-
-foreach ($arg in $args) {
-    if ($arg -eq "/Debug") {
-        $buildDebug = $true
-    } elseif ($arg -eq "/Release") {
-        $buildRelease = $true
-    } elseif ($arg -eq "/Force") {
-        $forceBuild = $true
-    } elseif ($arg -eq "/Partial") {
-        $partialBuild = $true
-    } elseif ($arg -like "/Jobs:*") {
-        # Parse the job count from the argument
-        $jobValue = $arg -replace "^/Jobs:", ""
-        [int]::TryParse($jobValue, [ref]$jobCount)
-        if ($jobCount -le 0) {
-            Write-Host "Invalid value for /Jobs:N. N must be a positive integer." -ForegroundColor Red
-            Exit-Script 1
-        }
-    }
-}
-
-# Default behavior: build both if none specified
-if (-not $buildDebug -and -not $buildRelease) {
-    $buildDebug = $true
-    $buildRelease = $true
 }
 
 # Do builds based on flags
