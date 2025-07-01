@@ -65,7 +65,7 @@ jobs:
 
     - name: Install LLVM
       run: >
-        .\setup_llvm.ps1 /${{ matrix.build_type }} /Force /Jobs:4
+        .\setup_llvm.ps1 /${{ matrix.build_type }} /Jobs:4
 
     - name: Configure CMake
       run: >
