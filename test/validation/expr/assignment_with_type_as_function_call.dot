@@ -1,0 +1,17 @@
+digraph G {
+0[label="block"];
+1[label="ident: x"];
+2[label="op :"];
+3[label="ident: determine_type"];
+4[label="paren"];
+5[label="ident: some_context"];
+6[label="op ="];
+7[label="num: 4.000000"];
+0->2 ;
+0->6 ;
+2->1 ;
+2->3 ;
+4->5 ;
+6->4 ;
+6->7 ;
+}
