@@ -40,7 +40,7 @@ To run the helper script, you will likely need to run a powershell session as ad
 
 ```ps1
 Set-ExecutionPolicy unrestricted
-.\setup_llvm.ps1
+.\setup_llvm.ps1 /Help
 Set-ExecutionPolicy restricted
 ```
 
