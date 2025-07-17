@@ -388,6 +388,8 @@ void mfast::parse(
                 add_single_token_op<AssignDeducedValueOperatorNode>(
                     it, ast, nodes, parser_state, var_table
                 );
+
+                parser_state.last_seen.back() |= NodeProps::ASSIGN_DEDUCED_VALUE;
                 continue;
             case mflex::TokenType::ASSIGN_TYPE:
                 mfassert(
@@ -402,7 +404,7 @@ void mfast::parse(
                     it, ast, nodes, parser_state, var_table
                 );
 
-                parser_state.last_seen.back() = NodeProps::ASSIGN_TYPE;
+                parser_state.last_seen.back() |= NodeProps::ASSIGN_TYPE;
                 continue;
             case mflex::TokenType::ASSIGN_VALUE:
                 // Add ASSIGN_VALUE vertex.
