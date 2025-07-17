@@ -36,8 +36,24 @@ namespace mattflow {
                 mflit::IdentifierIdx identifier,
                 mflit::IdentifierIdx type
             );
+
+            /**
+             * @brief Find the type of a variable, walking up the scope tree if
+             * necessary.
+             *
+             * @param scope The current scope to start searching from.
+             * @param scope_tree The scope tree to walk.
+             * @param identifier The identifier of the variable to find.
+             * @return const mftype::Type* The type if found, otherwise nullptr.
+             */
+            const mftype::Type* find(
+                mfvar::Scope                scope,
+                const mfvar::ScopeTree&     scope_tree,
+                const mflit::IdentifierIdx& identifier
+            ) const;
         protected:
-            Map& get_scope_map(mfvar::Scope scope);
+            const Map* get_scope_map(mfvar::Scope scope) const;
+            Map&       get_scope_map(mfvar::Scope scope);
 
             ScopeMap m_scope_var_type_map;
         };
