@@ -41,11 +41,19 @@ mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
     auto& scope_map = get_scope_map(scope);
     auto  it        = scope_map.find(identifier);
 
+    // This should never happen as try_insert should be called just before this. If it
+    // does occur we should actually throw some kind of error.
+    // TODO(Matthew): Deal with this.
     if (it == scope_map.end()) {
         return { it, false };
     }
 
-    if (it->second != mftype::Type{ mftype::UnresolvedType{} }) {
+    // If the identifier has information already regarding its type, then associating a
+    // concrete type should be a failure.
+    // TODO(Matthew): This likely means we need one API for associating type during
+    //                parsing, and another during type deduction and reflection phases
+    //                of the compiler.
+    if (!std::holds_alternative<mftype::UnresolvedType>(it->second)) {
         return { it, false };
     }
 
@@ -54,8 +62,11 @@ mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
     return { it, true };
 }
 
-mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
-    mfvar::Scope scope, mflit::IdentifierIdx identifier, mflit::IdentifierIdx type
+mfvar::VariableTypeTable::MapEntry
+mfvar::VariableTypeTable::associate_type_of_identifier(
+    mfvar::Scope         scope,
+    mflit::IdentifierIdx identifier,
+    mflit::IdentifierIdx type_of_identifier
 ) {
     // TODO(Matthew): Type association may need to allow for walking up scope tree
     //                to find where identifier was declared. This is only unnecessary
@@ -65,18 +76,58 @@ mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
     auto& scope_map = get_scope_map(scope);
     auto  it        = scope_map.find(identifier);
 
+    // This should never happen as try_insert should be called just before this. If it
+    // does occur we should actually throw some kind of error.
+    // TODO(Matthew): Deal with this.
     if (it == scope_map.end()) {
         return { it, false };
     }
 
-    // TODO(Matthew): Do we want to do any eager type resolution? This may get in the
-    //                way of fun language features like reflection.
-
-    if (it->second != mftype::Type{ mftype::UnresolvedType{ type } }) {
+    // If the identifier has information already regarding its type, then associating a
+    // concrete type should be a failure.
+    // TODO(Matthew): This likely means we need one API for associating type during
+    //                parsing, and another during type deduction and reflection phases
+    //                of the compiler.
+    if (!std::holds_alternative<mftype::UnresolvedType>(it->second)) {
         return { it, false };
     }
 
-    it->second = mftype::UnresolvedType{ type };
+    it->second = mftype::UnresolvedTypeOf{ .identifier = type_of_identifier };
+
+    return { it, true };
+}
+
+mfvar::VariableTypeTable::MapEntry
+mfvar::VariableTypeTable::associate_type_held_by_identifier(
+    mfvar::Scope         scope,
+    mflit::IdentifierIdx identifier,
+    mflit::IdentifierIdx type_held_by_identifier
+) {
+    // TODO(Matthew): Type association may need to allow for walking up scope tree
+    //                to find where identifier was declared. This is only unnecessary
+    //                if in every case we have new info to inform type association we
+    //                also know the exact scope of the identifier.
+
+    auto& scope_map = get_scope_map(scope);
+    auto  it        = scope_map.find(identifier);
+
+    // This should never happen as try_insert should be called just before this. If it
+    // does occur we should actually throw some kind of error.
+    // TODO(Matthew): Deal with this.
+    if (it == scope_map.end()) {
+        return { it, false };
+    }
+
+    // If the identifier has information already regarding its type, then associating a
+    // concrete type should be a failure.
+    // TODO(Matthew): This likely means we need one API for associating type during
+    //                parsing, and another during type deduction and reflection phases
+    //                of the compiler.
+    if (!std::holds_alternative<mftype::UnresolvedType>(it->second)) {
+        return { it, false };
+    }
+
+    it->second = mftype::UnresolvedTypeHeldBy{ .identifier = type_held_by_identifier };
 
     return { it, true };
 }

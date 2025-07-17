@@ -90,7 +90,7 @@ namespace mattflow {
                         // we may obtain the assigned type, otherwise we can mark it as
                         // existent with a requirement that it turn out later to be of
                         // type type and assigned.
-                        var_table.associate_type(
+                        var_table.associate_type_held_by_identifier(
                             parser_state.scopes.back(), node->name, nonop_node.name
                         );
                     }
@@ -103,8 +103,23 @@ namespace mattflow {
                     //                LHS in the case of a return type is not an
                     //                identifier node but a paren expression node (I
                     //                should double check this is true).
+
+                    // We have `node := nonop_node` where nonop_node is an identifier.
+                    // The type of node depends on the type of nonop_node.  We record
+                    // this dependency by creating an UnresolvedTypeOf that points  to
+                    // the identifier on the RHS.
                 } else if ((parser_state.last_seen.back() & NodeProps::ASSIGN_DEDUCED_VALUE) == NodeProps::ASSIGN_DEDUCED_VALUE)
-                { }
+                {
+                    auto node = std::get_if<IdentifierNode>(&nodes.get_node_info(
+                        parser_state.non_operating_vertices.back().back()
+                    ));
+
+                    if (node) {
+                        var_table.associate_type_of_identifier(
+                            parser_state.scopes.back(), node->name, nonop_node.name
+                        );
+                    }
+                }
             }
 
             parser_state.last_seen.back() = mfast::NodeProps::NONOP;
