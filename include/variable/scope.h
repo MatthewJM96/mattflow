@@ -4,7 +4,7 @@
 namespace mattflow {
     namespace variable {
         using ScopeTree
-            = boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS>;
+            = boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS>;
 
         using Scope = ScopeTree::vertex_descriptor;
     }  // namespace variable
