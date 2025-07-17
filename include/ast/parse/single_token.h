@@ -25,7 +25,7 @@ namespace mattflow {
 
             parser_state.last_seen.back() = mfast::NodeProps::NONOP;
 
-            if constexpr (std::is_base_of_v<_NodeType, TypeNode>) {
+            if constexpr (std::is_base_of_v<TypeNode, _NodeType>) {
                 // If we are adding a type node, check if the last-seen vertex was a
                 // type assignment node and if so associate the type with the last-seen
                 // non-op if this is an identifier.
@@ -44,7 +44,7 @@ namespace mattflow {
                     // dealing with - for which I haven't figured out how to track.
                     // TODO(Matthew): how shall we deal with this?
                 }
-            } else if constexpr (std::is_base_of_v<_NodeType, IdentifierNode>) {
+            } else if constexpr (std::is_base_of_v<IdentifierNode, _NodeType>) {
                 // If we are adding an identifier node, check if the last-seen vertex
                 // was a type assignment node and if so associate the identifier (and
                 // the underlying type it represents) with the identifier that is having
