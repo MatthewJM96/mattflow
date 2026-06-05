@@ -54,7 +54,7 @@ void mfast::parse(
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     IfExprNode{ it, it },
-                    NodeProps::MULTI_EXPR | NodeProps::IF,
+                    NodeProps::MULTI_EXPR | NodeProps::IF | NodeProps::SCOPE,
                     ast,
                     nodes,
                     parser_state,
@@ -168,7 +168,7 @@ void mfast::parse(
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     ForNode{ it, it },
-                    NodeProps::MULTI_EXPR | NodeProps::FOR,
+                    NodeProps::MULTI_EXPR | NodeProps::FOR | NodeProps::SCOPE,
                     ast,
                     nodes,
                     parser_state,
@@ -187,7 +187,7 @@ void mfast::parse(
                 // Push a new enclosure for paren expr.
                 push_enclosure(
                     WhileNode{ it, it },
-                    NodeProps::MULTI_EXPR | NodeProps::WHILE,
+                    NodeProps::MULTI_EXPR | NodeProps::WHILE | NodeProps::SCOPE,
                     ast,
                     nodes,
                     parser_state,
@@ -311,7 +311,8 @@ void mfast::parse(
                 // Push a new enclosure for block expr.
                 push_enclosure(
                     StructNode{ it, it, nullptr },
-                    NodeProps::STRUCT | NodeProps::MULTI_EXPR | NodeProps::BRACE_EXPR,
+                    NodeProps::STRUCT | NodeProps::MULTI_EXPR | NodeProps::BRACE_EXPR
+                        | NodeProps::SCOPE,
                     ast,
                     nodes,
                     parser_state,
@@ -330,7 +331,7 @@ void mfast::parse(
                 // Push a new enclosure for block expr.
                 push_enclosure(
                     BlockExprNode{ it, it },
-                    NodeProps::MULTI_EXPR | NodeProps::BRACE_EXPR,
+                    NodeProps::MULTI_EXPR | NodeProps::BRACE_EXPR | NodeProps::SCOPE,
                     ast,
                     nodes,
                     parser_state,
