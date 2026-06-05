@@ -7,7 +7,7 @@
 mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::try_insert(
     mfvar::Scope scope, mflit::IdentifierIdx identifier
 ) {
-    auto& scope_map = get_scope_map(scope);
+    auto& scope_map = try_insert_scope_map(scope);
     auto  it        = scope_map.find(identifier);
 
     if (it == scope_map.end()) {
@@ -20,7 +20,7 @@ mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::try_insert(
 mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::try_insert(
     mfvar::Scope scope, mflit::IdentifierIdx identifier, const mftype::Type& type
 ) {
-    auto& scope_map = get_scope_map(scope);
+    auto& scope_map = try_insert_scope_map(scope);
     auto  it        = scope_map.find(identifier);
 
     if (it == scope_map.end()) {
@@ -38,7 +38,7 @@ mfvar::VariableTypeTable::MapEntry mfvar::VariableTypeTable::associate_type(
     //                if in every case we have new info to inform type association we
     //                also know the exact scope of the identifier.
 
-    auto& scope_map = get_scope_map(scope);
+    auto& scope_map = try_insert_scope_map(scope);
     auto  it        = scope_map.find(identifier);
 
     // This should never happen as try_insert should be called just before this. If it
@@ -73,7 +73,7 @@ mfvar::VariableTypeTable::associate_type_of_identifier(
     //                if in every case we have new info to inform type association we
     //                also know the exact scope of the identifier.
 
-    auto& scope_map = get_scope_map(scope);
+    auto& scope_map = try_insert_scope_map(scope);
     auto  it        = scope_map.find(identifier);
 
     // This should never happen as try_insert should be called just before this. If it
@@ -108,7 +108,7 @@ mfvar::VariableTypeTable::associate_type_held_by_identifier(
     //                if in every case we have new info to inform type association we
     //                also know the exact scope of the identifier.
 
-    auto& scope_map = get_scope_map(scope);
+    auto& scope_map = try_insert_scope_map(scope);
     auto  it        = scope_map.find(identifier);
 
     // This should never happen as try_insert should be called just before this. If it
@@ -169,7 +169,7 @@ mfvar::VariableTypeTable::get_scope_map(mfvar::Scope scope) const {
 }
 
 mfvar::VariableTypeTable::Map&
-mfvar::VariableTypeTable::get_scope_map(mfvar::Scope scope) {
+mfvar::VariableTypeTable::try_insert_scope_map(mfvar::Scope scope) {
     auto it = m_scope_var_type_map.try_emplace(scope, Map{}).first;
     return it->second;
 }
