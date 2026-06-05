@@ -23,13 +23,13 @@ namespace mattflow {
             // Link operations on stack if we have an end of expression.
             mfast::maybe_link_operations_on_stack(ast, nodes, parser_state);
 
-            parser_state.last_seen.back() = mfast::NodeProps::NONOP;
-
-            if constexpr (std::is_base_of_v<_NodeType, TypeNode>) {
+            if constexpr (std::is_base_of_v<TypeNode, _NodeType>) {
                 // If we are adding a type node, check if the last-seen vertex was a
                 // type assignment node and if so associate the type with the last-seen
                 // non-op if this is an identifier.
-                if (parser_state.last_seen.back() == NodeProps::ASSIGN_TYPE) {
+                if ((parser_state.last_seen.back() & NodeProps::ASSIGN_TYPE)
+                    == NodeProps::ASSIGN_TYPE)
+                {
                     auto node = std::get_if<IdentifierNode>(&nodes.get_node_info(
                         parser_state.non_operating_vertices.back().back()
                     ));
@@ -40,16 +40,45 @@ namespace mattflow {
                         );
                     }
 
-                    // We don't care if we fail, just means it was a function we were
-                    // dealing with - for which I haven't figured out how to track.
-                    // TODO(Matthew): how shall we deal with this?
+                    // TODO(Matthew): We can here get that node is null in the case that
+                    //                the RHS is specifying the return type of a
+                    //                function. I.e.:
+                    //                  (x: int, y: float) : int
+                    //                would work fine for the two parameters, but the
+                    //                LHS in the case of a return type is not an
+                    //                identifier node but a paren expression node (I
+                    //                should double check this is true).
+
+                    // The other case where an identifier acquires a type is when the
+                    // type is deduced. For a TypeNode to be on the RHS of such an
+                    // expression tells us that the LHS identifier is therefore of type
+                    // Type.
+                } else if ((parser_state.last_seen.back() & NodeProps::ASSIGN_DEDUCED_VALUE) == NodeProps::ASSIGN_DEDUCED_VALUE)
+                {
+                    auto node = std::get_if<IdentifierNode>(&nodes.get_node_info(
+                        parser_state.non_operating_vertices.back().back()
+                    ));
+
+                    if (node) {
+                        // We have `identifier := type_node`, therefore the
+                        // identifier's type is TypeType.
+                        var_table.associate_type(
+                            parser_state.scopes.back(), node->name, mftype::TypeType{}
+                        );
+                    }
+
+                    // TODO(Matthew): We could assert node is valid here, I THINK our
+                    //                grammar forbids any ":=" operator use anywhere
+                    //                where the LHS is not an identifier.
                 }
-            } else if constexpr (std::is_base_of_v<_NodeType, IdentifierNode>) {
+            } else if constexpr (std::is_base_of_v<IdentifierNode, _NodeType>) {
                 // If we are adding an identifier node, check if the last-seen vertex
                 // was a type assignment node and if so associate the identifier (and
                 // the underlying type it represents) with the identifier that is having
                 // its type assigned.
-                if (parser_state.last_seen.back() == NodeProps::ASSIGN_TYPE) {
+                if ((parser_state.last_seen.back() & NodeProps::ASSIGN_TYPE)
+                    == NodeProps::ASSIGN_TYPE)
+                {
                     auto node = std::get_if<IdentifierNode>(&nodes.get_node_info(
                         parser_state.non_operating_vertices.back().back()
                     ));
@@ -61,16 +90,40 @@ namespace mattflow {
                         // we may obtain the assigned type, otherwise we can mark it as
                         // existent with a requirement that it turn out later to be of
                         // type type and assigned.
-                        var_table.associate_type(
+                        var_table.associate_type_held_by_identifier(
                             parser_state.scopes.back(), node->name, nonop_node.name
                         );
                     }
 
-                    // We don't care if we fail, just means it was a function we were
-                    // dealing with - for which I haven't figured out how to track.
-                    // TODO(Matthew): how shall we deal with this?
-                }
+                    // TODO(Matthew): We can here get that node is null in the case that
+                    //                the RHS is specifying the return type of a
+                    //                function. I.e.:
+                    //                  (x: int, y: float) : int
+                    //                would work fine for the two parameters, but the
+                    //                LHS in the case of a return type is not an
+                    //                identifier node but a paren expression node (I
+                    //                should double check this is true).
 
+                    // We have `node := nonop_node` where nonop_node is an identifier.
+                    // The type of node depends on the type of nonop_node.  We record
+                    // this dependency by creating an UnresolvedTypeOf that points  to
+                    // the identifier on the RHS.
+                } else if ((parser_state.last_seen.back() & NodeProps::ASSIGN_DEDUCED_VALUE) == NodeProps::ASSIGN_DEDUCED_VALUE)
+                {
+                    auto node = std::get_if<IdentifierNode>(&nodes.get_node_info(
+                        parser_state.non_operating_vertices.back().back()
+                    ));
+
+                    if (node) {
+                        var_table.associate_type_of_identifier(
+                            parser_state.scopes.back(), node->name, nonop_node.name
+                        );
+                    }
+                }
+            }
+
+            parser_state.last_seen.back() = mfast::NodeProps::NONOP;
+            if constexpr (std::is_base_of_v<IdentifierNode, _NodeType>) {
                 parser_state.last_seen.back() |= mfast::NodeProps::IDENTIFIER;
             }
 

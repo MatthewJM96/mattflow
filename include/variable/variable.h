@@ -9,7 +9,7 @@ namespace mattflow {
         class VariableTypeTable {
         public:
             using Map         = std::unordered_map<mflit::IdentifierIdx, mftype::Type>;
-            using ScopeMap    = std::unordered_map<mfvar::Scope, Map>;
+            using ScopeMap    = std::unordered_map<Scope, Map>;
             using MapIterator = Map::const_iterator;
             using MapEntry    = std::pair<MapIterator, bool>;
 
@@ -19,25 +19,43 @@ namespace mattflow {
 
             MATTFLOW_NON_COPYABLE(VariableTypeTable);
 
-            MapEntry try_insert(mfvar::Scope scope, mflit::IdentifierIdx identifier);
+            MapEntry try_insert(Scope scope, mflit::IdentifierIdx identifier);
             MapEntry try_insert(
-                mfvar::Scope         scope,
-                mflit::IdentifierIdx identifier,
-                const mftype::Type&  type
+                Scope scope, mflit::IdentifierIdx identifier, const mftype::Type& type
             );
 
             MapEntry associate_type(
-                mfvar::Scope         scope,
-                mflit::IdentifierIdx identifier,
-                const mftype::Type&  type
+                Scope scope, mflit::IdentifierIdx identifier, const mftype::Type& type
             );
-            MapEntry associate_type(
-                mfvar::Scope         scope,
+            MapEntry associate_type_of_identifier(
+                Scope                scope,
                 mflit::IdentifierIdx identifier,
-                mflit::IdentifierIdx type
+                mflit::IdentifierIdx type_of_identifier
             );
+            MapEntry associate_type_held_by_identifier(
+                Scope                scope,
+                mflit::IdentifierIdx identifier,
+                mflit::IdentifierIdx type_held_by_identifier
+            );
+
+            /**
+             * @brief Find the type of a variable, walking up the scope tree if
+             * necessary.
+             *
+             * @param scope The current scope to start searching from.
+             * @param scope_tree The scope tree to walk.
+             * @param identifier The identifier of the variable to find.
+             * @return const mftype::Type* The type if found, otherwise nullptr.
+             */
+            const mftype::Type* find(
+                Scope                       scope,
+                const ScopeTree&            scope_tree,
+                const mflit::IdentifierIdx& identifier
+            ) const;
+
+            const Map* get_scope_map(Scope scope) const;
         protected:
-            Map& get_scope_map(mfvar::Scope scope);
+            Map& try_insert_scope_map(Scope scope);
 
             ScopeMap m_scope_var_type_map;
         };
