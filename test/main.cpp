@@ -156,7 +156,9 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
     {
         const auto    scope_filepath = make_scope_path(path);
         std::ofstream scope_os(scope_filepath);
-        boost::write_graphviz(scope_os, scope_tree);
+        boost::write_graphviz(
+            scope_os, scope_tree, mfvar::ScopeTreeNodeInfoWriter(&var_table)
+        );
 
         auto destination = scope_filepath;
         destination.replace_extension("dot.png");

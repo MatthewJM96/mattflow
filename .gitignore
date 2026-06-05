@@ -9,6 +9,7 @@
 
 # Test artifacts
 /test/results
+/test/scopes
 
 # Run log artifacts
 /log/
