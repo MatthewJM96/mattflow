@@ -25,12 +25,14 @@ enum class TestResult {
     SUCCESS
 };
 
-static std::tuple<std::filesystem::path, std::filesystem::path>
-make_paths(const std::filesystem::path& path, std::filesystem::path&& new_base) {
-    const auto token_filename = path.filename().replace_extension(".token");
-    const auto ast_filename   = path.filename().replace_extension(".dot");
+static std::filesystem::path make_path(
+    const std::filesystem::path& path,
+    std::filesystem::path&&      new_base,
+    const std::string&           extension
+) {
+    const auto filename = path.filename().replace_extension(extension);
 
-    auto validation_directory = new_base;
+    auto new_path = new_base;
 
     bool is_root_part = true;
     for (const auto& part : path.parent_path()) {
@@ -39,31 +41,41 @@ make_paths(const std::filesystem::path& path, std::filesystem::path&& new_base) 
             continue;
         }
 
-        validation_directory /= part;
+        new_path /= part;
     }
 
-    return { validation_directory / token_filename,
-             validation_directory / ast_filename };
+    return new_path / filename;
 }
 
 static std::tuple<std::filesystem::path, std::filesystem::path>
 make_validation_paths(const std::filesystem::path& path) {
-    auto result_paths = make_paths(path, "validation");
+    auto token_path = make_path(path, "validation", ".token");
+    auto dot_path   = make_path(path, "validation", ".dot");
 
     // Ensure the results directory exists.
-    std::filesystem::create_directories(std::get<0>(result_paths).parent_path());
+    std::filesystem::create_directories(token_path.parent_path());
 
-    return result_paths;
+    return { token_path, dot_path };
 }
 
 static std::tuple<std::filesystem::path, std::filesystem::path>
 make_result_paths(const std::filesystem::path& path) {
-    auto result_paths = make_paths(path, "results");
+    auto token_path = make_path(path, "results", ".token");
+    auto dot_path   = make_path(path, "results", ".dot");
 
     // Ensure the results directory exists.
-    std::filesystem::create_directories(std::get<0>(result_paths).parent_path());
+    std::filesystem::create_directories(token_path.parent_path());
 
-    return result_paths;
+    return { token_path, dot_path };
+}
+
+static std::filesystem::path make_scope_path(const std::filesystem::path& path) {
+    auto dot_path = make_path(path, "scopes", ".dot");
+
+    // Ensure the results directory exists.
+    std::filesystem::create_directories(dot_path.parent_path());
+
+    return dot_path;
 }
 
 TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
@@ -139,6 +151,18 @@ TestResult run_test(const std::filesystem::path& path, TestConfig config = {}) {
         std::cout << "    ...failed.\n\nException: " << e.what() << std::endl;
 
         return TestResult::SYNTAX_PARSING_FAILURE;
+    }
+
+    {
+        const auto    scope_filepath = make_scope_path(path);
+        std::ofstream scope_os(scope_filepath);
+        boost::write_graphviz(scope_os, scope_tree);
+
+        auto destination = scope_filepath;
+        destination.replace_extension("dot.png");
+        (void)std::system(("dot -Tpng -o" + destination.string() + " "
+                           + scope_filepath.string())
+                              .c_str());
     }
 
     if (config.generate_validations) {
