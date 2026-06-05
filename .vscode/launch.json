@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "GCC x64 Debug",
+            "name": "CLI - GCC x64 Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/GCC-x64-Debug/mattflow_cli",
@@ -19,6 +19,17 @@
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb"
+        },
+        {
+            "name": "Test - GCC x64 Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/GCC-x64-Debug/mattflow_tests",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/test",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb"
